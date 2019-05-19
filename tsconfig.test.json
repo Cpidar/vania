@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      "target": "es6",
+      "strict": true,
+      "experimentalDecorators": true,
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "baseUrl": ".",
+      "allowSyntheticDefaultImports": true,
+      "strictPropertyInitialization": false,
+      "resolveJsonModule": true
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  }
