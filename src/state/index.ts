@@ -11,7 +11,7 @@ import { Subject, range, asyncScheduler, merge, asapScheduler, from, Observable 
 import { map, shareReplay, switchMap, switchMapTo, tap, mergeMap, share, filter, observeOn, bufferCount, pluck, take, toArray, concatMap, flatMap, startWith, distinctUntilKeyChanged, first, mapTo, combineLatest, reduce } from 'rxjs/operators'
 import { getBadTimeEvents } from '../events/event'
 import { dayState } from './cycle'
-import { getCycleDay, getCycleDaysInRange } from 'src/db';
+import { getCycleDay, getCycleDaysInRange, saveCycleDay, saveBulkCycleDay } from 'src/db';
 import { CycleDaySchema } from 'src/db/schemas';
 
 import cycleModue from '../lib/cycle'
@@ -25,8 +25,7 @@ interface Model {
   today: string;
   events: { type: string, title: string }[];
   PHN: CycleDaySchema;
-  currentCycle: any;
-  calculatedCycle: any
+  currentCycle: { start: string, cycleLength: number, bleedindLength: number };
 }
 
 export const initialModel: Model = {
@@ -36,8 +35,7 @@ export const initialModel: Model = {
   today: jMoment().startOf('day').format('jYYYY-jMM-jDD'),
   events: [],
   PHN: {} as any,
-  currentCycle: { start: '', cycleLength: 0, periodLength: 0 },
-  calculatedCycle: { start: '', cycleLength: 0, periodLength: 0 }
+  currentCycle: { start: '', cycleLength: 0, bleedindLength: 0 },
 }
 
 export const present = async (data: { type: string, payload: any}) => {
@@ -86,12 +84,12 @@ export const present = async (data: { type: string, payload: any}) => {
       const newPerLength = moment(data.payload).diff(moment(initialModel.currentCycle.start), 'days')
 
       initialModel.status = 'PERIOD-ENDS'
-      initialModel.currentCycle.periodLength = newPerLength
+      initialModel.currentCycle.bleedindLength = newPerLength
       return initialModel
 
     case 'changePeriod':
       initialModel.status = 'PERIOD_CHANGE'
-      initialModel.currentCycle.periodLength = data.payload.periodLength
+      initialModel.currentCycle.bleedindLength = data.payload.periodLength
       initialModel.currentCycle.cycleLength = data.payload.cycleLength
       return initialModel
 
@@ -115,6 +113,7 @@ export const computeDaysInMonth = (counter: number, m: string) => {
 
   return {
     jDate: jDate.format('jYYYY-jMM-jDD'),
+    mDate: jDate.format('YYYY-MM-DD'),
     day,
     isToday,
     currentMonthCond
@@ -127,7 +126,6 @@ export const action$: Subject<any> = new Subject()
 
 export const model$: Observable<Model> = action$.pipe(
   switchMap(present),
-  tap(console.log),
   shareReplay()
 )
 // no: number of month after or before of current month
@@ -138,6 +136,26 @@ export const getMonthList = (no: number) => model$.pipe(
     const ar = Array.from({ length: 2 * no + 1 }, (v, i) => i - no)
     return ar.map(v => moment(m.month).clone().add(v, 'jMonth').format('jYYYY-jMM-jDD'))
   })
+  )
+  
+export const saveInitialCycleConfig = () => model$.pipe(
+  filter(m => (m.status === 'INIT')),
+  map((m: Model) => {
+    let docs: Partial<CycleDaySchema>[] = []
+    for(let i = 0; i < m.currentCycle.bleedindLength; i++) {
+      let date = moment(m.currentCycle.start).add(i, 'day').format('YYYY-MM-DD')
+      console.log(date)
+      if(date > jMoment().format('YYYY-MM-DD')) break
+      docs.push({
+        _id: `cycleday-${date}`,
+        date: date,
+        isCycleStart: i === 0 ? true : false,
+        isBleedingDay: true
+      })
+    }
+    return docs
+  }),
+  switchMap(c => saveBulkCycleDay(c as Partial<CycleDaySchema>[])),
 )
 
 export const daysInMonth = (month: string) => range(-moment(month).clone().weekday(), 42).pipe(
@@ -161,6 +179,7 @@ export const longSelectedDayObj = model$.pipe(
   map((m) => {
     return {
       date: m.selectedDay,
+      mDate: jMoment(m.selectedDay, 'jYYYY-jMM-jDD').format('YYYY-MM-DD'),
       day: moment(m.selectedDay).format('jDD'),
       monthName: moment(m.selectedDay).format('jMMMM'),
       fullYear: moment(m.selectedDay).format('jYYYY'),
@@ -170,62 +189,12 @@ export const longSelectedDayObj = model$.pipe(
 )
 
 export const getCycleDateDataForSelected = model$.pipe(
-  tap(console.log),
   pluck('PHN')
 )
 
 export const getEventsForSelectedDay = model$.pipe(
   pluck('events')
 )
-
-// export const futurePeriodDays = (month: string) => daysInMonth(month).pipe(
-//   pluck('jDate'),
-//   combineLatest(model$.pipe(pluck('currentCycle')), (d, c) => dayState(d, c)),
-//   filter(x => x !== undefined)
-// )
-// export const badTimeEvents = (month: string) => daysInMonth(month).pipe(
-//   mergeMap((day) => getBadTimeEvents(day.jDate))
-// )
-export const getDaysHavePHN = (month:string) => {
-  return from(getCycleDaysInRange(month)).pipe(
-    tap(console.log),
-    mergeMap(d => from(d)),
-    pluck('doc'),
-    filter((doc: any) => doc.hasOwnProperty('bleeding')),
-    reduce((acc, doc: any) => {
-      const date = jMoment(doc.date, 'YYYY-MM-DD').format('jYYYY-jMM-jDD')
-      acc[date] = doc.isCycleStart ? {cycle: 'period-start'} : {cycle: 'period'}
-      return acc
-    }, {})
-  )
-  // map(phn => [phn.bleedState, phn.sexState, phn.moodState, phn.symptomState].flat().filter(x => x !== ''))
-}
-
-export const bleedingDaysForCal = (month: string) => cycleModue().then(m => {
-  const start = miladi(month)
-  const end = jMoment(start, 'YYYY-MM-DD').add(1, 'month').format('YYYY-MM-DD')
-  const mensesStartWithinRange = m.getMensesStartWithinRange(start, end)
-  mensesStartWithinRange.reduce((acc: CycleDaySchema[], cycle: CycleDaySchema) => {
-    acc.push(cycle)
-    acc.concat(m.getMensesDaysRightAfter(cycle))
-    return acc
-  }, [])
-})
-
-export const bleedingDay = () => cycleModue().then(m => {
-  console.log(m.getMenses())
-})
-
-// export const getDaysHaveEvents = (month:string) => merge(
-//   futurePeriodDays(month),
-//   getDaysHavePHN(month),
-//   badTimeEvents(month)
-// )
-
-
-// export const getPHNValuesArray = getSelectedPHN.pipe(
-//   map(phn => [phn.bleedState, phn.sexState, phn.moodState, phn.symptomState].flat().filter(x => x !== ''))
-// )
 
 export const calendarReloadHook = model$.pipe(
   filter(m => m.status === 'PERIOD_CHANGE'),
@@ -234,18 +203,18 @@ export const calendarReloadHook = model$.pipe(
 
 // بعد اینو اضاف کن که اگر قبل از آخرین پریودی واقعی چیزی وارد کرد روی پریودی پیش بینی تاثیر نذار
 //  برای این کار براساس مقدار diff حالتهای مختلف تعریف کن
-export const possibleClosePeriod = model$.pipe(
-  filter(m => (m.status === 'SELECTED_DAY')),
-  map(m => {
-    const diff = moment(m.selectedDay).diff(moment(m.currentCycle.start), 'days')
-    console.log(diff)
-    if (diff > 8 || diff < -m.currentCycle.periodLength) {
-      return ({ canPeriod: true, diff })
-    } else {
-      return ({ canPeriod: false, diff })
-    }
-  })
-)
+// export const possibleClosePeriod = model$.pipe(
+//   filter(m => (m.status === 'SELECTED_DAY')),
+//   map(m => {
+//     const diff = moment(m.selectedDay).diff(moment(m.currentCycle.start), 'days')
+//     console.log(diff)
+//     if (diff > 8 || diff < -m.currentCycle.bleedindLength) {
+//       return ({ canPeriod: true, diff })
+//     } else {
+//       return ({ canPeriod: false, diff })
+//     }
+//   })
+// )
 
 export const dispatch = (type: string, payload?: any) => {
   model$.subscribe()

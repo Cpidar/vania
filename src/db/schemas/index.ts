@@ -97,6 +97,7 @@ export interface CycleDaySchema extends Base {
     _rev?: string;
     date: string;
     isCycleStart: boolean;
+    isBleedingDay: boolean;
     temperature: TemperatureSchema;
     weight: WeightSchema;
     bleeding?: BleedingSchema;

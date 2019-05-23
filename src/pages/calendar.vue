@@ -9,6 +9,7 @@
       animated
       swipeable
       arrows
+      height="100%"
       transition-next="slide-left"
       transition-prev="slide-right"
       v-model="slide"
@@ -27,37 +28,26 @@
       </q-carousel-slide>
     </q-carousel>
     <calendar-footer />
-    <!-- <period-handler
-      :currentDate="getSelectedDay$"
-      @period="changePeriod"
-    />
-    <event-section :event="getSelectedDay$" /> -->
-    <phn-section :phn="phn" />
-    <q-dialog v-model="showModal" persistent maximized transition-show="slide-up" transition-hide="slide-down">
-      <q-layout class="bg-white">
-        <q-header class="bg-primary">
-          <q-toolbar>
-            <q-btn flat round dense icon="keyboard_arrow_right" v-close-popup />
-            <q-toolbar-title>Header</q-toolbar-title>
-          </q-toolbar>
-        </q-header>
-        <q-page-container>
-          <q-page>
-            <phn-modal :date="currentDay" :phn="phn" />
-          </q-page>
-        </q-page-container>
-      </q-layout>
-    </q-dialog>
 
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        round
-        icon="add"
-        color="primary"
-        size="lg"
-        @click="showModal = true"
-      />
-    </q-page-sticky>
+  <div class="row justify-center q-py-md q-gutter-sm">
+    <temp-dialog ></temp-dialog>
+    <bleed-dialog></bleed-dialog>
+    <mucus-dialog></mucus-dialog>
+    <phn-modal :date="currentDay" :phn="phn" @close="showModal = false"/>
+  </div>
+
+    <!-- <q-toggle
+        v-model="gotPeriod"
+        checked-icon="check"
+        color="red"
+        label="پریود شدم"
+        unchecked-icon="clear"
+    /> -->
+
+    <!-- <event-section :event="getSelectedDay$" /> -->
+    <phn-section :phn="phn" />
+
+
   </div>
 </template>
 
@@ -68,8 +58,8 @@ import {
   getMonthList,
   calendarReloadHook,
   shortSelectedDay,
-  CycleDaysInCurrentMonth,
-  getCycleDateDataForSelected
+  getCycleDateDataForSelected,
+  saveInitialCycleConfig
   // getDaysHaveEvents,
 } from '../state'
 
@@ -79,25 +69,43 @@ import CalendarFooter from '../components/calendar-footer.vue'
 import PeriodHandler from '../components/period-handler.vue'
 import PhnSection from '../components/phn-section.vue'
 import PhnModal from '../components/phn-modal.vue'
-import EventSection from '../components/event-section.vue'
+import TempDialog from '../components/temperature-dialog.vue'
+import BleedDialog from '../components/bleeding-dialog.vue'
+import MucusDialog from '../components/mucus-dialog.vue'
+
 
 import { Vue, Component } from 'vue-property-decorator'
 import { Observable, of, combineLatest, zip } from 'rxjs';
 import { merge, catchError, pluck, switchMap } from 'rxjs/operators';
 import { getCycleDay, getCycleDaysInRange } from '../db';
 import { CycleDaySchema } from '../db/schemas';
+import CycleModule from '../lib/cycle'
+import jMoment from 'moment-jalaali'
 
 
 @Component<CalendarPage>({
-  components: { Calendar, CalendarHeader, CalendarFooter, PeriodHandler, PhnSection, EventSection, PhnModal },
+  components: { 
+  Calendar,
+  CalendarHeader,
+  CalendarFooter,
+  PeriodHandler,
+  PhnSection,
+  PhnModal,
+  TempDialog,
+  BleedDialog,
+  MucusDialog
+  },
   subscriptions() {
     const monthList = getMonthList(10)
+    const currentDay = longSelectedDayObj.pipe(pluck('date'))
+    const isMenseStart = longSelectedDayObj.pipe(switchMap(day => CycleModule().then(m => m.isMensesStart(day.mDate))))
     return {
       getSelectedDay$: longSelectedDayObj,
       monthList,
       calendarKey: calendarReloadHook,
       phn: getCycleDateDataForSelected,
-      currentDay: longSelectedDayObj.pipe(pluck('date'))
+      currentDay,
+      isMenseStart
     }
   }
 })
@@ -111,28 +119,27 @@ export default class CalendarPage extends Vue {
   currentDay: string = ''
   monthList: string[] = []
   phn: CycleDaySchema = {} as any
+  gotPeriod: boolean = false
 
 
   mounted() {
-  }
+    this.$subscribeTo(saveInitialCycleConfig(), (x) => {console.log(x)})
+    }
 
   beforeCreate() {
-    const payload = { start: '1397/06/31', cycleLength: 18, periodLength: 4 }
+    const payload = { start: '1398-02-10', cycleLength: 18, bleedindLength: 4 }
     dispatch('init', payload)
   }
 
   monthChange() {
     // this.currentDay = this.$observables.monthList[this.slide]
     // this.$nextTick(() => this.activeMonth.push(this.monthList[this.activeIndex - 1], this.monthList[this.activeIndex + 1]))
-    dispatch('goToMonth', this.currentDay)
+    // dispatch('goToMonth', this.currentDay)
   }
 
   changePeriod(ev: any) {
     console.log(ev)
     this.loading = true
-    // setTimeout(function () { this.loading = false }, 100)
-    this.$observables.calendarKey = ev
-    // setTimeout(() => { this.loading = false }, 1000)
   }
 }
 </script>

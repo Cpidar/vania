@@ -1,71 +1,104 @@
 <template>
-<div>
-  <q-list>
-    <q-item-label>میزان خونریزی</q-item-label>
-    <q-item class="q-px-xs">
-      <div class="row inline no-wrap q-gutter-lg" style="height: 120px;">
-        <iRadio
-          v-for="(bleed, i) of bleedIcons"
-          :key="i"
-          :value="bleed.key"
-          :label="bleed.label"
-          :unchecked-icon="bleed.icon"
-          :checked-icon="bleed.checkedIcon"
-          checked-color="pink"
-          v-model="bleeding"
-        />
-      </div>
-    </q-item>
-    <q-separator />
-    <q-item-label>حالت روحی</q-item-label>
-    <q-item class="q-px-xs">
-      <div class="row inline no-wrap q-gutter-lg scroll" style="height: 120px;">
-        <iCheckbox
-          v-for="(mood, i) of moodIcons"
-          :key="i"
-          :value="mood.key"
-          :label="mood.label"
-          :unchecked-icon="mood.icon"
-          checked-color="teal-10"
-          v-model="moods"
-        />
-      </div>
-    </q-item>
-    <q-separator />
-    <q-item-label>علائم درد یا بیماری</q-item-label>
-    <q-item>
-      <div class="row inline no-wrap q-gutter-lg scroll" style="height: 120px;">
-        <iCheckbox
-          v-for="(pain, i) of painIcons"
-          :key="i"
-          :value="pain.key"
-          :label="pain.label"
-          :unchecked-icon="pain.icon"
-          checked-color="purple-10"
-          v-model="pains"
-        />
-      </div>
-    </q-item>
-    <q-separator />
-    <q-item-label>رابطه جنسی</q-item-label>
-    <q-item>
-      <div class="row inline no-wrap q-gutter-lg scroll" style="height: 120px;">
-        <iRadio
-          v-for="(sex, i) of sexIcons"
-          :key="i"
-          :value="sex.key"
-          :label="sex.label"
-          :unchecked-icon="sex.icon"
-          :checked-icon="sex.checkedIcon"
-          checked-color="pink"
-          v-model="sexes"
-        />
-      </div>
-    </q-item>
-  </q-list>
-  <q-page-sticky position="bottom" :offset="[18, 18]">
-    <q-btn fab icon="add" color="accent" @click="onSave"/>
-  </q-page-sticky>
+  <div>
+    <q-btn
+      class="glossy"
+      round
+      color="deep-orange"
+      icon="mdi-dots-horizontal"
+      @click="showModal = true"
+    ></q-btn>
+    <q-dialog
+      v-model="showModal"
+      persistent
+      maximized
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <q-layout class="bg-white">
+        <q-header class="bg-primary">
+          <q-toolbar>
+            <q-btn
+              flat
+              round
+              dense
+              icon="keyboard_arrow_right"
+              v-close-popup
+            />
+            <q-toolbar-title>Header</q-toolbar-title>
+          </q-toolbar>
+        </q-header>
+        <q-page-container>
+          <q-page>
+            <q-list>
+              <q-item-label>حالت روحی</q-item-label>
+              <q-item class="q-px-xs">
+                <div
+                  class="row inline no-wrap q-gutter-lg scroll"
+                  style="height: 120px;"
+                >
+                  <iCheckbox
+                    v-for="(mood, i) of moodIcons"
+                    :key="i"
+                    :value="mood.key"
+                    :label="mood.label"
+                    :unchecked-icon="mood.icon"
+                    checked-color="teal-10"
+                    v-model="moods"
+                  />
+                </div>
+              </q-item>
+              <q-separator />
+              <q-item-label>علائم درد یا بیماری</q-item-label>
+              <q-item>
+                <div
+                  class="row inline no-wrap q-gutter-lg scroll"
+                  style="height: 120px;"
+                >
+                  <iCheckbox
+                    v-for="(pain, i) of painIcons"
+                    :key="i"
+                    :value="pain.key"
+                    :label="pain.label"
+                    :unchecked-icon="pain.icon"
+                    checked-color="purple-10"
+                    v-model="pains"
+                  />
+                </div>
+              </q-item>
+              <q-separator />
+              <q-item-label>رابطه جنسی</q-item-label>
+              <q-item>
+                <div
+                  class="row inline no-wrap q-gutter-lg scroll"
+                  style="height: 120px;"
+                >
+                  <iRadio
+                    v-for="(sex, i) of sexIcons"
+                    :key="i"
+                    :value="sex.key"
+                    :label="sex.label"
+                    :unchecked-icon="sex.icon"
+                    checked-color="pink"
+                    v-model="sexes"
+                  />
+                </div>
+              </q-item>
+            </q-list>
+            <q-page-sticky
+              position="bottom"
+              :offset="[18, 18]"
+            >
+              <q-btn
+                fab
+                icon="add"
+                color="accent"
+                @click="onSave"
+              />
+            </q-page-sticky>
+          </q-page>
+        </q-page-container>
+      </q-layout>
+    </q-dialog>
   </div>
 </template>
 
@@ -128,7 +161,7 @@ const initialPHN: Partial<CycleDaySchema> = {
     panicky: false,
     lonely: false
   },
-  sex: { value: 10 }
+  sex: { value: -1 }
 }
 
 @Component({
@@ -146,21 +179,20 @@ export default class PhnModal extends Vue {
   showModal = false
   currentDate = this.date
 
-  bleeding: number | undefined = this.phn.bleeding ? this.phn.bleeding.value : undefined
+  bleeding: number | undefined = this.phn.bleeding ? this.phn.bleeding.value : -1
   pains: PainSchema | undefined = this.phn.pain ? this.phn.pain : initialPHN.pain
   moods: MoodSchema | undefined = this.phn.mood ? this.phn.mood : initialPHN.mood
-  sexes: number | undefined = this.phn.sex ? this.phn.sex.value : undefined
+  sexes: number | undefined = this.phn.sex ? this.phn.sex.value : -1
 
   onSave() {
     Promise.all([
       saveSymptom('bleeding', this.currentDate, { value: this.bleeding, exclude: false }),
-      saveCycleDay(this.currentDate, { pain: this.pains, mood: this.moods, sex: { value: this.sexes } })
+      // saveCycleDay(this.currentDate, { pain: this.pains, mood: this.moods, sex: { value: this.sexes } })
     ]).then(res => {
-      // Notify({
-      //   message: 'John pinged you',
-      //   color: 'purple'
-      // })
-      console.log(res)
+      this.$emit('close', true)
+      this.$q.notify({
+        message: 'ثبت دیتا موفق بود'
+      })
     })
   }
 
@@ -171,7 +203,31 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* .bleed-container {
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -179,7 +235,31 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
   flex-wrap: nowrap;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -187,7 +267,31 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 } */
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -195,11 +299,47 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
   display: none;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 } */
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

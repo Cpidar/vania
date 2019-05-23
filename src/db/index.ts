@@ -21,7 +21,7 @@ export async function getBleedingDaysSortedByDate(): Promise<CycleDaySchema[]> {
       index: {fields: ['bleeding', 'date']}
     }).then(() => db.find({
       selector: {
-        bleeding: { $exists: true }
+        isBleedingDay: { $eq: true }
       },
       sort: [{ _id: 'desc' }]
     })
@@ -38,7 +38,7 @@ export async function getTemperatureDaysSortedByDate(): Promise<CycleDaySchema[]
       selector: {
         temperature: { $exists: true }
       },
-      sort: [{ date: 'desc' }]
+      sort: [{ _id: 'desc' }]
     })
     return doc.docs
   } catch (err) {
@@ -50,8 +50,9 @@ export async function getCycleDaysSortedByDate() {
   try {
     const docs = await db.allDocs({
       include_docs: true,
-      startkey: 'cycleday',
-      endkey: 'cycleday\uffff'
+      endkey: 'cycleday',
+      startkey: 'cycleday\uffff',
+      descending: true
     })
     return docs.rows.map(doc => doc.doc)
   } catch (err) {
@@ -65,7 +66,8 @@ export async function getCycleStartsSortedByDate(): Promise<CycleDaySchema[]> {
     const doc = await db.find({
       selector: {
         isCycleStart: { $eq: true }
-      }
+      },
+      sort: [{ _id: 'desc' }]
     })
     const resp = doc.docs
     return resp
@@ -85,23 +87,30 @@ export async function saveCycleDay(sdate: string, cycleDay: Partial<CycleDaySche
   })
 }
 
+export async function saveBulkCycleDay(cycleDays: Partial<CycleDaySchema>[]) {
+  return db.bulkDocs(cycleDays as any)
+}
+
 export async function saveSymptom(symptom: string, sdate: string, val: any) {
   const date = miladi(sdate)
   const cycle = await cycleModule()
   const isMensesStart = cycle.isMensesStart
   const getMensesDaysRightAfter = cycle.getMensesDaysRightAfter
+  console.log(date)
 
-  db.upsert(`cycleday-${date}`, function (cycleDay: any) {
+  return db.upsert(`cycleday-${date}`, function (cycleDay: any) {
     if (!cycleDay.date) {
       cycleDay.date = date
     }
     if (bleedingValueDeleted(symptom, val)) {
       cycleDay.bleeding = val
       cycleDay.isCycleStart = false
+      cycleDay.isBleedingDay = true
       maybeSetNewCycleStart(cycleDay)
     } else if (bleedingValueAddedOrChanged(symptom, val)) {
       cycleDay.bleeding = val
-      cycleDay.isCycleStart = isMensesStart(cycleDay)
+      cycleDay.isBleedingDay = true
+      cycleDay.isCycleStart = isMensesStart(date)
       maybeClearOldCycleStarts(cycleDay)
     } else {
       cycleDay[symptom] = val
@@ -116,7 +125,7 @@ export async function saveSymptom(symptom: string, sdate: string, val: any) {
     const mensesDaysAfter = getMensesDaysRightAfter(dayWithDeletedBleeding)
     if (!mensesDaysAfter.length) return
     const nextOne = mensesDaysAfter[mensesDaysAfter.length - 1]
-    if (isMensesStart(nextOne)) {
+    if (isMensesStart(nextOne.date)) {
       nextOne.isCycleStart = true
     }
   }
@@ -145,7 +154,7 @@ export async function updateCycleStartsForAllCycleDays() {
     const isMensesStart = cycle.isMensesStart
 
     return await Promise.all(days.map((day: CycleDaySchema) => {
-      if (isMensesStart(day)) {
+      if (isMensesStart(day.date)) {
         day.isCycleStart = true
       }
       return db.put({

@@ -1,4 +1,7 @@
 export default function (feeling: any, texture: any ) {
+
+  if (typeof feeling != 'number' || typeof texture != 'number') return null
+
   const feelingMapping: any = {
     0: 0,
     1: 1,

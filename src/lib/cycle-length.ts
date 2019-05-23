@@ -1,9 +1,18 @@
 /* eslint-disable standard/computed-property-even-spacing */
 import assert from 'assert'
 
+export interface CycleLengthState {
+  minimum: number;
+  maximum: number;
+  mean: number;
+  median: number;
+  middle: number;
+  stdDeviation: number | null;
+}
+
 export function getCycleLengthStats(cycleLengths: number[]) {
   throwIfArgsAreNotInRequiredFormat(cycleLengths)
-  const cycleLengthStats = {} as any
+  const cycleLengthStats = {} as CycleLengthState
   const sortedCycleLengths = cycleLengths.sort((a, b) => {
     return a - b
   })

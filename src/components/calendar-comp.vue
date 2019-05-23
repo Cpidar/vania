@@ -18,7 +18,7 @@
         :today="day.isToday"
         :inactive="day.currentMonthCond"
         :event-type="events[day.jDate]"
-        :period="period.get(day.jDate)"
+        :period="period.get(day.mDate)"
       >
         {{day.day}}
       </Day>
@@ -28,7 +28,7 @@
 
 <script lang="ts">
 
-import { daysInMonth, getDaysHavePHN, bleedingDaysForCal, bleedingDay } from '../state'
+import { daysInMonth } from '../state'
 import Day from './day.vue'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { reduce, mergeDeepRight } from 'ramda'
@@ -56,14 +56,10 @@ export default class Calendar extends Vue {
       function (err) { console.log(err) },
       () => { console.log('complete') }
     )
-    this.$subscribeTo(getDaysHavePHN(this.current), (ev: any) => {
-      console.log(ev)
-      // this.events = reduce(mergeDeepRight, this.events, ev)
-      this.events = {...ev}
-    })
     this.selectedDay = this.selectedDay || this.current
     
     cycleModule().then(m => {
+      console.log(m.getMenses())
       this.period = new Map([...m.getMenses(), ...m.getPredictedMenses()])
     })
   }

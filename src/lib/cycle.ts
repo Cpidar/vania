@@ -1,18 +1,17 @@
 import * as joda from 'js-joda'
 import jMoment from 'moment-jalaali'
-import { getCycleLengthStats } from './cycle-length'
+import { getCycleLengthStats, CycleLengthState } from './cycle-length'
 import { getBleedingDaysSortedByDate, getCycleStartsSortedByDate, getCycleDaysSortedByDate } from '../db'
 import { CycleDaySchema, BleedingSchema } from '../db/schemas';
 const LocalDate = joda.LocalDate
 const DAYS = joda.ChronoUnit.DAYS
-
-const toJalali = (date: string) => jMoment(date, 'YYYY-MM-DD').format('jYYYY-jMM-jDD')
 
 export default async function config(opts?: any) {
   let bleedingDaysSortedByDate: CycleDaySchema[]
   let cycleStartsSortedByDate: CycleDaySchema[]
   let cycleDaysSortedByDate: CycleDaySchema[]
   let maxBreakInBleeding: number
+  let maxBleedingLength: number
   let maxCycleLength: number
   let minCyclesForPrediction: number
 
@@ -22,10 +21,12 @@ export default async function config(opts?: any) {
     bleedingDaysSortedByDate = await getBleedingDaysSortedByDate()
     cycleStartsSortedByDate = await getCycleStartsSortedByDate()
     cycleDaysSortedByDate = await getCycleDaysSortedByDate()
+    console.log(cycleDaysSortedByDate)
     // maximum day break between bleeding
     maxBreakInBleeding = 1
+    maxBleedingLength = 6
     maxCycleLength = 99
-    minCyclesForPrediction = 1
+    minCyclesForPrediction = 0
   } else {
     bleedingDaysSortedByDate = opts.bleedingDaysSortedByDate || []
     cycleStartsSortedByDate = opts.cycleStartsSortedByDate || []
@@ -40,25 +41,28 @@ export default async function config(opts?: any) {
   }
 
   function getMensesStartWithinRange(start: string, end: string): CycleDaySchema[] {
-    return cycleStartsSortedByDate.filter(cycle =>  cycle.date <= end && cycle.date >= start)
+    return cycleStartsSortedByDate.filter(cycle => cycle.date <= end && cycle.date >= start)
   }
 
   function getMenses() {
     const starts = cycleStartsSortedByDate
     let m = new Map<string, string>()
-    for( let cycle of starts) {
+    if (starts.length === 0) return m
+    for (let cycle of starts) {
       const start = LocalDate.parse(cycle.date)
       const nextCycles = getMensesDaysRightAfter(cycle)
-      const end = nextCycles[0].date
-      m.set(toJalali(cycle.date), 'period-start')
-      m.set(toJalali(end), 'period-end')
+      const end = nextCycles.length ? nextCycles[0].date : ''
+      m.set(cycle.date, 'period-start')
+      if (!end) break
+      m.set(end, 'period-end')
       let i = 1
-      while(true) {
+      while (true) {
         let date = start.plusDays(i++)
-        if(date.equals(LocalDate.parse(end))) { break }
-        m.set(toJalali(date.toString()), 'period')
+        if (date.equals(LocalDate.parse(end))) { break }
+        m.set(date.toString(), 'period')
       }
     }
+    console.log(m)
     return m
   }
 
@@ -117,28 +121,29 @@ export default async function config(opts?: any) {
     return cycleLength > maxCycleLength ? null : cycle
   }
 
-  function getCycleForDay(dayOrDate: any, todayDate: string) {
+  function getCycleForDay(dayOrDate: any, todayDate?: string) {
     const dateString = typeof dayOrDate === 'string' ? dayOrDate : dayOrDate.date
     const cycleStart = getLastMensesStartForDay(dateString)
     if (!cycleStart) return null
     return getCycleForCycleStartDay(cycleStart, todayDate)
   }
 
-  function isMensesStart(cycleDay: CycleDaySchema) {
-    if (!cycleDay.bleeding || cycleDay.bleeding.exclude) return false
-    if (noBleedingDayWithinThresholdBefore(cycleDay)) return true
+  function isMensesStart(date: string) {
+    // if (!cycleDay.isBleedingDay || (cycleDay.bleeding as BleedingSchema).exclude) return false
+    if (noBleedingDayWithinThresholdBefore(date)) return true
     return false
 
     // checks that there are no relevant bleeding days before
     // the input cycleDay (returns boolean)
-    function noBleedingDayWithinThresholdBefore(cycleDay: CycleDaySchema) {
-      const localDate = LocalDate.parse(cycleDay.date)
-      const threshold = localDate.minusDays(maxBreakInBleeding + 1).toString()
+    function noBleedingDayWithinThresholdBefore(date: string) {
+      const localDate = LocalDate.parse(date)
+      const threshold = localDate.minusDays(maxBleedingLength + 1).toString()
       const bleedingDays = bleedingDaysSortedByDate
-      const index = bleedingDays.findIndex(day => day.date === cycleDay.date)
+      const index = bleedingDays.findIndex(day => day.date === date)
       const candidates = bleedingDays.slice(index + 1)
       return !candidates.some(day => {
-        return day.date >= threshold && !(day.bleeding as BleedingSchema).exclude
+        return day.date >= threshold
+        // && !(day.bleeding as BleedingSchema).exclude
       })
     }
   }
@@ -148,12 +153,12 @@ export default async function config(opts?: any) {
   // changes
   function getMensesDaysRightAfter(cycleDay: CycleDaySchema) {
     const bleedingDays = bleedingDaysSortedByDate
-      .filter(d => !(d.bleeding as BleedingSchema).exclude)
-      .reverse()
+    // .filter(d => !(d.bleeding as BleedingSchema).exclude)
+    // .reverse()
     const firstFollowingBleedingDayIndex = bleedingDays.findIndex(day => {
-      return day.date > cycleDay.date
+      return day.date === cycleDay.date
     })
-    return recurse(cycleDay, firstFollowingBleedingDayIndex, [])
+    return recurse(cycleDay, firstFollowingBleedingDayIndex - 1, [])
 
     // we look at the current bleeding day as well as the next, and decide
     // whether they belong to one menses. if they do, we collect them, once
@@ -163,7 +168,7 @@ export default async function config(opts?: any) {
       if (!next) return mensesDays
       if (!isWithinThreshold(day, next)) return mensesDays
       mensesDays.unshift(next)
-      return recurse(next, nextIndex + 1, mensesDays)
+      return recurse(next, nextIndex - 1, mensesDays)
     }
 
     // checks whether the two days belong to one menses episode
@@ -180,19 +185,29 @@ export default async function config(opts?: any) {
       .map((cycleStart, i, startsAsLocalDates) => {
         if (i === cycleStartsSortedByDate.length - 1) return null
         const prevCycleStart = startsAsLocalDates[i + 1]
-        return prevCycleStart.until(cycleStart, DAYS)
+        return Math.abs(prevCycleStart.until(cycleStart, DAYS))
       })
       .filter(length => length && length <= maxCycleLength)
   }
 
-  function getPredictedMenses() {
-    const cycleLengths = getAllCycleLengths()
-    if (cycleLengths.length < minCyclesForPrediction) {
-      return new Map<string, string>()
+  function getPredictedMenses(opt?: { start: string, cycleLength: number, bleedingLength: number }) {
+
+    let cycleLengths = getAllCycleLengths()
+    let periodDistance: number
+    let periodStartVariation: number
+    let cycleInfo: CycleLengthState
+
+    if (opt && cycleLengths.length < minCyclesForPrediction) {
+      cycleLengths = [opt.cycleLength]
+      var lastStart = LocalDate.parse(opt.start)
+    } else {
+      const allMensesStarts = cycleStartsSortedByDate
+      lastStart = LocalDate.parse(allMensesStarts[0].date)
     }
-    const cycleInfo = getCycleLengthStats(cycleLengths as number[])
-    const periodDistance = Math.round(cycleInfo.mean)
-    let periodStartVariation
+
+    cycleInfo = getCycleLengthStats(cycleLengths as number[])
+    periodDistance = Math.round(cycleInfo.mean)
+
     if (cycleInfo.stdDeviation === null) {
       periodStartVariation = 2
     } else if (cycleInfo.stdDeviation < 1.5) { // threshold is chosen a little arbitrarily
@@ -203,19 +218,18 @@ export default async function config(opts?: any) {
     if (periodDistance - 5 < periodStartVariation) { // otherwise predictions overlap
       return []
     }
-    const allMensesStarts = cycleStartsSortedByDate
-    let lastStart = LocalDate.parse(allMensesStarts[0].date)
+
     const predictedMenses = new Map<string, string>()
     for (let i = 0; i < 3; i++) {
       lastStart = lastStart.plusDays(periodDistance)
-      const nextPredictedDates = predictedMenses.set(toJalali(lastStart.toString()), 'period-pr')
+      predictedMenses.set(lastStart.toString(), 'period-pr')
       for (let j = 0; j < periodStartVariation; j++) {
-        if(j === periodStartVariation -1) {
-          predictedMenses.set(toJalali(lastStart.minusDays(j + 1).toString()), 'period-pr-end')
-          predictedMenses.set(toJalali(lastStart.plusDays(j + 1).toString()), 'period-pr-end')
+        if (j === periodStartVariation - 1) {
+          predictedMenses.set(lastStart.minusDays(j + 1).toString(), 'period-pr-start')
+          predictedMenses.set(lastStart.plusDays(j + 1).toString(), 'period-pr-end')
         } else {
-          predictedMenses.set(toJalali(lastStart.minusDays(j + 1).toString()), 'period-pr')
-          predictedMenses.set(toJalali(lastStart.plusDays(j + 1).toString()), 'period-pr')
+          predictedMenses.set(lastStart.minusDays(j + 1).toString(), 'period-pr')
+          predictedMenses.set(lastStart.plusDays(j + 1).toString(), 'period-pr')
         }
       }
     }

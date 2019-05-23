@@ -1,6 +1,6 @@
 <template>
   <section class="q-px-md q-py-md">
-    <q-banner dense class="bg-grey-3" v-if="events.length">
+    <q-banner dense class="bg-grey-3" v-if="events !== undefined && events.length > 0">
       <template v-slot:avatar>
         <q-icon name="event_available" color="secondary" />
       </template>
@@ -37,7 +37,7 @@
         <q-timeline-entry
           icon="sentiment_very_dissatisfied"
           key="bleeding"
-          v-if="bleeding !== undefined"
+          v-if="bleeding !== -1 && bleeding !== undefined"
         >
           <div>
             <q-chip>
@@ -71,7 +71,7 @@
           </div>
         </q-timeline-entry>
 
-        <q-timeline-entry icon="delete" key="sex" v-if="sex !== undefined">
+        <q-timeline-entry icon="delete" key="sex" v-if="(sex !== -1) && (sex !== undefined)">
           <div>
             <q-chip>
               <q-avatar size="28px">
@@ -124,6 +124,10 @@ export default class PhnSection extends Vue {
   bleedingLabel = bleeding.labels
   sexLabels = sex.categories
   events: { type: string, title: string }[] = []
+
+  get checkExistEvents () {
+    return this.events.length
+  }
 
 
   get pains() {

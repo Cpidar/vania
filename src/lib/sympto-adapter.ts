@@ -4,8 +4,9 @@ import getFertilityStatus from './sympto'
 import cycleModule from './cycle'
 import { useCervixObservable } from '../local-storage'
 import { fertilityStatus as labels } from '../i18n/en/labels'
+import { CycleDaySchema } from 'src/db/schemas';
 
-export async function getFertilityStatusForDay(dateString) {
+export async function getFertilityStatusForDay(dateString: string) {
   const status = await getCycleStatusForDay(dateString)
   console.log(status)
   if (!status) {
@@ -34,10 +35,10 @@ export async function getFertilityStatusForDay(dateString) {
     return formatStatus('periOvulatory', dateString, {phases: {periOvulatory: {}}})
   }
 
-  return formatStatus(phaseNameForDay, dateString, status)
+  return formatStatus(phaseNameForDay as string, dateString, status)
 }
 
-export async function getCycleStatusForDay(dateString, opts = {}) {
+export async function getCycleStatusForDay(dateString: string, opts?: any) {
   const {
     getCycleForDay,
     getCyclesBefore,
@@ -47,7 +48,7 @@ export async function getCycleStatusForDay(dateString, opts = {}) {
   const cycle = getCycleForDay(dateString)
   if (!cycle) return null
 
-  const cycleInfo = {cycle: formatCycleForSympto(cycle)}
+  const cycleInfo = {cycle: formatCycleForSympto(cycle)} as any
 
   const previousCycle = getPreviousCycle(dateString)
 
@@ -57,7 +58,7 @@ export async function getCycleStatusForDay(dateString, opts = {}) {
   if (previousCycle && !opts.excludeEarlierCycles) {
     const earlierCycles = getCyclesBefore(previousCycle[0])
     if (earlierCycles) {
-      cycleInfo.earlierCycles = earlierCycles.map(formatCycleForSympto)
+      cycleInfo.earlierCycles = (earlierCycles as CycleDaySchema[][]).map(formatCycleForSympto)
     }
   }
 
@@ -66,7 +67,7 @@ export async function getCycleStatusForDay(dateString, opts = {}) {
   return getFertilityStatus(cycleInfo)
 }
 
-function formatStatus(phaseNameForDay, dateString, status) {
+function formatStatus(phaseNameForDay: string, dateString: string, status: any) {
   const mapping = {
     preOvulatory: () => {
       return {
@@ -75,7 +76,7 @@ function formatStatus(phaseNameForDay, dateString, status) {
         statusText: labels.preOvuText
       }
     },
-    periOvulatory: (dateString, status) => {
+    periOvulatory: (dateString: string, status: any) => {
       // there might not actually be any data for the phase
       const peri = status.phases.periOvulatory
       const phaseEnd = peri && peri.end
@@ -91,7 +92,7 @@ function formatStatus(phaseNameForDay, dateString, status) {
         statusText: labels.periOvuText
       }
     },
-    postOvulatory: (dateString, status) => {
+    postOvulatory: (dateString: string, status: any) => {
       return {
         status: labels.infertile,
         phase: 3,
@@ -100,11 +101,40 @@ function formatStatus(phaseNameForDay, dateString, status) {
     }
   }
 
-  return mapping[phaseNameForDay](dateString, status)
+  return (mapping as any)[phaseNameForDay](dateString, status)
 }
 
-function formatCycleForSympto(cycle) {
+function formatCycleForSympto(cycle: CycleDaySchema[]) {
+  const formatted = cycle.reduce((acc: any, oldDay) => {
+    // deep clone
+    const day = JSON.parse(JSON.stringify(oldDay));
+    // remove excluded symptoms
+    ['bleeding', 'temperature', 'mucus', 'cervix'].forEach(symptomName => {
+      if (day[symptomName] && day[symptomName].exclude) {
+        delete day[symptomName]
+      }
+    })
+    // remove days with incomplete cervix values
+    if (hasIncompleteCervixValue(day)) {
+      delete day.cervix
+    }
+    // remove days with incomplete mucus value (because nfp-mucus returns null when that's the case)
+    if (day.mucus && day.mucus.value === null) {
+      delete day.mucus
+    }
+    // change format
+    ['bleeding', 'temperature', 'mucus'].forEach(symptomName => {
+      if (day[symptomName]) day[symptomName] = day[symptomName].value
+    })
+    acc.push(day)
+    return acc
+  }, [])
   // we get earliest last, but sympto wants earliest first
-  cycle.reverse()
-  return cycle
+  formatted.reverse()
+  return formatted
 }
+
+function hasIncompleteCervixValue(day: CycleDaySchema) {
+  return day.cervix && (typeof day.cervix.opening != 'number' || typeof day.cervix.firmness != 'number')
+}
+

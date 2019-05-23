@@ -47,7 +47,6 @@ export default class Day extends Vue {
   @Emit('select')
   selectDay(ev: any) {
     const selectedDay = ev.target.getAttribute('value')
-    console.log(getBadTimeEvents(selectedDay))
     getCycleDay(selectedDay).then((p) => {
       dispatch('selectDay', { selectedDay, events: getBadTimeEvents(selectedDay), phn: p })
     }
@@ -118,9 +117,22 @@ export default class Day extends Vue {
 }
 
 .period-pr {
+  box-sizing: border-box;
   border-top: 2.5px solid #6cc4d9;
   border-bottom: 2.5px solid #6cc4d9;
   // color: white;
+}
+
+.period-pr-start {
+  @extend .period-pr;
+  border-left: 2.5px solid #6cc4d9;
+  border-radius: var(--cell-height) 0 0 var(--cell-height);
+}
+
+.period-pr-end {
+  @extend .period-pr;
+  border-right: 2.5px solid #6cc4d9;
+  border-radius: 0 var(--cell-height) var(--cell-height) 0;
 }
 
 .has-note {
@@ -138,17 +150,5 @@ export default class Day extends Vue {
   height: 10px;
   background-color: #865fc1;
   border-radius: 50%;
-}
-
-.period-pr-start {
-  @extend .period-pr;
-  border-left: 2.5px solid #6cc4d9;
-  border-radius: var(--cell-height) 0 0 var(--cell-height);
-}
-
-.period-pr-end {
-  @extend .period-pr;
-  border-right: 2.5px solid #6cc4d9;
-  border-radius: 0 var(--cell-height) var(--cell-height) 0;
 }
 </style>

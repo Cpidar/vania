@@ -115,7 +115,7 @@ export const temperature = {
   outOfAbsoluteRangeWarning: 'This temperature value is too high or low to be shown on the temperature chart.',
   saveAnyway: 'Save anyway',
   temperature: {
-    header: 'Temperature (°C)',
+    header: 'دما',
     explainer: 'Take your temperature right after waking up, before getting out of bed'
   },
   time: 'Time',
