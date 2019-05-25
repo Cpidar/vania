@@ -9,7 +9,8 @@
       "baseUrl": ".",
       "allowSyntheticDefaultImports": true,
       "strictPropertyInitialization": false,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      "strictNullChecks": false,
     },
     "include": [
       "./src/**/*"

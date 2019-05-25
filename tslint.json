@@ -18,7 +18,6 @@
       false
     ],
     "arrow-parens": false,
-    // Pending fix for shorthand property names.
     "object-literal-sort-keys": false
   },
   "rulesDirectory": []

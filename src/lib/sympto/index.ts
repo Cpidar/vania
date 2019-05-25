@@ -5,13 +5,15 @@ import getPreOvulatoryPhase from './pre-ovulatory'
 import { LocalDate } from 'js-joda'
 import assert from 'assert'
 import { CycleDaySchema, BleedingSchema } from 'src/db/schemas';
+import { CycleInfo, StatusModel, PhaseModel, SymptomShiftModel } from 'src/lib/cycle.models';
 
-export default function getSymptoThermalStatus(cycleInfo: any) {
+export default function getSymptoThermalStatus(cycleInfo: CycleInfo) {
   const { cycle, previousCycle, earlierCycles = [], secondarySymptom = 'mucus' } = cycleInfo
   throwIfArgsAreNotInRequiredFormat([cycle, ...earlierCycles])
 
-  const status: any = {
-    phases: {}
+  const status: StatusModel = {
+    status: '',
+    phases: {} as PhaseModel
   }
 
   // if there was no first higher measurement in the previous cycle,
@@ -39,7 +41,8 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
   // TODO maybe add indicator if there was no preovuphase?
   status.phases.periOvulatory = {
     start: { date: null },
-    cycleDays: []
+    cycleDays: [] as CycleDaySchema[],
+    end: { date: '' }
   }
   const periPhase = status.phases.periOvulatory
 
@@ -54,13 +57,13 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
     periPhase.cycleDays = [...cycle]
   }
 
-  const temperatureShift: any = getTemperatureShift(cycle)
+  const temperatureShift = getTemperatureShift(cycle)
 
   if (!temperatureShift.detected) return status
 
-  const tempEvalEndIndex = cycle.indexOf(temperatureShift.evaluationCompleteDay)
+  const tempEvalEndIndex = cycle.indexOf(temperatureShift.evaluationCompleteDay as CycleDaySchema)
 
-  let secondaryShift
+  let secondaryShift: SymptomShiftModel = {} as SymptomShiftModel
   if (secondarySymptom === 'mucus') {
     secondaryShift = getMucusShift(cycle, tempEvalEndIndex)
   } else if (secondarySymptom === 'cervix') {
@@ -69,14 +72,14 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
 
   if (!secondaryShift.detected) return status
 
-  let periOvulatoryEnd
-  const tempOver = temperatureShift.evaluationCompleteDay.date
-  const secondarySymptomOver = secondaryShift.evaluationCompleteDay.date
+  let periOvulatoryEnd: CycleDaySchema = {} as CycleDaySchema
+  const tempOver = (temperatureShift.evaluationCompleteDay as CycleDaySchema).date
+  const secondarySymptomOver = (secondaryShift.evaluationCompleteDay as CycleDaySchema).date
 
   if (tempOver >= secondarySymptomOver) {
-    periOvulatoryEnd = temperatureShift.evaluationCompleteDay
+    periOvulatoryEnd = (temperatureShift.evaluationCompleteDay as CycleDaySchema)
   } else if (secondarySymptom > tempOver) {
-    periOvulatoryEnd = secondaryShift.evaluationCompleteDay
+    periOvulatoryEnd = (secondaryShift.evaluationCompleteDay as CycleDaySchema)
   }
 
   const previousPeriDays = periPhase.cycleDays
@@ -87,7 +90,8 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
       date: periOvulatoryEnd.date,
       time: '18:00'
     },
-    cycleDays: previousPeriDays.slice(previousPeriEndIndex)
+    cycleDays: previousPeriDays.slice(previousPeriEndIndex),
+    end: { date: '' }
   }
 
   periPhase.cycleDays = previousPeriDays.slice(0, previousPeriEndIndex + 1)
@@ -110,7 +114,7 @@ function throwIfArgsAreNotInRequiredFormat(cycles: CycleDaySchema[][]) {
     assert.ok(cycle.length > 0, 'Cycle must not be empty.')
     assert.ok(cycle[0].bleeding !== null, 'First cycle day should have bleeding.')
     assert.equal(typeof cycle[0].bleeding, 'object', 'First cycle day must contain bleeding value.')
-    assert.equal(typeof (cycle[0].bleeding as BleedingSchema).value, 'number', 'First cycle day bleeding value must be a number.')
+    assert.equal(typeof cycle[0].bleeding.value, 'number', 'First cycle day bleeding value must be a number.')
     cycle.forEach(day => {
       assert.equal(typeof day.date, 'string', 'Date must be given as a string.')
       assert.doesNotThrow(() => LocalDate.parse(day.date), 'Date must be given in right string format.')

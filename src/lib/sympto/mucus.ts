@@ -1,6 +1,7 @@
 import { CycleDaySchema } from "src/db/schemas";
+import { SymptomShiftModel } from "src/lib/cycle.models";
 
-export default function (cycleDays: CycleDaySchema[], tempEvalEndIndex: number) {
+export default function (cycleDays: CycleDaySchema[], tempEvalEndIndex: number): SymptomShiftModel {
   const notDetected = { detected: false }
   const mucusDays = cycleDays.filter(day => day.mucus && !day.mucus.exclude)
   let currentBestQuality = 0

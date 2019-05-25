@@ -1,9 +1,9 @@
-/* eslint-disable no-mixed-operators */
 import { LocalDate } from 'js-joda'
 import apply8DayRule from './minus-8-day-rule'
 import { CycleDaySchema } from 'src/db/schemas';
+import { OvuPhaseModel } from 'src/lib/cycle.models';
 
-export default function (cycle: CycleDaySchema[], previousCycles: CycleDaySchema[][], secondarySymptom: string) {
+export default function (cycle: CycleDaySchema[], previousCycles: CycleDaySchema[][], secondarySymptom: string): OvuPhaseModel {
   let preOvuPhaseLength = 5
 
   const minus8DayRuleResult = apply8DayRule(previousCycles, secondarySymptom)
@@ -18,7 +18,7 @@ export default function (cycle: CycleDaySchema[], previousCycles: CycleDaySchema
   // if fertile mucus or cervix occurs on the 1st cycle day, there is no pre-ovu phase
   if (!preOvulatoryDays.length) return null
 
-  let endDate
+  let endDate: string
   if (preOvulatoryDays.length === maybePreOvuDays.length) {
     endDate = preOvuEndDate
   } else {

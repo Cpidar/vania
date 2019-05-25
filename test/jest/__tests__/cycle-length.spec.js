@@ -1,12 +1,9 @@
-import chai from 'chai'
 import { AssertionError } from 'assert'
 
-import {getCycleLengthStats as cycleInfo} from '../lib/cycle-length'
-
-const expect = chai.expect
+import {getCycleLengthStats as cycleInfo} from 'src/lib/cycle-length'
 
 describe('getCycleLengthStats', () => {
-  it('works for a simple odd-numbered array', () => {
+  test('works for a simple odd-numbered array', () => {
     const cycleLengths = [99, 5, 1, 2, 100]
     const result = cycleInfo(cycleLengths)
     const expectedResult = {
@@ -16,10 +13,10 @@ describe('getCycleLengthStats', () => {
       median: 5,
       stdDeviation: 53.06
     }
-    expect(result).to.eql(expectedResult)
-  }),
+    expect(result).toEqual(expectedResult)
+  })
 
-  it('works for a simple even-numbered array', () => {
+  test('works for a simple even-numbered array', () => {
     const cycleLengths = [4, 1, 15, 2, 20, 5]
     const result = cycleInfo(cycleLengths)
     const expectedResult = {
@@ -29,10 +26,10 @@ describe('getCycleLengthStats', () => {
       median: 4.5,
       stdDeviation: 7.78
     }
-    expect(result).to.eql(expectedResult)
-  }),
+    expect(result).toEqual(expectedResult)
+  })
 
-  it('works for an one-element array', () => {
+  test('works for an one-element array', () => {
     const cycleLengths = [42]
     const result = cycleInfo(cycleLengths)
     const expectedResult = {
@@ -42,11 +39,11 @@ describe('getCycleLengthStats', () => {
       median: 42,
       stdDeviation: null
     }
-    expect(result).to.eql(expectedResult)
-  }),
+    expect(result).toEqual(expectedResult)
+  })
 
   describe('works for more realistic examples', () => {
-    it('1 day difference between shortest and longest period', () => {
+    test('1 day difference between shortest and longest period', () => {
       const cycleLengths = [28, 29, 28, 28, 28, 29, 28, 28, 28, 29, 29, 28]
       const result = cycleInfo(cycleLengths)
       const expectedResult = {
@@ -56,9 +53,9 @@ describe('getCycleLengthStats', () => {
         median: 28,
         stdDeviation: 0.49
       }
-      expect(result).to.eql(expectedResult)
-    }),
-    it('3 days difference between shortest and longest period', () => {
+      expect(result).toEqual(expectedResult)
+    })
+    test('3 days difference between shortest and longest period', () => {
       const cycleLengths = [28, 29, 28, 28, 27, 30, 28, 27, 28, 28, 29, 27]
       const result = cycleInfo(cycleLengths)
       const expectedResult = {
@@ -68,9 +65,9 @@ describe('getCycleLengthStats', () => {
         median: 28,
         stdDeviation: 0.90
       }
-      expect(result).to.eql(expectedResult)
-    }),
-    it('8 days difference between shortest and longest period', () => {
+      expect(result).toEqual(expectedResult)
+    })
+    test('8 days difference between shortest and longest period', () => {
       const cycleLengths = [28, 32, 29, 27, 28, 26, 33, 28, 29, 34, 27, 29]
       const result = cycleInfo(cycleLengths)
       const expectedResult = {
@@ -80,26 +77,25 @@ describe('getCycleLengthStats', () => {
         median: 28.5,
         stdDeviation: 2.52
       }
-      expect(result).to.eql(expectedResult)
+      expect(result).toEqual(expectedResult)
     })
   })
-
   describe('when args are wrong', () => {
-    it('throws when arg object is an empty array', () => {
+    test('throws when arg object is an empty array', () => {
       const cycleLengths = []
-      expect(() => cycleInfo(cycleLengths).to.throw(AssertionError))
-    }),
-    it('throws when arg object is not in right format', () => {
+      expect(() => cycleInfo(cycleLengths)).toThrow(AssertionError)
+    })
+    test('throws when arg object is not in right format', () => {
       const wrongObject = { hello: 'world' }
-      expect(() => cycleInfo(wrongObject).to.throw(AssertionError))
-    }),
-    it('throws when arg array contains a string', () => {
+      expect(() => cycleInfo(wrongObject)).toThrow(AssertionError)
+    })
+    test('throws when arg array contains a string', () => {
       const wrongElement = [4, 1, 15, '2', 20, 5]
-      expect(() => cycleInfo(wrongElement).to.throw(AssertionError))
-    }),
-    it('throws when arg array contains a NaN', () => {
+      expect(() => cycleInfo(wrongElement)).toThrow(AssertionError)
+    })
+    test('throws when arg array contains a NaN', () => {
       const wrongElement = [4, 1, 15, NaN, 20, 5]
-      expect(() => cycleInfo(wrongElement).to.throw(AssertionError))
+      expect(() => cycleInfo(wrongElement)).toThrow(AssertionError)
     })
   })
 })

@@ -1,4 +1,3 @@
-/* eslint-disable standard/computed-property-even-spacing */
 import assert from 'assert'
 
 export interface CycleLengthState {

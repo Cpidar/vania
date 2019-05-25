@@ -1,9 +1,10 @@
 import { CycleDaySchema } from "src/db/schemas";
+import { SymptomShiftModel, TemperatureDaysModel } from "src/lib/cycle.models";
 
 export default function (cycleDays: CycleDaySchema[]) {
-  const temperatureDays = cycleDays
-    .filter(day => day.temperature && !day.temperature.exclude)
-    .map(day => {
+  const temperatureDays: TemperatureDaysModel[] = cycleDays
+    .filter((day: CycleDaySchema) => day.temperature && !day.temperature.exclude)
+    .map((day: CycleDaySchema) => {
       return {
         originalCycleDay: day,
         temp: rounded(day.temperature.value, 0.05)
@@ -25,7 +26,7 @@ export default function (cycleDays: CycleDaySchema[]) {
     const temp = temperatureDays[i].temp
     if (temp <= ltl) continue
 
-    const shift: any = checkIfFirstHighMeasurement(temp, i, temperatureDays, ltl)
+    const shift: SymptomShiftModel = checkIfFirstHighMeasurement(temp, i, temperatureDays, ltl)
 
     if (shift.detected) {
       shift.firstHighMeasurementDay = temperatureDays[i].originalCycleDay
@@ -50,7 +51,7 @@ function checkIfFirstHighMeasurement(_temp: any, i: number, temperatureDays: any
     { detected: false }
 }
 
-function getResultForRegularRule(nextDaysAfterPotentialFhm: any[], ltl: number) {
+function getResultForRegularRule(nextDaysAfterPotentialFhm: TemperatureDaysModel[], ltl: number) {
   if (!nextDaysAfterPotentialFhm.every((day: { temp: number; }) => day.temp > ltl)) return false
   const thirdDay = nextDaysAfterPotentialFhm[1]
   if (isLessThan0Point2(thirdDay.temp - ltl)) return false

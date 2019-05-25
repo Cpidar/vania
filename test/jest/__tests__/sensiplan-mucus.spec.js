@@ -1,80 +1,73 @@
-import chai from 'chai'
-import dirtyChai from 'dirty-chai'
-
-const expect = chai.expect
-chai.use(dirtyChai)
-
-import getSensiplanMucus from '../lib/nfp-mucus'
+import getSensiplanMucus from 'src/lib/nfp-mucus'
 
 describe('getSensiplanMucus', () => {
-
   describe('results in t for:', () => {
-    it('dry feeling and no texture', function () {
+    test('dry feeling and no texture', () => {
       const sensiplanValue = getSensiplanMucus(0, 0)
-      expect(sensiplanValue).to.eql(0)
+      expect(sensiplanValue).toBe(0)
     })
   })
 
   describe('results in Ø for:', () => {
-    it('no feeling and no texture', function () {
+    test('no feeling and no texture', () => {
       const sensiplanValue = getSensiplanMucus(1, 0)
-      expect(sensiplanValue).to.eql(1)
+      expect(sensiplanValue).toBe(1)
     })
   })
 
   describe('results in f for:', () => {
-    it('wet feeling and no texture', function () {
+    test('wet feeling and no texture', () => {
       const sensiplanValue = getSensiplanMucus(2, 0)
-      expect(sensiplanValue).to.eql(2)
+      expect(sensiplanValue).toBe(2)
     })
   })
 
   describe('results in S for:', () => {
-    it('dry feeling and creamy texture', function () {
+    test('dry feeling and creamy texture', () => {
       const sensiplanValue = getSensiplanMucus(0, 1)
-      expect(sensiplanValue).to.eql(3)
+      expect(sensiplanValue).toBe(3)
     })
 
-    it('no feeling and creamy texture', function () {
+    test('no feeling and creamy texture', () => {
       const sensiplanValue = getSensiplanMucus(1, 1)
-      expect(sensiplanValue).to.eql(3)
+      expect(sensiplanValue).toBe(3)
     })
 
-    it('wet feeling and creamy texture', function () {
+    test('wet feeling and creamy texture', () => {
       const sensiplanValue = getSensiplanMucus(2, 1)
-      expect(sensiplanValue).to.eql(3)
+      expect(sensiplanValue).toBe(3)
     })
   })
 
   describe('results in +S for:', () => {
-    it('dry feeling and egg white texture', function () {
+    test('dry feeling and egg white texture', () => {
       const sensiplanValue = getSensiplanMucus(0, 2)
-      expect(sensiplanValue).to.eql(4)
+      expect(sensiplanValue).toBe(4)
     })
 
-    it('no feeling and egg white texture', function () {
+    test('no feeling and egg white texture', () => {
       const sensiplanValue = getSensiplanMucus(1, 2)
-      expect(sensiplanValue).to.eql(4)
+      expect(sensiplanValue).toBe(4)
     })
 
-    it('wet feeling and egg white texture', function () {
+    test('wet feeling and egg white texture', () => {
       const sensiplanValue = getSensiplanMucus(2, 2)
-      expect(sensiplanValue).to.eql(4)
+      expect(sensiplanValue).toBe(4)
     })
 
-    it('slippery feeling and egg white texture', function () {
+    test('slippery feeling and egg white texture', () => {
       const sensiplanValue = getSensiplanMucus(3, 2)
-      expect(sensiplanValue).to.eql(4)
+      expect(sensiplanValue).toBe(4)
     })
 
-    it('slippery feeling and creamy texture', function () {
+    test('slippery feeling and creamy texture', () => {
       const sensiplanValue = getSensiplanMucus(3, 1)
-      expect(sensiplanValue).to.eql(4)
+      expect(sensiplanValue).toBe(4)
     })
 
-    it('slippery feeling and no texture', function () {
+    test('slippery feeling and no texture', () => {
       const sensiplanValue = getSensiplanMucus(3, 0)
-      expect(sensiplanValue).to.eql(4)
+      expect(sensiplanValue).toBe(4)
     })
   })
 })

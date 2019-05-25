@@ -1,6 +1,7 @@
 import { CycleDaySchema, CervixSchema } from "src/db/schemas";
+import { SymptomShiftModel } from "src/lib/cycle.models";
 
-export default function (cycleDays: CycleDaySchema[], tempEvalEndIndex: number): any {
+export default function (cycleDays: CycleDaySchema[], tempEvalEndIndex: number): SymptomShiftModel {
   const notDetected = { detected: false }
   const cervixDays = cycleDays
     .filter(day => day.cervix && !day.cervix.exclude)

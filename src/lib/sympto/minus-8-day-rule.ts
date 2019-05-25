@@ -2,7 +2,7 @@ import { LocalDate } from 'js-joda'
 import getNfpStatus from './index'
 import { CycleDaySchema } from 'src/db/schemas';
 
-export default function (previousCycles: CycleDaySchema[][], secondarySymptom: any) {
+export default function (previousCycles: CycleDaySchema[][], secondarySymptom: string) {
   const fhms = previousCycles
     .map(cycle => {
       const status = getNfpStatus({ cycle, secondarySymptom })
@@ -16,7 +16,7 @@ export default function (previousCycles: CycleDaySchema[][], secondarySymptom: a
     })
     .filter(val => typeof val === 'number')
 
-  const preOvuLength = Math.min(...<number[]>fhms) - 8
+  const preOvuLength = Math.min(...fhms) - 8
 
   // pre ovu length may only be lengthened if we have more than 12 previous fhms
   // if pre ovu length is less than 5, it shortened even with fewer prev fhms

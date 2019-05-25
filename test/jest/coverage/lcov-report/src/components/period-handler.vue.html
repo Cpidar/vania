@@ -22,7 +22,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>0/22</span>
+        <span class='fraction'>0/20</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
@@ -37,7 +37,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">0% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>0/22</span>
+        <span class='fraction'>0/19</span>
       </div>
     </div>
     <p class="quiet">
@@ -118,7 +118,12 @@
 <a name='L70'></a><a href='#L70'>70</a>
 <a name='L71'></a><a href='#L71'>71</a>
 <a name='L72'></a><a href='#L72'>72</a>
-<a name='L73'></a><a href='#L73'>73</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -145,26 +150,35 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -172,10 +186,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,62 +202,67 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&lt;template&gt;
   &lt;section&gt;
-    &lt;q-list&gt;
-      &lt;q-item v-if="isVisibleGotButton"&gt;
-        &lt;q-item-label&gt;
-          &lt;q-item-section label&gt;شروع پریود&lt;/q-item-section&gt;
-        &lt;/q-item-label&gt;
-        &lt;q-item-section&gt;
-          &lt;q-toggle
-            v-model="gotPeriod"
-            checked-icon="sentiment very dissatisfied"
-            unchecked-icon="sentiment very satisfied"
-          /&gt;
-        &lt;/q-item-section&gt;
-      &lt;/q-item&gt;
-      &lt;q-item v-if="!isVisibleGotButton"&gt;
-        &lt;q-item-label&gt;
-          &lt;q-item-section label&gt;پایان پریود&lt;/q-item-section&gt;
-        &lt;/q-item-label&gt;
-        &lt;q-item-section&gt;
-          &lt;q-toggle
-            v-model="endPeriod"
-            checked-icon="sentiment very satisfied"
-            unchecked-icon="sentiment very dissatisfied"
-          /&gt;
-        &lt;/q-item-section&gt;
-      &lt;/q-item&gt;
-    &lt;/q-list&gt;
+        &lt;q-btn-toggle
+          v-model="model"
+          push
+          rounded
+          unelevated
+          toggle-color="purple"
+          :options="[
+            {value: 'one', slot: 'one'},
+            {value: 'two', slot: 'two'},
+          ]"
+        &gt;
+          &lt;template v-slot:one&gt;
+            &lt;div class="row items-center no-wrap"&gt;
+              &lt;div class="text-center"&gt;
+                Pick
+              &lt;/div&gt;
+              &lt;q-icon right name="directions_boat" &gt;&lt;/q-icon&gt;
+            &lt;/div&gt;
+          &lt;/template&gt;
+  
+          &lt;template v-slot:two&gt;
+            &lt;div class="row items-center no-wrap"&gt;
+              &lt;div class="text-center"&gt;
+                Pick
+              &lt;/div&gt;
+              &lt;q-icon right name="directions_car" &gt;&lt;/q-icon&gt;
+            &lt;/div&gt;
+          &lt;/template&gt;
+&nbsp;
+        &lt;/q-btn-toggle&gt;
   &lt;/section&gt;
 &lt;/template&gt;
 &nbsp;
 &lt;script lang="ts"&gt;
-<span class="cstat-no" title="statement not covered" >import { Vue, Component, Watch, Emit } from 'vue-property-decorator'</span>
+<span class="cstat-no" title="statement not covered" >import { Vue, Component, Watch, Emit, Prop } from 'vue-property-decorator'</span>
 // import { putToDB } from '../events/event'
-<span class="cstat-no" title="statement not covered" >import { dispatch, possibleClosePeriod } from '../state'</span>
+<span class="cstat-no" title="statement not covered" >import { dispatch, shortSelectedDay } from '../state'</span>
+<span class="cstat-no" title="statement not covered" >import { saveSymptom } from '../db';</span>
+<span class="cstat-no" title="statement not covered" >import { take, switchMap } from 'rxjs/operators';</span>
+<span class="cstat-no" title="statement not covered" >import { Notify } from 'quasar'</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >@Component({})</span></span>
 <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >export default class PeriodHandler extends Vue {</span></span>
+<span class="cstat-no" title="statement not covered" >  @Prop() start: boolean</span>
 <span class="cstat-no" title="statement not covered" >  diff = 0</span>
 <span class="cstat-no" title="statement not covered" >  gotPeriod = false</span>
 <span class="cstat-no" title="statement not covered" >  endPeriod = false</span>
 <span class="cstat-no" title="statement not covered" >  startPeriodDate = ''</span>
-<span class="cstat-no" title="statement not covered" >  isVisibleGotButton = true</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  created() {</span>
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >    this.$subscribeTo(possibleClosePeriod, (d) =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >      this.isVisibleGotButton = d.canPeriod</span>
-<span class="cstat-no" title="statement not covered" >      this.diff = d.diff</span>
-<span class="cstat-no" title="statement not covered" >      this.gotPeriod = false</span>
-<span class="cstat-no" title="statement not covered" >      this.endPeriod = false</span>
-    })
+  created() {
   }
 &nbsp;
   @Watch('gotPeriod')
 <span class="cstat-no" title="statement not covered" >  Period() {</span>
 <span class="cstat-no" title="statement not covered" >    if (this.gotPeriod === true) {</span>
-<span class="cstat-no" title="statement not covered" >      dispatch('gotPeriod')</span>
-<span class="cstat-no" title="statement not covered" >      this.changePeriod()</span>
+<span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >      shortSelectedDay.pipe(take(1), switchMap(date =&gt; saveSymptom('bleeding', date, { value: 0, exclude: false }))).subscribe( res =&gt; {</span></span></span>
+<span class="cstat-no" title="statement not covered" >        Notify({</span>
+          message: 'success',
+          color: 'purpel'
+        })
+      })
     } else {
 <span class="cstat-no" title="statement not covered" >      dispatch('removePeriod')</span>
     }
@@ -268,7 +283,7 @@
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu May 16 2019 10:32:09 GMT+0430 (Iran Daylight Time)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri May 24 2019 14:45:22 GMT+0430 (Iran Daylight Time)
 </div>
 </div>
 <script src="..\..\prettify.js"></script>

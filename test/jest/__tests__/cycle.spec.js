@@ -1,12 +1,7 @@
-import chai from 'chai'
-import dirtyChai from 'dirty-chai'
-import cycleModule from '../lib/cycle'
-
-const expect = chai.expect
-chai.use(dirtyChai)
+import cycleModule from 'src/lib/cycle'
 
 describe('getCycleDayNumber', () => {
-  it('works for a simple example', () => {
+  it('works for a simple example', async () => {
     const cycleStarts = [{
       date: '2018-05-09',
       isCycleStart: true,
@@ -18,61 +13,69 @@ describe('getCycleDayNumber', () => {
       isCycleStart: true,
       bleeding: { value: 2 }
     }]
-    const getCycleDayNumber = cycleModule({
+    const cycleMod = await cycleModule({
       cycleStartsSortedByDate: cycleStarts
-    }).getCycleDayNumber
+    })
+    const getCycleDayNumber = cycleMod.getCycleDayNumber
     const targetDate = '2018-05-17'
     const result = getCycleDayNumber(targetDate)
-    expect(result).to.eql(9)
+    expect(result).toBe(9)
   })
 
-  it('gets the correct number if the target day is not in the current cycle', () => {
-    const cycleStarts = [{
-      date: '2018-05-13',
-      isCycleStart: true,
-      bleeding: {
-        value: 2
-      }
-    }, {
-      date: '2018-04-10',
-      isCycleStart: true,
-      bleeding: { value: 2 }
-    }]
+  it(
+    'gets the correct number if the target day is not in the current cycle',
+    async () => {
+      const cycleStarts = [{
+        date: '2018-05-13',
+        isCycleStart: true,
+        bleeding: {
+          value: 2
+        }
+      }, {
+        date: '2018-04-10',
+        isCycleStart: true,
+        bleeding: { value: 2 }
+      }]
+      const cycleMod = await cycleModule({
+        cycleStartsSortedByDate: cycleStarts
+      })
+      const targetDate = '2018-04-27'
+      const getCycleDayNumber = cycleMod.getCycleDayNumber
+      const result = getCycleDayNumber(targetDate)
+      expect(result).toBe(18)
+    }
+  )
 
-    const targetDate = '2018-04-27'
-    const getCycleDayNumber = cycleModule({
-      cycleStartsSortedByDate: cycleStarts
-    }).getCycleDayNumber
-    const result = getCycleDayNumber(targetDate)
-    expect(result).to.eql(18)
-  })
+  test(
+    'gets the correct number if the target day is the only bleeding day',
+    async () => {
+      const cycleStarts = [{
+        date: '2018-05-13',
+        isCycleStart: true,
+        bleeding: { value: 2 }
+      }]
+      const cycleMod = await cycleModule({
+        cycleStartsSortedByDate: cycleStarts
+      })
+      const targetDate = '2018-05-13'
+      const getCycleDayNumber = cycleMod.getCycleDayNumber
+      const result = getCycleDayNumber(targetDate)
+      expect(result).toBe(1)
+    }
+  )
 
-  it('gets the correct number if the target day is the only bleeding day', () => {
-    const cycleStarts = [{
-      date: '2018-05-13',
-      isCycleStart: true,
-      bleeding: { value: 2 }
-    }]
-
-    const targetDate = '2018-05-13'
-    const getCycleDayNumber = cycleModule({
-      cycleStartsSortedByDate: cycleStarts
-    }).getCycleDayNumber
-    const result = getCycleDayNumber(targetDate)
-    expect(result).to.eql(1)
-  })
-
-  it('returns null if there are no bleeding days', function () {
+  test('returns null if there are no bleeding days', async () => {
     const cycleStarts = []
     const targetDate = '2018-05-17'
-    const getCycleDayNumber = cycleModule({
+    const cycleMod = await cycleModule({
       cycleStartsSortedByDate: cycleStarts
-    }).getCycleDayNumber
+    })
+    const getCycleDayNumber = cycleMod.getCycleDayNumber
     const result = getCycleDayNumber(targetDate)
-    expect(result).to.be.null()
+    expect(result).toBeNull()
   })
 
-  it('returns null if the cycle is longer than the max', function () {
+  test('returns null if the cycle is longer than the max', async () => {
     const cycleStarts = [{
       date: '2018-05-09',
       isCycleStart: true,
@@ -84,18 +87,19 @@ describe('getCycleDayNumber', () => {
       isCycleStart: true,
       bleeding: { value: 2 }
     }]
-    // we use the default 99 days max length
-    const getCycleDayNumber = cycleModule({
+    const cycleMod = await cycleModule({
       cycleStartsSortedByDate: cycleStarts
-    }).getCycleDayNumber
+    })
+    // we use the default 99 days max length
+    const getCycleDayNumber = cycleMod.getCycleDayNumber
     const targetDate = '2018-08-16'
     const result = getCycleDayNumber(targetDate)
-    expect(result).to.be.null()
+    expect(result).toBeNull()
   })
 })
 
 describe('getPreviousCycle', () => {
-  it('gets previous cycle', () => {
+  test('gets previous cycle', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-07-05',
@@ -132,7 +136,7 @@ describe('getPreviousCycle', () => {
       {
         date: '2018-04-02',
         bleeding: { value: 2 }
-      },
+      }
     ]
 
     const cycleStarts = [
@@ -141,15 +145,15 @@ describe('getPreviousCycle', () => {
       '2018-05-03',
       '2018-04-02'
     ]
-
-    const { getPreviousCycle } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       })
     })
+    const { getPreviousCycle } = cycleMod
     const result = getPreviousCycle('2018-06-08')
-    expect(result).to.eql([
+    expect(result).toEqual([
       {
         date: '2018-05-05',
         mucus: { value: 2 }
@@ -165,51 +169,51 @@ describe('getPreviousCycle', () => {
     ])
   })
 
-  it('returns null when target day is not in a cyle', () => {
+  test('returns null when target day is not in a cyle', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-07-05',
+        date: '2018-07-05'
       },
       {
-        date: '2018-06-05',
+        date: '2018-06-05'
       },
       {
-        date: '2018-05-05',
+        date: '2018-05-05'
       },
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
-        date: '2018-05-03',
+        date: '2018-05-03'
       },
       {
-        date: '2018-04-05',
+        date: '2018-04-05'
       },
       {
         date: '2018-04-04',
         mucus: { value: 2 }
       },
       {
-        date: '2018-04-03',
+        date: '2018-04-03'
       },
       {
-        date: '2018-04-02',
-      },
+        date: '2018-04-02'
+      }
     ]
 
     const cycleStarts = []
-
-    const { getPreviousCycle } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       })
     })
+    const { getPreviousCycle } = cycleMod
     const result = getPreviousCycle('2018-06-08')
-    expect(result).to.eql(null)
+    expect(result).toBeNull()
   })
 
-  it('returns null when there is no previous cycle', () => {
+  test('returns null when there is no previous cycle', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-07-05',
@@ -246,7 +250,7 @@ describe('getPreviousCycle', () => {
       {
         date: '2018-04-02',
         bleeding: { value: 2 }
-      },
+      }
     ]
 
     const cycleStarts = [
@@ -255,18 +259,18 @@ describe('getPreviousCycle', () => {
       '2018-05-03',
       '2018-04-02'
     ]
-
-    const { getPreviousCycle } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       })
     })
+    const { getPreviousCycle } = cycleMod
     const result = getPreviousCycle('2018-04-18')
-    expect(result).to.eql(null)
+    expect(result).toBeNull()
   })
 
-  it('returns null when the previous cycle > maxcyclelength', () => {
+  test('returns null when the previous cycle > maxcyclelength', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-07-05',
@@ -303,7 +307,7 @@ describe('getPreviousCycle', () => {
       {
         date: '2018-04-02',
         bleeding: { value: 2 }
-      },
+      }
     ]
 
     const cycleStarts = [
@@ -312,21 +316,21 @@ describe('getPreviousCycle', () => {
       '2018-05-03',
       '2018-04-02'
     ]
-
-    const { getPreviousCycle } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       }),
       maxCycleLength: 2
     })
+    const { getPreviousCycle } = cycleMod
     const result = getPreviousCycle('2018-06-08')
-    expect(result).to.eql(null)
+    expect(result).toBeNull()
   })
 })
 
 describe('getCyclesBefore', () => {
-  it('gets previous cycles', () => {
+  test('gets previous cycles', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-07-05',
@@ -363,7 +367,7 @@ describe('getCyclesBefore', () => {
       {
         date: '2018-04-02',
         bleeding: { value: 2 }
-      },
+      }
     ]
 
     const cycleStarts = [
@@ -372,16 +376,16 @@ describe('getCyclesBefore', () => {
       '2018-05-03',
       '2018-04-02'
     ]
-
-    const { getCyclesBefore } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       })
     })
+    const { getCyclesBefore } = cycleMod
     const result = getCyclesBefore(cycleDaysSortedByDate[0])
-    expect(result.length).to.eql(3)
-    expect(result).to.eql([
+    expect(result).toHaveLength(3)
+    expect(result).toEqual([
       [
         {
           date: '2018-06-05',
@@ -416,12 +420,12 @@ describe('getCyclesBefore', () => {
         {
           date: '2018-04-02',
           bleeding: { value: 2 }
-        },
+        }
       ]
     ])
   })
 
-  it('skips cycles that are longer than max', () => {
+  test('skips cycles that are longer than max', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-07-05',
@@ -458,7 +462,7 @@ describe('getCyclesBefore', () => {
       {
         date: '2018-04-02',
         bleeding: { value: 2 }
-      },
+      }
     ]
 
     const cycleStarts = [
@@ -467,19 +471,19 @@ describe('getCyclesBefore', () => {
       '2018-05-03',
       '2018-04-02'
     ]
-
-    const { getCyclesBefore } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       }),
       maxCycleLength: 30
     })
+    const { getCyclesBefore } = cycleMod
     const result = getCyclesBefore(cycleDaysSortedByDate[0])
-    expect(result.length).to.eql(1)
-    expect(result).to.eql([[{
+    expect(result).toHaveLength(1)
+    expect(result).toEqual([[{
       bleeding: { value: 2 },
-      date: "2018-06-05"
+      date: '2018-06-05'
     }]])
   })
 })
@@ -521,7 +525,7 @@ describe('getCycleForDay', () => {
     {
       date: '2018-04-02',
       bleeding: { value: 2 }
-    },
+    }
   ]
   const cycleStarts = [
     '2018-07-05',
@@ -530,25 +534,25 @@ describe('getCycleForDay', () => {
     '2018-04-02'
   ]
 
-  const { getCycleForDay } = cycleModule({
-    cycleDaysSortedByDate,
-    cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
-      return cycleStarts.includes(d.date)
+  test('gets cycle that has only one day', async () => {
+    const cycleMod = await cycleModule({
+      cycleDaysSortedByDate,
+      cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
+        return cycleStarts.includes(d.date)
+      })
     })
-  })
-
-  it('gets cycle that has only one day', () => {
+    const { getCycleForDay } = cycleMod
     const result = getCycleForDay('2018-07-05', '2018-08-01')
-    expect(result.length).to.eql(1)
-    expect(result).to.eql([
+    expect(result).toHaveLength(1)
+    expect(result).toEqual([
       {
         date: '2018-07-05',
         bleeding: { value: 2 }
       }
     ])
     const result2 = getCycleForDay('2018-06-05')
-    expect(result2.length).to.eql(1)
-    expect(result2).to.eql([
+    expect(result2).toHaveLength(1)
+    expect(result2).toEqual([
       {
         date: '2018-06-05',
         bleeding: { value: 2 }
@@ -556,10 +560,17 @@ describe('getCycleForDay', () => {
     ])
   })
 
-  it('for later date gets cycle that has only one day', () => {
+  test('for later date gets cycle that has only one day', async () => {
+    const cycleMod = await cycleModule({
+      cycleDaysSortedByDate,
+      cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
+        return cycleStarts.includes(d.date)
+      })
+    })
+    const { getCycleForDay } = cycleMod
     const result = getCycleForDay('2018-06-20')
-    expect(result.length).to.eql(1)
-    expect(result).to.eql([
+    expect(result).toHaveLength(1)
+    expect(result).toEqual([
       {
         date: '2018-06-05',
         bleeding: { value: 2 }
@@ -567,27 +578,42 @@ describe('getCycleForDay', () => {
     ])
   })
 
-  it('returns null if there is no cycle start for that date', () => {
+  test('returns null if there is no cycle start for that date', async () => {
+    const cycleMod = await cycleModule({
+      cycleDaysSortedByDate,
+      cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
+        return cycleStarts.includes(d.date)
+      })
+    })
+    const { getCycleForDay } = cycleMod
     const result = getCycleForDay('2018-04-01')
-    expect(result).to.eql(null)
+    expect(result).toBeNull()
   })
 
-  it('returns null if the cycle is longer than the max', () => {
-    const { getCycleForDay } = cycleModule({
+  test('returns null if the cycle is longer than the max', async () => {
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
         return cycleStarts.includes(d.date)
       }),
       maxCycleLength: 3
     })
+    const { getCycleForDay } = cycleMod
     const result = getCycleForDay('2018-04-04')
-    expect(result).to.eql(null)
+    expect(result).toBeNull()
   })
 
-  it('gets cycle for day', () => {
+  test('gets cycle for day', async () => {
+    const cycleMod = await cycleModule({
+      cycleDaysSortedByDate,
+      cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
+        return cycleStarts.includes(d.date)
+      })
+    })
+    const { getCycleForDay } = cycleMod
     const result = getCycleForDay('2018-04-04')
-    expect(result.length).to.eql(4)
-    expect(result).to.eql([
+    expect(result).toHaveLength(4)
+    expect(result).toEqual([
       {
         date: '2018-04-05',
         mucus: { value: 2 }
@@ -603,18 +629,17 @@ describe('getCycleForDay', () => {
       {
         date: '2018-04-02',
         bleeding: { value: 2 }
-      },
+      }
     ])
   })
 })
 
 describe('getPredictedMenses', () => {
   describe('cannot predict next menses', () => {
-    it('if no bleeding is documented', () => {
+    test('if no bleeding is documented', async () => {
       const cycleDaysSortedByDate = [ {} ]
       const cycleStarts = []
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding),
         cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
@@ -623,11 +648,12 @@ describe('getPredictedMenses', () => {
         maxCycleLength: 99,
         minCyclesForPrediction: 1
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      expect(result).to.eql([])
+      expect(result).toEqual([])
     })
 
-    it('if one bleeding is documented (no completed cycle)', () => {
+    test('if one bleeding is documented (no completed cycle)', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-06-02',
@@ -635,8 +661,7 @@ describe('getPredictedMenses', () => {
         }
       ]
       const cycleStarts = ['2018-06-02']
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding),
         cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
@@ -645,11 +670,12 @@ describe('getPredictedMenses', () => {
         maxCycleLength: 99,
         minCyclesForPrediction: 1
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      expect(result).to.eql([])
+      expect(result).toEqual([])
     })
 
-    it('if number of cycles is below minCyclesForPrediction', () => {
+    test('if number of cycles is below minCyclesForPrediction', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-06-02',
@@ -662,64 +688,67 @@ describe('getPredictedMenses', () => {
         {
           date: '2018-05-01',
           bleeding: { value: 2 }
-        },
+        }
       ]
       const cycleStarts = ['2018-06-01', '2018-05-01']
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding),
         cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
           return cycleStarts.includes(d.date)
-        }),
+        })
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      expect(result).to.eql([])
+      expect(result).toEqual([])
     })
 
-    it('if number of cycles is below minCyclesForPrediction because one of them is too long', () => {
-      const cycleDaysSortedByDate = [
-        {
-          date: '2018-06-02',
-          bleeding: { value: 2 }
-        },
-        {
-          date: '2018-06-01',
-          bleeding: { value: 2 }
-        },
-        {
-          date: '2018-05-01',
-          bleeding: { value: 2 }
-        },
-        {
-          date: '2018-04-03',
-          bleeding: { value: 2 }
-        },
-        {
-          date: '2018-04-02',
-          bleeding: { value: 2 }
-        },
-        {
-          date: '2018-04-01',
-          bleeding: { value: 2 }
-        },
-      ]
-      const cycleStarts = ['2018-06-01', '2018-05-01', '2018-04-01']
-
-      const { getPredictedMenses } = cycleModule({
-        cycleDaysSortedByDate,
-        bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding),
-        cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
-          return cycleStarts.includes(d.date)
-        }),
-        maxCycleLength: 2
-      })
-      const result = getPredictedMenses()
-      expect(result).to.eql([])
-    })
+    test(
+      'if number of cycles is below minCyclesForPrediction because one of them is too long',
+      async () => {
+        const cycleDaysSortedByDate = [
+          {
+            date: '2018-06-02',
+            bleeding: { value: 2 }
+          },
+          {
+            date: '2018-06-01',
+            bleeding: { value: 2 }
+          },
+          {
+            date: '2018-05-01',
+            bleeding: { value: 2 }
+          },
+          {
+            date: '2018-04-03',
+            bleeding: { value: 2 }
+          },
+          {
+            date: '2018-04-02',
+            bleeding: { value: 2 }
+          },
+          {
+            date: '2018-04-01',
+            bleeding: { value: 2 }
+          }
+        ]
+        const cycleStarts = ['2018-06-01', '2018-05-01', '2018-04-01']
+        const cycleMod = await cycleModule({
+          cycleDaysSortedByDate,
+          bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding),
+          cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
+            return cycleStarts.includes(d.date)
+          }),
+          maxCycleLength: 2
+        })
+        const { getPredictedMenses } = cycleMod
+        const result = getPredictedMenses()
+        expect(result).toEqual([])
+      }
+    )
   })
   describe('works', () => {
-    it('for one completed cycle with minCyclesForPrediction = 1', () => {
+    test('for one completed cycle with minCyclesForPrediction = 1', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-07-15',
@@ -731,13 +760,14 @@ describe('getPredictedMenses', () => {
         }
       ]
       const cycleStarts = ['2018-07-15', '2018-07-01']
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         cycleStartsSortedByDate: cycleDaysSortedByDate.filter(d => {
           return cycleStarts.includes(d.date)
         }),
         minCyclesForPrediction: 1
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
       const expectedResult = [
         [
@@ -752,20 +782,20 @@ describe('getPredictedMenses', () => {
           '2018-08-11',
           '2018-08-12',
           '2018-08-13',
-          '2018-08-14',
+          '2018-08-14'
         ],
         [
           '2018-08-24',
           '2018-08-25',
           '2018-08-26',
           '2018-08-27',
-          '2018-08-28',
+          '2018-08-28'
         ]
       ]
-      expect(result).to.eql(expectedResult)
+      expect(result).toEqual(expectedResult)
     })
 
-    it('if number of cycles is above minCyclesForPrediction', () => {
+    test('if number of cycles is above minCyclesForPrediction', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-08-02',
@@ -782,14 +812,14 @@ describe('getPredictedMenses', () => {
         {
           date: '2018-05-01',
           bleeding: { value: 2 }
-        },
+        }
       ]
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         cycleStartsSortedByDate: cycleDaysSortedByDate,
         minCyclesForPrediction: 1
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
       const expectedResult = [
         [
@@ -808,10 +838,10 @@ describe('getPredictedMenses', () => {
           '2018-11-04'
         ]
       ]
-      expect(result).to.eql(expectedResult)
+      expect(result).toEqual(expectedResult)
     })
 
-    it('3 cycles with little standard deviation', () => {
+    test('3 cycles with little standard deviation', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-08-01',
@@ -828,13 +858,13 @@ describe('getPredictedMenses', () => {
         {
           date: '2018-06-20',
           bleeding: { value: 2 }
-        },
+        }
       ]
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         cycleStartsSortedByDate: cycleDaysSortedByDate
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
       const expectedResult = [
         [
@@ -853,10 +883,10 @@ describe('getPredictedMenses', () => {
           '2018-09-13'
         ]
       ]
-      expect(result).to.eql(expectedResult)
+      expect(result).toEqual(expectedResult)
     })
 
-    it('3 cycles with bigger standard deviation', () => {
+    test('3 cycles with bigger standard deviation', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-08-01',
@@ -873,13 +903,13 @@ describe('getPredictedMenses', () => {
         {
           date: '2018-06-20',
           bleeding: { value: 2 }
-        },
+        }
       ]
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         cycleStartsSortedByDate: cycleDaysSortedByDate
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
       const expectedResult = [
         [
@@ -887,27 +917,27 @@ describe('getPredictedMenses', () => {
           '2018-08-14',
           '2018-08-15',
           '2018-08-16',
-          '2018-08-17',
+          '2018-08-17'
         ],
         [
           '2018-08-27',
           '2018-08-28',
           '2018-08-29',
           '2018-08-30',
-          '2018-08-31',
+          '2018-08-31'
         ],
         [
           '2018-09-10',
           '2018-09-11',
           '2018-09-12',
           '2018-09-13',
-          '2018-09-14',
+          '2018-09-14'
         ]
       ]
-      expect(result).to.eql(expectedResult)
+      expect(result).toEqual(expectedResult)
     })
 
-    it('does not count cycles longer than max', () => {
+    test('does not count cycles longer than max', async () => {
       const cycleDaysSortedByDate = [
         {
           date: '2018-08-01',
@@ -928,14 +958,14 @@ describe('getPredictedMenses', () => {
         {
           date: '2018-04-20',
           bleeding: { value: 2 }
-        },
+        }
       ]
-
-      const { getPredictedMenses } = cycleModule({
+      const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
         cycleStartsSortedByDate: cycleDaysSortedByDate,
         maxCycleLength: 50
       })
+      const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
       const expectedResult = [
         [
@@ -943,33 +973,33 @@ describe('getPredictedMenses', () => {
           '2018-08-14',
           '2018-08-15',
           '2018-08-16',
-          '2018-08-17',
+          '2018-08-17'
         ],
         [
           '2018-08-27',
           '2018-08-28',
           '2018-08-29',
           '2018-08-30',
-          '2018-08-31',
+          '2018-08-31'
         ],
         [
           '2018-09-10',
           '2018-09-11',
           '2018-09-12',
           '2018-09-13',
-          '2018-09-14',
+          '2018-09-14'
         ]
       ]
-      expect(result).to.eql(expectedResult)
+      expect(result).toEqual(expectedResult)
     })
   })
 })
 
 describe('isMensesStart', () => {
-  it('works for simple menses start', () => {
+  test('works for simple menses start', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
         date: '2018-05-03',
@@ -984,23 +1014,23 @@ describe('isMensesStart', () => {
         bleeding: { value: 1 }
       },
       {
-        date: '2018-04-30',
+        date: '2018-04-30'
       }
     ]
-
-    const { isMensesStart } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { isMensesStart } = cycleMod
     const start = isMensesStart(cycleDaysSortedByDate[3])
-    expect(start).to.be.true()
-    expect(isMensesStart(cycleDaysSortedByDate[0])).to.be.false()
-    expect(isMensesStart(cycleDaysSortedByDate[1])).to.be.false()
-    expect(isMensesStart(cycleDaysSortedByDate[2])).to.be.false()
-    expect(isMensesStart(cycleDaysSortedByDate[4])).to.be.false()
+    expect(start).toBeTruthy()
+    expect(isMensesStart(cycleDaysSortedByDate[0])).toBeFalsy()
+    expect(isMensesStart(cycleDaysSortedByDate[1])).toBeFalsy()
+    expect(isMensesStart(cycleDaysSortedByDate[2])).toBeFalsy()
+    expect(isMensesStart(cycleDaysSortedByDate[4])).toBeFalsy()
   })
 
-  it('works with previous excluded value', () => {
+  test('works with previous excluded value', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-06-01',
@@ -1012,151 +1042,163 @@ describe('isMensesStart', () => {
       },
       {
         date: '2018-04-30',
-        bleeding: { value: 2 , exclude: true}
-      },
+        bleeding: { value: 2, exclude: true }
+      }
     ]
-
-    const { isMensesStart } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { isMensesStart } = cycleMod
     const start = isMensesStart(cycleDaysSortedByDate[1])
-    expect(start).to.be.true()
+    expect(start).toBeTruthy()
     const notStart = isMensesStart(cycleDaysSortedByDate[2])
-    expect(notStart).to.be.false()
+    expect(notStart).toBeFalsy()
   })
 
-  it('returns false when day has no bleeding', () => {
+  test('returns false when day has no bleeding', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-06-01',
+        date: '2018-06-01'
       },
       {
-        date: '2018-05-01',
+        date: '2018-05-01'
       },
       {
         date: '2018-04-30',
-        bleeding: { value: 2 , exclude: true}
-      },
+        bleeding: { value: 2, exclude: true }
+      }
     ]
-
-    const { isMensesStart } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { isMensesStart } = cycleMod
     const start = isMensesStart(cycleDaysSortedByDate[0])
-    expect(start).to.be.false()
+    expect(start).toBeFalsy()
   })
 
-  it('returns false when there is a previous bleeding day within the threshold', () => {
-    const cycleDaysSortedByDate = [
-      {
-        date: '2018-06-01',
-      },
-      {
-        date: '2018-05-01',
-      },
-      {
-        date: '2018-04-30',
-        bleeding: { value: 2 }
-      },
-      {
-        date: '2018-04-29'
-      },
-      {
-        date: '2018-04-28',
-        bleeding: { value: 2 }
-      },
-    ]
+  test(
+    'returns false when there is a previous bleeding day within the threshold',
+    async () => {
+      const cycleDaysSortedByDate = [
+        {
+          date: '2018-06-01'
+        },
+        {
+          date: '2018-05-01'
+        },
+        {
+          date: '2018-04-30',
+          bleeding: { value: 2 }
+        },
+        {
+          date: '2018-04-29'
+        },
+        {
+          date: '2018-04-28',
+          bleeding: { value: 2 }
+        }
+      ]
+      const cycleMod = await cycleModule({
+        cycleDaysSortedByDate,
+        bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
+      })
+      const { isMensesStart } = cycleMod
+      const start = isMensesStart(cycleDaysSortedByDate[2])
+      expect(start).toBeFalsy()
+    }
+  )
 
-    const { isMensesStart } = cycleModule({
-      cycleDaysSortedByDate,
-      bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
-    })
-    const start = isMensesStart(cycleDaysSortedByDate[2])
-    expect(start).to.be.false()
-  })
-
-  it('returns true when there is a previous excluded bleeding day within the threshold', () => {
-    const cycleDaysSortedByDate = [
-      {
-        date: '2018-06-01',
-      },
-      {
-        date: '2018-05-01',
-      },
-      {
-        date: '2018-04-30',
-        bleeding: { value: 2 }
-      },
-      {
-        date: '2018-04-29'
-      },
-      {
-        date: '2018-04-28',
-        bleeding: { value: 2 , exclude: true}
-      },
-    ]
-
-    const { isMensesStart } = cycleModule({
-      cycleDaysSortedByDate,
-      bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
-    })
-    const start = isMensesStart(cycleDaysSortedByDate[2])
-    expect(start).to.be.true()
-  })
+  test(
+    'returns true when there is a previous excluded bleeding day within the threshold',
+    async () => {
+      const cycleDaysSortedByDate = [
+        {
+          date: '2018-06-01'
+        },
+        {
+          date: '2018-05-01'
+        },
+        {
+          date: '2018-04-30',
+          bleeding: { value: 2 }
+        },
+        {
+          date: '2018-04-29'
+        },
+        {
+          date: '2018-04-28',
+          bleeding: { value: 2, exclude: true }
+        }
+      ]
+      const cycleMod = await cycleModule({
+        cycleDaysSortedByDate,
+        bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
+      })
+      const { isMensesStart } = cycleMod
+      const start = isMensesStart(cycleDaysSortedByDate[2])
+      expect(start).toBeTruthy()
+    }
+  )
   describe('with cycle thresholds', () => {
     const maxBreakInBleeding = 3
 
-    it('disregards bleeding breaks equal to maxAllowedBleedingBreak in a bleeding period', () => {
-      const bleedingDays = [{
-        date: '2018-05-14',
-        bleeding: {
-          value: 2
-        }
-      }, {
-        date: '2018-05-10',
-        bleeding: {
-          value: 2
-        }
-      }]
+    test(
+      'disregards bleeding breaks equal to maxAllowedBleedingBreak in a bleeding period',
+      async () => {
+        const bleedingDays = [{
+          date: '2018-05-14',
+          bleeding: {
+            value: 2
+          }
+        }, {
+          date: '2018-05-10',
+          bleeding: {
+            value: 2
+          }
+        }]
+        const cycleMod = await cycleModule({
+          bleedingDaysSortedByDate: bleedingDays,
+          maxBreakInBleeding
+        })
+        const { isMensesStart } = cycleMod
+        const result = isMensesStart(bleedingDays[0])
+        expect(result).toBeFalsy()
+      }
+    )
 
-      const isMensesStart = cycleModule({
-        bleedingDaysSortedByDate: bleedingDays,
-        maxBreakInBleeding
-      }).isMensesStart
-      const result = isMensesStart(bleedingDays[0])
-      expect(result).to.be.false()
-    })
-
-    it('counts bleeding breaks longer than maxAllowedBleedingBreak in a bleeding period', () => {
-      const bleedingDays = [{
-        date: '2018-05-14',
-        bleeding: {
-          value: 2
-        }
-      }, {
-        date: '2018-05-09',
-        bleeding: {
-          value: 2
-        }
-      }]
-
-      const isMensesStart = cycleModule({
-        bleedingDaysSortedByDate: bleedingDays,
-        maxBreakInBleeding
-      }).isMensesStart
-      const result = isMensesStart(bleedingDays[0])
-      expect(result).to.be.true()
-    })
+    test(
+      'counts bleeding breaks longer than maxAllowedBleedingBreak in a bleeding period',
+      async () => {
+        const bleedingDays = [{
+          date: '2018-05-14',
+          bleeding: {
+            value: 2
+          }
+        }, {
+          date: '2018-05-09',
+          bleeding: {
+            value: 2
+          }
+        }]
+        const cycleMod = await cycleModule({
+          bleedingDaysSortedByDate: bleedingDays,
+          maxBreakInBleeding
+        })
+        const { isMensesStart } = cycleMod
+        const result = isMensesStart(bleedingDays[0])
+        expect(result).toBeTruthy()
+      }
+    )
   })
 })
 
 describe('getMensesDaysRightAfter', () => {
-  it('works for simple menses start', () => {
+  test('works for simple menses start', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
         date: '2018-05-03',
@@ -1171,16 +1213,16 @@ describe('getMensesDaysRightAfter', () => {
         bleeding: { value: 1 }
       },
       {
-        date: '2018-04-30',
+        date: '2018-04-30'
       }
     ]
-
-    const { getMensesDaysRightAfter } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { getMensesDaysRightAfter } = cycleMod
     const days = getMensesDaysRightAfter(cycleDaysSortedByDate[3])
-    expect(days).to.eql([
+    expect(days).toEqual([
       {
         date: '2018-05-03',
         bleeding: { value: 1 }
@@ -1192,10 +1234,10 @@ describe('getMensesDaysRightAfter', () => {
     ])
   })
 
-  it('works when the day is not a bleeding day', () => {
+  test('works when the day is not a bleeding day', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
         date: '2018-05-03',
@@ -1214,13 +1256,13 @@ describe('getMensesDaysRightAfter', () => {
         bleeding: null
       }
     ]
-
-    const { getMensesDaysRightAfter } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { getMensesDaysRightAfter } = cycleMod
     const days = getMensesDaysRightAfter(cycleDaysSortedByDate[4])
-    expect(days).to.eql([
+    expect(days).toEqual([
       {
         date: '2018-05-03',
         bleeding: { value: 1 }
@@ -1236,10 +1278,10 @@ describe('getMensesDaysRightAfter', () => {
     ])
   })
 
-  it('ignores excluded values', () => {
+  test('ignores excluded values', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
         date: '2018-05-03',
@@ -1254,16 +1296,16 @@ describe('getMensesDaysRightAfter', () => {
         bleeding: { value: 1 }
       },
       {
-        date: '2018-04-30',
+        date: '2018-04-30'
       }
     ]
-
-    const { getMensesDaysRightAfter } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { getMensesDaysRightAfter } = cycleMod
     const days = getMensesDaysRightAfter(cycleDaysSortedByDate[3])
-    expect(days).to.eql([
+    expect(days).toEqual([
       {
         date: '2018-05-03',
         bleeding: { value: 1 }
@@ -1271,67 +1313,67 @@ describe('getMensesDaysRightAfter', () => {
     ])
   })
 
-  it('returns empty when there are no bleeding days after', () => {
+  test('returns empty when there are no bleeding days after', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
-        date: '2018-05-03',
+        date: '2018-05-03'
       },
       {
-        date: '2018-05-02',
+        date: '2018-05-02'
       },
       {
         date: '2018-05-01',
         bleeding: { value: 1 }
       },
       {
-        date: '2018-04-30',
+        date: '2018-04-30'
       }
     ]
-
-    const { getMensesDaysRightAfter } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { getMensesDaysRightAfter } = cycleMod
     const days = getMensesDaysRightAfter(cycleDaysSortedByDate[3])
-    expect(days).to.eql([])
+    expect(days).toEqual([])
   })
 
-  it('returns empty when there are no bleeding days within threshold', () => {
+  test('returns empty when there are no bleeding days within threshold', async () => {
     const cycleDaysSortedByDate = [
       {
         date: '2018-05-04',
         bleeding: { value: 1 }
       },
       {
-        date: '2018-05-03',
+        date: '2018-05-03'
       },
       {
-        date: '2018-05-02',
+        date: '2018-05-02'
       },
       {
         date: '2018-05-01',
         bleeding: { value: 1 }
       },
       {
-        date: '2018-04-30',
+        date: '2018-04-30'
       }
     ]
-
-    const { getMensesDaysRightAfter } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { getMensesDaysRightAfter } = cycleMod
     const days = getMensesDaysRightAfter(cycleDaysSortedByDate[3])
-    expect(days).to.eql([])
+    expect(days).toEqual([])
   })
 
-  it('includes days within the treshold', () => {
+  test('includes days within the treshold', async () => {
     const cycleDaysSortedByDate = [
       {
-        date: '2018-05-04',
+        date: '2018-05-04'
       },
       {
         date: '2018-05-05',
@@ -1346,16 +1388,16 @@ describe('getMensesDaysRightAfter', () => {
         bleeding: { value: 1 }
       },
       {
-        date: '2018-04-30',
+        date: '2018-04-30'
       }
     ]
-
-    const { getMensesDaysRightAfter } = cycleModule({
+    const cycleMod = await cycleModule({
       cycleDaysSortedByDate,
       bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
     })
+    const { getMensesDaysRightAfter } = cycleMod
     const days = getMensesDaysRightAfter(cycleDaysSortedByDate[3])
-    expect(days).to.eql([
+    expect(days).toEqual([
       {
         date: '2018-05-05',
         bleeding: { value: 1 }
@@ -1369,46 +1411,52 @@ describe('getMensesDaysRightAfter', () => {
   describe('with cycle thresholds', () => {
     const maxBreakInBleeding = 3
 
-    it('disregards bleeding breaks shorter than maxAllowedBleedingBreak in a bleeding period', () => {
-      const bleedingDays = [{
-        date: '2018-05-14',
-        bleeding: {
-          value: 2
-        }
-      }, {
-        date: '2018-05-10',
-        bleeding: {
-          value: 2
-        }
-      }]
+    test(
+      'disregards bleeding breaks shorter than maxAllowedBleedingBreak in a bleeding period',
+      async () => {
+        const bleedingDays = [{
+          date: '2018-05-14',
+          bleeding: {
+            value: 2
+          }
+        }, {
+          date: '2018-05-10',
+          bleeding: {
+            value: 2
+          }
+        }]
+        const cycleMod = await cycleModule({
+          bleedingDaysSortedByDate: bleedingDays,
+          maxBreakInBleeding
+        })
+        const getMensesDaysRightAfter = cycleMod.getMensesDaysRightAfter
+        const result = getMensesDaysRightAfter(bleedingDays[1])
+        expect(result).toEqual([bleedingDays[0]])
+      }
+    )
 
-      const getMensesDaysRightAfter = cycleModule({
-        bleedingDaysSortedByDate: bleedingDays,
-        maxBreakInBleeding
-      }).getMensesDaysRightAfter
-      const result = getMensesDaysRightAfter(bleedingDays[1])
-      expect(result).to.eql([bleedingDays[0]])
-    })
-
-    it('counts bleeding breaks longer than maxAllowedBleedingBreak in a bleeding period', () => {
-      const bleedingDays = [{
-        date: '2018-05-14',
-        bleeding: {
-          value: 2
-        }
-      }, {
-        date: '2018-05-09',
-        bleeding: {
-          value: 2
-        }
-      }]
-
-      const getMensesDaysRightAfter = cycleModule({
-        bleedingDaysSortedByDate: bleedingDays,
-        maxBreakInBleeding
-      }).getMensesDaysRightAfter
-      const result = getMensesDaysRightAfter(bleedingDays[1])
-      expect(result).to.eql([])
-    })
+    test(
+      'counts bleeding breaks longer than maxAllowedBleedingBreak in a bleeding period',
+      async () => {
+        const bleedingDays = [{
+          date: '2018-05-14',
+          bleeding: {
+            value: 2
+          }
+        }, {
+          date: '2018-05-09',
+          bleeding: {
+            value: 2
+          }
+        }]
+        const cycleMod = await cycleModule({
+          bleedingDaysSortedByDate: bleedingDays,
+          maxBreakInBleeding
+        })
+        const getMensesDaysRightAfter = cycleMod.getMensesDaysRightAfter
+        const result = getMensesDaysRightAfter(bleedingDays[1])
+        expect(result).toEqual([])
+      }
+    )
   })
 })

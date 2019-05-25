@@ -1,17 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { LocalDate, ChronoUnit } from 'js-joda'
 import jMoment from 'moment-jalaali'
 import cycleModule from '../lib/cycle'
 import PouchDB from 'pouchdb'
 import PouchdbFind from 'pouchdb-find'
 import pouchdbUpsert from 'pouchdb-upsert'
-import { CycleDaySchema, BleedingSchema } from './schemas';
-import { shortSelectedDay } from 'src/state';
-import { take } from 'rxjs/operators';
+import { CycleDaySchema } from './schemas';
 PouchDB.plugin(PouchdbFind)
 PouchDB.plugin(pouchdbUpsert)
-
-const miladi = (str: string) => jMoment(str, 'jYYYY-jMM-jDD').format('YYYY-MM-DD')
 
 const db: PouchDB.Database<CycleDaySchema> = new PouchDB('mydb')
 
@@ -26,10 +21,10 @@ export async function getBleedingDaysSortedByDate(): Promise<CycleDaySchema[]> {
       sort: [{ _id: 'desc' }]
     })
     )
-    return doc.docs
+    return doc.docs.map(day => { delete day._rev; return day })
   } catch (err) {
     console.log(err)
-    return err
+    return null
   }
 }
 export async function getTemperatureDaysSortedByDate(): Promise<CycleDaySchema[]> {
@@ -40,7 +35,7 @@ export async function getTemperatureDaysSortedByDate(): Promise<CycleDaySchema[]
       },
       sort: [{ _id: 'desc' }]
     })
-    return doc.docs
+    return doc.docs.map(day => { delete day._rev; return day })
   } catch (err) {
     console.log(err)
     return err
@@ -54,10 +49,10 @@ export async function getCycleDaysSortedByDate() {
       startkey: 'cycleday\uffff',
       descending: true
     })
-    return docs.rows.map(doc => doc.doc)
+    return docs.rows.map(doc => { delete doc.doc._rev; return doc.doc })
   } catch (err) {
     console.log(err)
-    return err
+    return null
   }
 }
 
@@ -68,17 +63,16 @@ export async function getCycleStartsSortedByDate(): Promise<CycleDaySchema[]> {
         isCycleStart: { $eq: true }
       },
       sort: [{ _id: 'desc' }]
-    })
-    const resp = doc.docs
+    }).then(res => res.docs)
+    const resp = doc.map(day => { delete day._rev; return day })
     return resp
   } catch (err) {
     console.log(err)
-    return err
+    return null
   }
 }
 
-export async function saveCycleDay(sdate: string, cycleDay: Partial<CycleDaySchema>) {
-  const date = miladi(sdate)
+export async function saveCycleDay(date: string, cycleDay: Partial<CycleDaySchema>) {
   cycleDay.date = date
   return db.upsert(`cycleday-${date}`, function (doc: any) {
     doc._id = `cycleday-${date}`
@@ -91,8 +85,7 @@ export async function saveBulkCycleDay(cycleDays: Partial<CycleDaySchema>[]) {
   return db.bulkDocs(cycleDays as any)
 }
 
-export async function saveSymptom(symptom: string, sdate: string, val: any) {
-  const date = miladi(sdate)
+export async function saveSymptom(symptom: string, date: string, val: any) {
   const cycle = await cycleModule()
   const isMensesStart = cycle.isMensesStart
   const getMensesDaysRightAfter = cycle.getMensesDaysRightAfter
@@ -167,6 +160,7 @@ export async function updateCycleStartsForAllCycleDays() {
     )
   } catch (err) {
     console.log(err)
+    return null
   }
 }
 
@@ -179,18 +173,17 @@ export function createCycleDay(dateString: string) {
 }
 
 export function getCycleDay(dateString: string) {
-  const mDate = miladi(dateString)
-  console.log(mDate)
-  return db.get('cycleday-' + mDate)
+  console.log(dateString)
+  return db.get('cycleday-' + dateString)
 }
 
 export const getCycleDaysInRange = (start: string, end?: string) => {
-  const startkey = 'cycleday-' + miladi(start)
+  const startkey = 'cycleday-' + start
   let endkey
   if(!end) {
     endkey = 'cycleday-' + jMoment(start, 'jYYYY-jMM-jDD').add(1, 'jMonth').format('YYYY-MM-DD')
   } else {
-    endkey = 'cycleday-' + miladi(end)
+    endkey = 'cycleday-' + end
   }
   console.log(startkey, endkey)
   return db.allDocs({
@@ -246,17 +239,22 @@ export async function getAmountOfCycleDays() {
 export async function tryToImportWithDelete(cycleDays: CycleDaySchema[]) {
   let i = 0
   try {
-    var docs = await getCycleDaysSortedByDate()
-    let resp = await Promise.all(docs.rows.forEach((doc: any, index: number) => {
-      i = index
-      db.remove(doc)
-    })
+    let resp = await db.allDocs({
+      endkey: 'cycleday',
+      startkey: 'cycleday\uffff'
+    }).then( res => {
+      return Promise.all(res.rows.map((doc) => {
+        return db.remove(doc.id, doc.value.rev)
+      })
     )
+    })
+    
     cycleDays.forEach(doc => doc.isCycleStart = false)
     return await db.bulkDocs(cycleDays)
   } catch (err) {
     // const msg = `Line ${i + 1}(${docs.date}): ${err.message}`
     // throw new Error(msg)
+    return null
   }
 }
 
@@ -271,9 +269,11 @@ export async function tryToImportWithoutDelete(cycleDays: CycleDaySchema[]) {
       })
     })
     )
+    return resp
   } catch (err) {
     // const msg = `Line ${i + 1}(${day.date}): ${err.message}`
     // throw new Error(msg)
+    return null
   }
 }
 

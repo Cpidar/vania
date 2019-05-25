@@ -2,7 +2,7 @@ import * as joda from 'js-joda'
 import jMoment from 'moment-jalaali'
 import { getCycleLengthStats, CycleLengthState } from './cycle-length'
 import { getBleedingDaysSortedByDate, getCycleStartsSortedByDate, getCycleDaysSortedByDate } from '../db'
-import { CycleDaySchema, BleedingSchema } from '../db/schemas';
+import { CycleDaySchema, BleedingSchema } from 'src/db/schemas';
 const LocalDate = joda.LocalDate
 const DAYS = joda.ChronoUnit.DAYS
 
@@ -89,7 +89,7 @@ export default async function config(opts?: any) {
 
   function getCyclesBefore(targetCycleStartDay: CycleDaySchema) {
     const startFromHere = cycleStartsSortedByDate.findIndex(start => {
-      return start.date < targetCycleStartDay.date
+      return (start.date < targetCycleStartDay.date)
     })
     if (startFromHere < 0) return null
     return cycleStartsSortedByDate
@@ -105,7 +105,7 @@ export default async function config(opts?: any) {
     const i = cycleStartsSortedByDate.indexOf(startDay)
     const startLocalDate = LocalDate.parse((startDay).date)
     const nextMensesStart = cycleStartsSortedByDate[i - 1]
-    let cycle
+    let cycle: CycleDaySchema[]
     let cycleLength
     if (nextMensesStart) {
       cycle = cycleDaysSortedByDate.slice(
@@ -216,7 +216,7 @@ export default async function config(opts?: any) {
       periodStartVariation = 2
     }
     if (periodDistance - 5 < periodStartVariation) { // otherwise predictions overlap
-      return []
+      return new Map<string, string>()
     }
 
     const predictedMenses = new Map<string, string>()

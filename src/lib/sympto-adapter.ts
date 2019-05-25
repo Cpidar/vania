@@ -1,10 +1,11 @@
 // @ts-nocheck
 
 import getFertilityStatus from './sympto'
-import cycleModule from './cycle'
-import { useCervixObservable } from '../local-storage'
-import { fertilityStatus as labels } from '../i18n/en/labels'
+import cycleModule from 'src/lib/cycle'
+import { useCervixObservable } from 'src/local-storage'
+import { fertilityStatus as labels } from 'src/i18n/fa/labels'
 import { CycleDaySchema } from 'src/db/schemas';
+import { CycleInfo, StatusModel, OvuPhaseModel, FertalityStatus } from './cycle.models'
 
 export async function getFertilityStatusForDay(dateString: string) {
   const status = await getCycleStatusForDay(dateString)
@@ -32,13 +33,14 @@ export async function getFertilityStatusForDay(dateString: string) {
   // if there's only cycle data for the pre phase and the target day is after its end,
   // the day is in the peri phase
   if (phases.length === 1 && phases[0] === 'preOvulatory' && !phaseNameForDay) {
-    return formatStatus('periOvulatory', dateString, {phases: {periOvulatory: {}}})
+    return formatStatus('periOvulatory', dateString, {phases: {periOvulatory: {} as OvuPhaseModel}})
   }
 
-  return formatStatus(phaseNameForDay as string, dateString, status)
+  return formatStatus(phaseNameForDay, dateString, status)
 }
 
 export async function getCycleStatusForDay(dateString: string, opts?: any) {
+  let options = opts || { excludeEarlierCycles: false }
   const {
     getCycleForDay,
     getCyclesBefore,
@@ -48,14 +50,14 @@ export async function getCycleStatusForDay(dateString: string, opts?: any) {
   const cycle = getCycleForDay(dateString)
   if (!cycle) return null
 
-  const cycleInfo = {cycle: formatCycleForSympto(cycle)} as any
+  const cycleInfo:  CycleInfo = {cycle: formatCycleForSympto(cycle), secondarySymptom: ''}
 
   const previousCycle = getPreviousCycle(dateString)
 
   if (previousCycle) {
     cycleInfo.previousCycle = formatCycleForSympto(previousCycle)
   }
-  if (previousCycle && !opts.excludeEarlierCycles) {
+  if (previousCycle && !options.excludeEarlierCycles) {
     const earlierCycles = getCyclesBefore(previousCycle[0])
     if (earlierCycles) {
       cycleInfo.earlierCycles = (earlierCycles as CycleDaySchema[][]).map(formatCycleForSympto)
@@ -63,12 +65,13 @@ export async function getCycleStatusForDay(dateString: string, opts?: any) {
   }
 
   cycleInfo.secondarySymptom = useCervixObservable.value ? 'cervix' : 'mucus'
+  console.log(cycle)
 
   return getFertilityStatus(cycleInfo)
 }
 
-function formatStatus(phaseNameForDay: string, dateString: string, status: any) {
-  const mapping = {
+function formatStatus(phaseNameForDay: string, dateString: string, status: StatusModel): FertalityStatus {
+  const mapping: { [key: string]: any } = {
     preOvulatory: () => {
       return {
         status: labels.infertile,
@@ -76,11 +79,11 @@ function formatStatus(phaseNameForDay: string, dateString: string, status: any) 
         statusText: labels.preOvuText
       }
     },
-    periOvulatory: (dateString: string, status: any) => {
+    periOvulatory: (dateString: string, status: StatusModel) => {
       // there might not actually be any data for the phase
       const peri = status.phases.periOvulatory
       const phaseEnd = peri && peri.end
-      let s
+      let s: string
       if (phaseEnd && phaseEnd.date === dateString) {
         s = labels.fertileUntilEvening
       } else {
@@ -92,7 +95,7 @@ function formatStatus(phaseNameForDay: string, dateString: string, status: any) 
         statusText: labels.periOvuText
       }
     },
-    postOvulatory: (dateString: string, status: any) => {
+    postOvulatory: (dateString: string, status: StatusModel) => {
       return {
         status: labels.infertile,
         phase: 3,
@@ -101,11 +104,11 @@ function formatStatus(phaseNameForDay: string, dateString: string, status: any) 
     }
   }
 
-  return (mapping as any)[phaseNameForDay](dateString, status)
+  return mapping[phaseNameForDay](dateString, status)
 }
 
-function formatCycleForSympto(cycle: CycleDaySchema[]) {
-  const formatted = cycle.reduce((acc: any, oldDay) => {
+function formatCycleForSympto(cycle: CycleDaySchema[]): CycleDaySchema[] {
+  const formatted = cycle.reduce((acc: CycleDaySchema[], oldDay) => {
     // deep clone
     const day = JSON.parse(JSON.stringify(oldDay));
     // remove excluded symptoms

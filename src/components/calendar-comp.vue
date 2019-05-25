@@ -36,6 +36,7 @@ import { bufferTime } from 'rxjs/operators'
 import { getCycleDaysInRange } from '../db';
 import { CycleDaySchema } from '../db/schemas';
 import cycleModule from '../lib/cycle'
+import { getFertilityStatusForDay } from '../lib/sympto-adapter';
 
 @Component<Calendar>({
   components: { Day }
@@ -52,6 +53,11 @@ export default class Calendar extends Vue {
       (d: any) => {
         this.month = [...this.month, d]
         if (d.isToday) { this.selectedDay = d.jDate }
+        getFertilityStatusForDay(d.mDate).then(status => {
+          if(status.phase === 2) {
+            this.period.set(d.mDate, status.status)
+          }
+        })
       },
       function (err) { console.log(err) },
       () => { console.log('complete') }

@@ -1,18 +1,24 @@
 function convertToSymptoFormat(val) {
   const sympto = { date: val.date }
-  if (val.temperature) sympto.temperature = {
-    value: val.temperature,
-    time: '08:00',
-    exclude: false
+  if (val.temperature) {
+    sympto.temperature = {
+      value: val.temperature,
+      time: '08:00',
+      exclude: false
+    }
   }
-  if (val.cervix && typeof val.cervix.opening === 'number' && typeof val.cervix.firmness === 'number') sympto.cervix = {
-    opening: val.cervix.opening,
-    firmness: val.cervix.firmness,
-    exclude: false
+  if (val.cervix && typeof val.cervix.opening === 'number' && typeof val.cervix.firmness === 'number') {
+    sympto.cervix = {
+      opening: val.cervix.opening,
+      firmness: val.cervix.firmness,
+      exclude: false
+    }
   }
-  if (val.bleeding) sympto.bleeding = {
-    value: val.bleeding,
-    exclude: false
+  if (val.bleeding) {
+    sympto.bleeding = {
+      value: val.bleeding,
+      exclude: false
+    }
   }
   return sympto
 }
@@ -90,7 +96,7 @@ export const longCycleWithoutAnyShifts = [
   { date: '2018-07-23', temperature: 36.75, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-07-24', temperature: 36.65, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-07-25', temperature: 36.65, cervix: { opening: 0, firmness: 1 } },
-  { date: '2018-07-26', temperature: 36.65, cervix: { opening: 2, firmness: 1 } },
+  { date: '2018-07-26', temperature: 36.65, cervix: { opening: 2, firmness: 1 } }
 ].map(convertToSymptoFormat)
 
 export const longAndComplicatedCycle = [
@@ -306,9 +312,12 @@ export const fertileCervixOnlyAfterEndOfTempEval = [
   { date: '2018-06-20', temperature: 36.85 },
   { date: '2018-06-21', temperature: 36.8 },
   { date: '2018-06-22', temperature: 36.9 },
-  { date: '2018-06-25', temperature: 36.9, cervix: { opening: 1, firmness: 1 }},
-  { date: '2018-06-26', temperature: 36.8, cervix: { opening: 0, firmness: 0 }},
-  { date: '2018-06-30', temperature: 36.9, cervix: { opening: 0, firmness: 0 }},
-  { date: '2018-07-01', temperature: 36.9, cervix: { opening: 0, firmness: 0 }},
-  { date: '2018-07-02', temperature: 36.9, cervix: { opening: 0, firmness: 0 }}
+  { date: '2018-06-25', temperature: 36.9, cervix: { opening: 1, firmness: 1 }
+  },
+  { date: '2018-06-26', temperature: 36.8, cervix: { opening: 0, firmness: 0 }
+  },
+  { date: '2018-06-30', temperature: 36.9, cervix: { opening: 0, firmness: 0 }
+  },
+  { date: '2018-07-01', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
+  { date: '2018-07-02', temperature: 36.9, cervix: { opening: 0, firmness: 0 } }
 ].map(convertToSymptoFormat)

@@ -94,7 +94,6 @@ export interface MoodSchema extends Base {
 
 export interface CycleDaySchema extends Base {
     _id?: string;
-    _rev?: string;
     date: string;
     isCycleStart: boolean;
     isBleedingDay: boolean;
