@@ -21,7 +21,6 @@ export default async function config(opts?: any) {
     bleedingDaysSortedByDate = await getBleedingDaysSortedByDate()
     cycleStartsSortedByDate = await getCycleStartsSortedByDate()
     cycleDaysSortedByDate = await getCycleDaysSortedByDate()
-    console.log(cycleDaysSortedByDate)
     // maximum day break between bleeding
     maxBreakInBleeding = 1
     maxBleedingLength = 6
@@ -49,11 +48,12 @@ export default async function config(opts?: any) {
     let m = new Map<string, string>()
     if (starts.length === 0) return m
     for (let cycle of starts) {
+      console.log(cycle)
       const start = LocalDate.parse(cycle.date)
       const nextCycles = getMensesDaysRightAfter(cycle)
       const end = nextCycles.length ? nextCycles[0].date : ''
       m.set(cycle.date, 'period-start')
-      if (!end) break
+      if (!end) continue
       m.set(end, 'period-end')
       let i = 1
       while (true) {
@@ -62,7 +62,6 @@ export default async function config(opts?: any) {
         m.set(date.toString(), 'period')
       }
     }
-    console.log(m)
     return m
   }
 
@@ -99,10 +98,10 @@ export default async function config(opts?: any) {
       .filter(cycle => cycle)
   }
 
-  function getCycleForCycleStartDay(startDay?: any, todayDate?: string) {
+  function getCycleForCycleStartDay(startDay?: CycleDaySchema, todayDate?: string) {
     const todayAsLocalDate = todayDate ? LocalDate.parse(todayDate) : LocalDate.now()
-    const cycleStartIndex = cycleDaysSortedByDate.indexOf(startDay)
-    const i = cycleStartsSortedByDate.indexOf(startDay)
+    const cycleStartIndex = cycleDaysSortedByDate.findIndex(x => x.date === startDay.date)
+    const i = cycleStartsSortedByDate.findIndex(x => x.date === startDay.date)
     const startLocalDate = LocalDate.parse((startDay).date)
     const nextMensesStart = cycleStartsSortedByDate[i - 1]
     let cycle: CycleDaySchema[]
@@ -185,7 +184,7 @@ export default async function config(opts?: any) {
       .map((cycleStart, i, startsAsLocalDates) => {
         if (i === cycleStartsSortedByDate.length - 1) return null
         const prevCycleStart = startsAsLocalDates[i + 1]
-        return Math.abs(prevCycleStart.until(cycleStart, DAYS))
+        return prevCycleStart.until(cycleStart, DAYS)
       })
       .filter(length => length && length <= maxCycleLength)
   }
@@ -193,20 +192,14 @@ export default async function config(opts?: any) {
   function getPredictedMenses(opt?: { start: string, cycleLength: number, bleedingLength: number }) {
 
     let cycleLengths = getAllCycleLengths()
-    let periodDistance: number
-    let periodStartVariation: number
-    let cycleInfo: CycleLengthState
 
-    if (opt && cycleLengths.length < minCyclesForPrediction) {
-      cycleLengths = [opt.cycleLength]
-      var lastStart = LocalDate.parse(opt.start)
-    } else {
-      const allMensesStarts = cycleStartsSortedByDate
-      lastStart = LocalDate.parse(allMensesStarts[0].date)
+    if (cycleLengths.length < minCyclesForPrediction) {
+      return new Map<string, string>()
     }
-
-    cycleInfo = getCycleLengthStats(cycleLengths as number[])
-    periodDistance = Math.round(cycleInfo.mean)
+    
+    const cycleInfo = getCycleLengthStats(cycleLengths as number[])
+    const periodDistance = Math.round(cycleInfo.mean)
+    let periodStartVariation: number
 
     if (cycleInfo.stdDeviation === null) {
       periodStartVariation = 2
@@ -219,7 +212,9 @@ export default async function config(opts?: any) {
       return new Map<string, string>()
     }
 
-    const predictedMenses = new Map<string, string>()
+    const allMensesStarts = cycleStartsSortedByDate
+    let lastStart = LocalDate.parse(allMensesStarts[0].date)
+    let predictedMenses = new Map<string, string>()
     for (let i = 0; i < 3; i++) {
       lastStart = lastStart.plusDays(periodDistance)
       predictedMenses.set(lastStart.toString(), 'period-pr')

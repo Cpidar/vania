@@ -41,8 +41,7 @@ export default function getSymptoThermalStatus(cycleInfo: CycleInfo) {
   // TODO maybe add indicator if there was no preovuphase?
   status.phases.periOvulatory = {
     start: { date: null },
-    cycleDays: [] as CycleDaySchema[],
-    end: { date: '' }
+    cycleDays: [] as CycleDaySchema[]
   }
   const periPhase = status.phases.periOvulatory
 
@@ -112,9 +111,9 @@ function throwIfArgsAreNotInRequiredFormat(cycles: CycleDaySchema[][]) {
   cycles.forEach(cycle => {
     assert.ok(Array.isArray(cycle), 'Cycles must be arrays.')
     assert.ok(cycle.length > 0, 'Cycle must not be empty.')
-    assert.ok(cycle[0].bleeding !== null, 'First cycle day should have bleeding.')
-    assert.equal(typeof cycle[0].bleeding, 'object', 'First cycle day must contain bleeding value.')
-    assert.equal(typeof cycle[0].bleeding.value, 'number', 'First cycle day bleeding value must be a number.')
+    assert.ok(cycle[0].isBleedingDay === true, 'First cycle day should have bleeding.')
+    // assert.equal(typeof cycle[0].isBleedingDay, true, 'First cycle day must contain bleeding value.')
+    // assert.equal(typeof cycle[0].bleeding.value, 'number', 'First cycle day bleeding value must be a number.')
     cycle.forEach(day => {
       assert.equal(typeof day.date, 'string', 'Date must be given as a string.')
       assert.doesNotThrow(() => LocalDate.parse(day.date), 'Date must be given in right string format.')
@@ -126,7 +125,7 @@ function throwIfArgsAreNotInRequiredFormat(cycles: CycleDaySchema[][]) {
       if (day.cervix) assert.ok(day.cervix.opening <= 2, 'Cervix opening value must be 2 or smaller')
       if (day.cervix) assert.ok(day.cervix.firmness >= 0, 'Cervix firmness value must be 0 or bigger')
       if (day.cervix) assert.ok(day.cervix.firmness <= 1, 'Cervix firmness value must be 1 or smaller')
-      assert.equal(typeof (cycle[0].bleeding as BleedingSchema).value, 'number', 'Bleeding value must be a number')
+      // assert.equal(typeof (cycle[0].bleeding as BleedingSchema).value, 'number', 'Bleeding value must be a number')
     })
   })
 }

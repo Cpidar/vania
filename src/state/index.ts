@@ -1,20 +1,15 @@
-/* eslint-disable no-unused-vars */
-// @ts-nocheck
 
-// import * as jMoment from 'moment-jalaali'
 import jMoment from 'moment-jalaali'
+import { Subject, Observable, of, from } from 'rxjs'
+import { map, shareReplay, switchMap, share, filter, tap, catchError } from 'rxjs/operators'
+
+import { getCycleDay } from 'src/db';
+import { CycleDaySchema } from 'src/db/schemas';
+import { getBadTimeEvents } from 'src/lib/cal-events/event';
 
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
 
-import { Subject, range, asyncScheduler, merge, asapScheduler, from, Observable } from 'rxjs'
-import { map, shareReplay, switchMap, switchMapTo, tap, mergeMap, share, filter, observeOn, bufferCount, pluck, take, toArray, concatMap, flatMap, startWith, distinctUntilKeyChanged, first, mapTo, combineLatest, reduce } from 'rxjs/operators'
-import { getBadTimeEvents } from '../events/event'
-import { dayState } from './cycle'
-import { getCycleDay, getCycleDaysInRange, saveCycleDay, saveBulkCycleDay } from 'src/db';
-import { CycleDaySchema } from 'src/db/schemas';
-
-import cycleModue from '../lib/cycle'
 const moment = (str: string) => jMoment(str, 'jYYYY-jMM-jDD')
 const miladi = (str: string) => jMoment(str, 'jYYYY-jMM-jDD').format('YYYY-MM-DD')
 
@@ -36,6 +31,72 @@ export const initialModel: Model = {
   events: [],
   PHN: {} as any,
   currentCycle: { start: '', cycleLength: 0, bleedindLength: 0 },
+}
+
+export const initialCycleDay: CycleDaySchema =  {
+  date: miladi(initialModel.today),
+  isBleedingDay: false,
+  isCycleStart: false,
+  bleeding: { value: -1, exclude: false },
+  pain: {
+    acne: false,
+    bodyAche: false,
+    backaches: false,
+    bloating: false,
+    constipation: false,
+    cramps: false,
+    diarrhea: false,
+    dizziness: false,
+    headache: false,
+    lowerBackPain: false,
+    nausea: false,
+    neckaches: false,
+    ovulationPain: false,
+    pms: false,
+    shoulderAche: false,
+    tender: false,
+    migraine: false,
+    other: false
+  },
+  mood: {
+    happy: false,
+    sad: false,
+    stressed: false,
+    normal: false,
+    swings: false,
+    anxious: false,
+    frisky: false,
+    tired: false,
+    angry: false,
+    tense: false,
+    panicky: false,
+    lonely: false
+  },
+  sex: { value: -1 },
+  mucus: {
+    feeling: -1,
+    texture: -1,
+    value: -1,
+  },
+  cervix: {
+    firmness: -1,
+    opening: -1,
+    position: -1
+  },
+  desire: {
+    value: -1
+  },
+  temperature: {
+    value: -1,
+    time: ''
+  },
+  weight: {
+    value: -1,
+    time: ''
+  },
+  note: {
+    value: ''
+  }
 }
 
 export const present = async (data: { type: string, payload: any}) => {
@@ -103,22 +164,7 @@ export const present = async (data: { type: string, payload: any}) => {
   }
 }
 
-export const computeDaysInMonth = (counter: number, m: string) => {
-  const jDate = moment(m).clone().add(counter, 'day')
-  const day = jDate.jDate()
-  // const hDate = add(d, persianTohijri(newMonth))
-  //     .map(h => { return { day: h[0], month: h[1], year: h[2] } })[0];
-  const isToday = jDate.isSame(new Date(), 'day')
-  const currentMonthCond = jDate.jMonth() - moment(m).jMonth()
 
-  return {
-    jDate: jDate.format('jYYYY-jMM-jDD'),
-    mDate: jDate.format('YYYY-MM-DD'),
-    day,
-    isToday,
-    currentMonthCond
-  }
-}
 
 // Wiring
 
@@ -129,42 +175,29 @@ export const model$: Observable<Model> = action$.pipe(
   shareReplay()
 )
 // no: number of month after or before of current month
-export const getMonthList = (no: number) => model$.pipe(
-  filter(m => (m.status === 'INIT')),
-  take(1),
-  map(m => {
-    const ar = Array.from({ length: 2 * no + 1 }, (v, i) => i - no)
-    return ar.map(v => moment(m.month).clone().add(v, 'jMonth').format('jYYYY-jMM-jDD'))
-  })
-  )
-  
-export const saveInitialCycleConfig = () => model$.pipe(
-  filter(m => (m.status === 'INIT')),
-  map((m: Model) => {
-    let docs: Partial<CycleDaySchema>[] = []
-    for(let i = 0; i < m.currentCycle.bleedindLength; i++) {
-      let date = moment(m.currentCycle.start).add(i, 'day').format('YYYY-MM-DD')
-      console.log(date)
-      if(date > jMoment().format('YYYY-MM-DD')) break
-      docs.push({
-        _id: `cycleday-${date}`,
-        date: date,
-        isCycleStart: i === 0 ? true : false,
-        isBleedingDay: true
-      })
-    }
-    return docs
-  }),
-  switchMap(c => saveBulkCycleDay(c as Partial<CycleDaySchema>[])),
-)
 
-export const daysInMonth = (month: string) => range(-moment(month).clone().weekday(), 42).pipe(
-  // observeOn(asyncScheduler),
-  map((m) => computeDaysInMonth(m, month)),
-  // tap(console.log),
-  observeOn(asapScheduler),
-  share()
-)
+  
+// export const saveInitialCycleConfig = () => model$.pipe(
+//   filter(m => (m.status === 'INIT')),
+//   map((m: Model) => {
+//     let docs: Partial<CycleDaySchema>[] = []
+//     for(let i = 0; i < m.currentCycle.bleedindLength; i++) {
+//       let date = moment(m.currentCycle.start).add(i, 'day').format('YYYY-MM-DD')
+//       console.log(date)
+//       if(date > jMoment().format('YYYY-MM-DD')) break
+//       docs.push({
+//         _id: `cycleday-${date}`,
+//         date: date,
+//         isCycleStart: i === 0 ? true : false,
+//         isBleedingDay: true
+//       })
+//     }
+//     return docs
+//   }),
+//   switchMap(c => saveBulkCycleDay(c as Partial<CycleDaySchema>[])),
+// )
+
+
 
 export const shortSelectedDay = model$.pipe(
   // filter(m => (m.status === ('INIT' || 'SELECTED_DAY'))),
@@ -185,15 +218,17 @@ export const longSelectedDayObj = model$.pipe(
       fullYear: moment(m.selectedDay).format('jYYYY'),
     }
   }),
-  share()
+  shareReplay()
 )
 
-export const getCycleDateDataForSelected = model$.pipe(
-  pluck('PHN')
+export const getSelectedCycleDay = longSelectedDayObj.pipe(
+  switchMap(m => from(getCycleDay(m.mDate)).pipe(catchError((x) => {console.log('not-found'); return of(initialCycleDay)}))),
+  tap(console.log),
+  shareReplay()
 )
 
-export const getEventsForSelectedDay = model$.pipe(
-  pluck('events')
+export const getSelectedEvents = longSelectedDayObj.pipe(
+  switchMap(day => getBadTimeEvents(day.date))
 )
 
 export const calendarReloadHook = model$.pipe(

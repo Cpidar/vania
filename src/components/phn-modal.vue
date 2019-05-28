@@ -3,7 +3,8 @@
     <q-btn
       class="glossy"
       round
-      color="deep-orange"
+      outline
+      color="blue-grey"
       icon="mdi-dots-horizontal"
       @click="showModal = true"
     ></q-btn>
@@ -31,7 +32,7 @@
           <q-page>
             <q-list>
               <q-item-label>حالت روحی</q-item-label>
-              <q-item class="q-px-xs">
+              <q-item class="q-px-xs" v-if="moodIcons">
                 <div
                   class="row inline no-wrap q-gutter-lg scroll"
                   style="height: 120px;"
@@ -105,7 +106,7 @@
 <script lang="ts">
 import iCheckbox from './custom-checkbox.vue'
 import iRadio from './custom-radio.vue'
-import { shortSelectedDay, longSelectedDayObj } from '../state'
+import { shortSelectedDay, longSelectedDayObj, initialCycleDay } from '../state'
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { CycleDaySchema, PainSchema, MoodSchema, BleedingSchema, SexSchema } from '../db/schemas'
@@ -124,70 +125,38 @@ interface PhnIcon {
   checkedIcon?: string;
 }
 
-const initialPHN: Partial<CycleDaySchema> = {
-  date,
-  bleeding: { value: 10, exclude: false },
-  pain: {
-    acne: false,
-    bodyAche: false,
-    backaches: false,
-    bloating: false,
-    constipation: false,
-    cramps: false,
-    diarrhea: false,
-    dizziness: false,
-    headache: false,
-    lowerBackPain: false,
-    nausea: false,
-    neckaches: false,
-    ovulationPain: false,
-    pms: false,
-    shoulderAche: false,
-    tender: false,
-    migraine: false,
-    other: false
-  },
-  mood: {
-    happy: false,
-    sad: false,
-    stressed: false,
-    normal: false,
-    swings: false,
-    anxious: false,
-    frisky: false,
-    tired: false,
-    angry: false,
-    tense: false,
-    panicky: false,
-    lonely: false
-  },
-  sex: { value: -1 }
-}
+
 
 @Component({
   components: { iCheckbox, iRadio }
 })
 export default class PhnModal extends Vue {
-  @Prop({ default() { return initialPHN } }) phn: CycleDaySchema
+  @Prop({ default: () => initialCycleDay }) phn: CycleDaySchema
   @Prop() date: string
 
-  bleedIcons: PhnIcon[] = bleeding.labels.map((x, i) => ({ key: i, label: x, icon: `../assets/icons/ic_bl_${i}.png`, checkedIcon: `../assets/icons/ic_bl_${i}_l.png` }))
-  painIcons: PhnIcon[] = Object.keys(pain.categories).map((key, index) => ({ key, label: (<any>pain.categories)[key], icon: `../assets/icons/ic_sy_${key}.png` }))
   moodIcons: PhnIcon[] = Object.keys(mood.categories).map((key, index) => ({ key, label: (<any>mood.categories)[key], icon: `../assets/icons/ic_mood_${key}.png` }))
   sexIcons: PhnIcon[] = sex.categories.map((x, i) => ({ key: i, label: x, icon: `../assets/icons/ic_sex_${i}.png`, checkedIcon: `../assets/icons/ic_sex_${i}_l.png` }))
 
   showModal = false
   currentDate = this.date
 
-  bleeding: number | undefined = this.phn.bleeding ? this.phn.bleeding.value : -1
-  pains: PainSchema | undefined = this.phn.pain ? this.phn.pain : initialPHN.pain
-  moods: MoodSchema | undefined = this.phn.mood ? this.phn.mood : initialPHN.mood
-  sexes: number | undefined = this.phn.sex ? this.phn.sex.value : -1
+  pains: PainSchema | undefined = {} as PainSchema
+  moods: MoodSchema | undefined = {} as MoodSchema
+  sexes: number = -1
+
+  get painIcons() {
+    return Object.keys(pain.categories).map((key, index) => ({ key, label: (<any>pain.categories)[key], icon: `../assets/icons/ic_sy_${key}.png` }))
+  }
+
+  mounted() {
+    this.pains = this.phn ? this.phn.pain : undefined
+    this.moods = this.phn ? this.phn.mood : undefined
+    this.sexes = this.phn.sex ? this.phn.sex.value : -1
+  }
 
   onSave() {
     Promise.all([
-      saveSymptom('bleeding', this.currentDate, { value: this.bleeding, exclude: false }),
-      // saveCycleDay(this.currentDate, { pain: this.pains, mood: this.moods, sex: { value: this.sexes } })
+      saveCycleDay(this.currentDate, { pain: this.pains, mood: this.moods, sex: { value: this.sexes } })
     ]).then(res => {
       this.$emit('close', true)
       this.$q.notify({
@@ -200,6 +169,22 @@ export default class PhnModal extends Vue {
 </script>
 
 <style lang="stylus">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -231,7 +216,39 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   display: flex;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -263,6 +280,22 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   overflow-x: auto;
 
 
@@ -279,7 +312,39 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 } */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -311,6 +376,22 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   display: none;
 
 
@@ -327,7 +408,39 @@ export default class PhnModal extends Vue {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 } */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

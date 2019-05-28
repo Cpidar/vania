@@ -9,7 +9,6 @@ import { CycleInfo, StatusModel, OvuPhaseModel, FertalityStatus } from './cycle.
 
 export async function getFertilityStatusForDay(dateString: string) {
   const status = await getCycleStatusForDay(dateString)
-  console.log(status)
   if (!status) {
     return {
       status: labels.fertile,
@@ -65,7 +64,6 @@ export async function getCycleStatusForDay(dateString: string, opts?: any) {
   }
 
   cycleInfo.secondarySymptom = useCervixObservable.value ? 'cervix' : 'mucus'
-  console.log(cycle)
 
   return getFertilityStatus(cycleInfo)
 }

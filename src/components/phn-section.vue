@@ -17,15 +17,15 @@
         enter-active-class="animated fadeIn"
         leave-active-class="animated fadeOut"
       > -->
-        <q-timeline-entry icon="delete" key="weight-temp" v-if="weight && temperature">
+        <q-timeline-entry icon="delete" key="weight-temp" v-if="weight !== undefined && temperature !== undefined && weight !== -1 && temperature !== -1">
           <div>
-            <q-chip v-if="weight">
+            <q-chip v-if="weight !== -1 && weight !== undefined">
               <q-avatar size="28px">
                 <img :src="'./assets/icons/ic_weigth.png'" />
               </q-avatar>
               {{ weight + " Kg" }}
             </q-chip>
-            <q-chip v-if="temperature">
+            <q-chip v-if="temperature !== -1 && temperature !== undefined">
               <q-avatar size="28px">
                 <img :src="'./assets/icons/ic_tempreture.png'" />
               </q-avatar>
@@ -88,7 +88,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { shortSelectedDay, getEventsForSelectedDay } from '../state'
+import { shortSelectedDay, getSelectedEvents } from '../state'
 import { getCycleDay } from '../db'
 import { CycleDaySchema } from '../db/schemas';
 import { bleeding, pain, sex, mood } from '../i18n/fa/cycle-day';
@@ -105,12 +105,12 @@ interface PhnList {
     return {
       // phnValues: getPHNValuesArray,
       getSelectedDay$: shortSelectedDay,
-      events: getEventsForSelectedDay
+      events: getSelectedEvents
     }
   }
 })
 export default class PhnSection extends Vue {
-  @Prop({    default: () => ({
+  @Prop({ default: () => ({
       pain: {},
       bleeding: {},
       mood: {},

@@ -25,7 +25,6 @@
 import { Vue, Component, Prop, Model, Emit } from 'vue-property-decorator'
 import { dispatch } from '../state'
 import { getCycleDay } from '../db';
-import { getBadTimeEvents } from '../events/event';
 
 @Component({})
 export default class Day extends Vue {
@@ -35,6 +34,7 @@ export default class Day extends Vue {
   @Prop() inactive: any
   @Prop() hasNote: boolean
   @Prop() period: string
+  @Prop() fertility: string
   // v-model for class select
   @Model('select', {type: String}) selectedDay: string
 
@@ -47,13 +47,7 @@ export default class Day extends Vue {
   @Emit('select')
   selectDay(ev: any) {
     const selectedDay = ev.target.getAttribute('value')
-    getCycleDay(selectedDay).then((p) => {
-      dispatch('selectDay', { selectedDay, events: getBadTimeEvents(selectedDay), phn: p })
-    }
-    ).catch(err => {
-      console.log(err.name)
-      dispatch('selectDay', { selectedDay, events: getBadTimeEvents(selectedDay)})
-      })
+    dispatch('selectDay', { selectedDay })
     return ev.target.getAttribute('value')
   }
 }

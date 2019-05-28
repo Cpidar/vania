@@ -24,17 +24,21 @@
           :current="month"
           v-if="index - slide < 2 && index - slide > -2"
           :key="calendarKey"
+          :period="periodDays"
         />
       </q-carousel-slide>
     </q-carousel>
     <calendar-footer />
 
-  <div class="row justify-center q-py-md q-gutter-sm">
-    <temp-dialog ></temp-dialog>
-    <bleed-dialog></bleed-dialog>
-    <mucus-dialog></mucus-dialog>
-    <phn-modal :date="currentDay" :phn="phn" @close="showModal = false"/>
-  </div>
+    <div class="row justify-center q-py-md q-gutter-sm">
+      <bleed-dialog :date="mDate" :data="bleeding"></bleed-dialog>
+      <temp-dialog :date="mDate"></temp-dialog>
+      <mucus-dialog :date="mDate"></mucus-dialog>
+      <phn-modal
+        :date="currentDay"
+        :phn="phn"
+      />
+    </div>
 
     <!-- <q-toggle
         v-model="gotPeriod"
@@ -47,7 +51,6 @@
     <!-- <event-section :event="getSelectedDay$" /> -->
     <phn-section :phn="phn" />
 
-
   </div>
 </template>
 
@@ -55,14 +58,13 @@
 import {
   dispatch,
   longSelectedDayObj,
-  getMonthList,
   calendarReloadHook,
   shortSelectedDay,
-  getCycleDateDataForSelected,
-  saveInitialCycleConfig
+  getSelectedCycleDay,
   // getDaysHaveEvents,
 } from '../state'
 
+import { getMonthList, } from '../lib/calendar'
 import Calendar from '../components/calendar-comp.vue'
 import CalendarHeader from '../components/calendar-header.vue'
 import CalendarFooter from '../components/calendar-footer.vue'
@@ -84,16 +86,16 @@ import jMoment from 'moment-jalaali'
 
 
 @Component<CalendarPage>({
-  components: { 
-  Calendar,
-  CalendarHeader,
-  CalendarFooter,
-  PeriodHandler,
-  PhnSection,
-  PhnModal,
-  TempDialog,
-  BleedDialog,
-  MucusDialog
+  components: {
+    Calendar,
+    CalendarHeader,
+    CalendarFooter,
+    PeriodHandler,
+    PhnSection,
+    PhnModal,
+    TempDialog,
+    BleedDialog,
+    MucusDialog
   },
   subscriptions() {
     const monthList = getMonthList(10)
@@ -101,9 +103,11 @@ import jMoment from 'moment-jalaali'
     const isMenseStart = longSelectedDayObj.pipe(switchMap(day => CycleModule().then(m => m.isMensesStart(day.mDate))))
     return {
       getSelectedDay$: longSelectedDayObj,
+      mDate: longSelectedDayObj.pipe(pluck('mDate')),
       monthList,
       calendarKey: calendarReloadHook,
-      phn: getCycleDateDataForSelected,
+      phn: getSelectedCycleDay,
+      bleeding: getSelectedCycleDay.pipe(pluck('bleeding')),
       currentDay,
       isMenseStart
     }
@@ -111,8 +115,6 @@ import jMoment from 'moment-jalaali'
 })
 
 export default class CalendarPage extends Vue {
-  showModal = false
-  events = []
   selectedEvents = {}
   loading = false
   slide = 10
@@ -120,21 +122,21 @@ export default class CalendarPage extends Vue {
   monthList: string[] = []
   phn: CycleDaySchema = {} as any
   gotPeriod: boolean = false
+  periodDays: Map<string, string> = new Map()
 
 
   mounted() {
-    this.$subscribeTo(saveInitialCycleConfig(), (x) => {console.log(x)})
-    }
-
+    CycleModule().then(m => {
+      const p = m.getMenses()
+      console.log(p)
+      this.periodDays = p
+    })
+  }
   beforeCreate() {
-    const payload = { start: '1398-02-10', cycleLength: 18, bleedindLength: 4 }
-    dispatch('init', payload)
   }
 
+
   monthChange() {
-    // this.currentDay = this.$observables.monthList[this.slide]
-    // this.$nextTick(() => this.activeMonth.push(this.monthList[this.activeIndex - 1], this.monthList[this.activeIndex + 1]))
-    // dispatch('goToMonth', this.currentDay)
   }
 
   changePeriod(ev: any) {

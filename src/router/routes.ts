@@ -1,11 +1,15 @@
 import { RouteConfig } from 'vue-router'
+import Mylayout from '../layouts/MyLayout.vue'
+import HomePage from '../pages/home.vue'
+import CalendarPage from '../pages/calendar.vue'
 const routes: RouteConfig[] = [
   {
     path: '/',
-    component: () => import('layouts/MyLayout.vue'),
+    component: Mylayout,
     children: [
-      { path: '', component: () => import('pages/home.vue') },
-      { path: 'calendar', component: () => import('pages/calendar.vue') },
+      { path: '', component: HomePage },
+      // { path: 'calendar', component: () => import('pages/calendar.vue') },
+      { path: 'calendar', component: CalendarPage },
     ]
   }
 ]

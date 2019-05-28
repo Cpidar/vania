@@ -3,7 +3,8 @@
   <q-btn
     class="glossy"
     round
-    color="deep-orange"
+    outline
+    color="teal"
     icon="mdi-weather-rainy"
     @click="showDialogue = true"
   ></q-btn>
@@ -50,6 +51,7 @@ import { BleedingSchema, MucusSchema } from '../db/schemas'
 import iRadio from './custom-radio.vue'
 import { mucus, sharedDialogs } from '../i18n/fa/cycle-day';
 import { shared, headerTitles } from '../i18n/fa/labels';
+import { saveSymptom } from '../db';
 
 interface PhnIcon {
   key: number | string;
@@ -62,7 +64,7 @@ interface PhnIcon {
 @Component({
   components: { iRadio }
 })
-export default class BleedingDialogue extends Vue {
+export default class MucusDialog extends Vue {
   @Prop() data: MucusSchema
   @Prop() date: string
 
@@ -75,7 +77,6 @@ export default class BleedingDialogue extends Vue {
   bleeding: number | undefined = this.data ? this.data.value : -1
 
   save() {
-
   }
 
 }

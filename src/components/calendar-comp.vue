@@ -19,6 +19,7 @@
         :inactive="day.currentMonthCond"
         :event-type="events[day.jDate]"
         :period="period.get(day.mDate)"
+        :fertility="fertility.get(day.mDate)"
       >
         {{day.day}}
       </Day>
@@ -28,7 +29,7 @@
 
 <script lang="ts">
 
-import { daysInMonth } from '../state'
+import { daysInMonth } from '../lib/calendar'
 import Day from './day.vue'
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { reduce, mergeDeepRight } from 'ramda'
@@ -46,7 +47,8 @@ export default class Calendar extends Vue {
   events = {}
   selectedDay = ''
   month: any = []
-  period = new Map<string, string>()
+  @Prop({ default: () => new Map<string, string>() }) period: Map<string, string>
+  fertility = new Map<string, string>()
 
   mounted() {
     this.$subscribeTo(daysInMonth(this.current),
@@ -54,9 +56,7 @@ export default class Calendar extends Vue {
         this.month = [...this.month, d]
         if (d.isToday) { this.selectedDay = d.jDate }
         getFertilityStatusForDay(d.mDate).then(status => {
-          if(status.phase === 2) {
-            this.period.set(d.mDate, status.status)
-          }
+            this.fertility.set(d.mDate, status.status)
         })
       },
       function (err) { console.log(err) },
@@ -64,10 +64,6 @@ export default class Calendar extends Vue {
     )
     this.selectedDay = this.selectedDay || this.current
     
-    cycleModule().then(m => {
-      console.log(m.getMenses())
-      this.period = new Map([...m.getMenses(), ...m.getPredictedMenses()])
-    })
   }
 
 }

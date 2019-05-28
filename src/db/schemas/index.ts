@@ -6,14 +6,14 @@ export interface TemperatureSchema extends Base {
     value: number;
     exclude?: boolean;
     time: string;
-    note: string
+    note?: string
 }
 
 export interface WeightSchema extends Base {
     value: number;
     exclude?: boolean;
     time: string;
-    note: string
+    note?: string
 }
 
 export interface BleedingSchema extends Base {
@@ -74,7 +74,6 @@ export interface PainSchema extends Base {
     pms: boolean;
     shoulderAche: boolean;
     tender: boolean;
-    migraine: boolean;
 }
 
 export interface MoodSchema extends Base {
@@ -104,7 +103,7 @@ export interface CycleDaySchema extends Base {
     cervix: CervixSchema;
     note: NoteSchema;
     desire: DesireSchema;
-    sex?: SexSchema;
+    sex: SexSchema;
     pain: PainSchema;
     mood: MoodSchema;
 }

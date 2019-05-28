@@ -3,7 +3,8 @@
     <q-btn
       class="glossy"
       round
-      color="deep-orange"
+      :outline="!data"
+      color="pink"
       icon="mdi-water"
       @click="showDialogue = true"
     ></q-btn>
@@ -15,7 +16,7 @@
       transition-hide="slide-down"
     >
       <q-card
-        class="bg-teal text-white"
+        class="bg-amber-1"
         style="width: 300px"
       >
         <q-card-section>
@@ -41,7 +42,7 @@
 
         <q-card-actions
           align="left"
-          class="bg-white text-teal"
+          class="bg-amber text-white"
         >
           <q-btn
             flat
@@ -61,6 +62,7 @@ import { BleedingSchema, MucusSchema } from '../db/schemas'
 import iRadio from './custom-radio.vue'
 import { bleeding, sharedDialogs } from '../i18n/fa/cycle-day';
 import { headerTitles } from '../i18n/fa/labels';
+import { saveSymptom } from 'src/db';
 
 interface PhnIcon {
   key: number | string;
@@ -73,7 +75,7 @@ interface PhnIcon {
 @Component({
   components: { iRadio }
 })
-export default class BleedingDialogue extends Vue {
+export default class BleedingDialog extends Vue {
   @Prop() data: BleedingSchema
   @Prop() date: string
 
@@ -83,10 +85,14 @@ export default class BleedingDialogue extends Vue {
   sharedLabels = sharedDialogs
 
   bleedIcons: PhnIcon[] = this.Bleedinglabels.labels.map((x, i) => ({ key: i, label: x, icon: `../assets/icons/ic_bl_${i}.png`, checkedIcon: `../assets/icons/ic_bl_${i}_l.png` }))
-  bleeding: number | undefined = this.data ? this.data.value : -1
+  bleeding: number = -1
+
+  created() {
+    this.bleeding = this.data ? this.data.value : -1
+  }
 
   save() {
-
+    saveSymptom('bleeding', this.date, { value: this.bleeding, exclude: false })
   }
 
 }

@@ -3,6 +3,7 @@
   <q-btn
     class="glossy"
     round
+    outline
     color="deep-orange"
     icon="mdi-thermometer"
     @click="showDialog = true"
@@ -67,7 +68,7 @@ function range(start: number, end: number) {
 @Component({
   components: { iRadio }
 })
-export default class BleedingDialogue extends Vue {
+export default class TemperatureDialog extends Vue {
   @Prop() data: TemperatureSchema
   @Prop() date: string
 

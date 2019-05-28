@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
-    <div class="month">
+  <div class="container column justify-center items-center">
+    <!-- <div class="month">
       <h2 class="monthname">فروردین</h2>
-    </div>
-    <section class="week">
+    </div> -->
+    <!-- <section class="week">
       <div class="weekday">شنبه</div>
       <div class="weekday">یکشنبه</div>
       <div class="weekday">دوشنبه</div>
@@ -18,17 +18,27 @@
       <div><span>5</span></div>
       <div><span>6</span></div>
       <div><span>7</span></div>
-    </section>
-    <div class="circle">
-      <h5 class="date">{{cycleDayNumber}}</h5>
-      <h3 class="circlename">:</h3>
-      <div></div>
+    </section> -->
+        <q-space />
+
+
+    <div class="circle column justify-between items-center q-pt-md shadow-10">
+      <div class="text-body1">{{todayLabel}}</div>
+      <div class="text-h2">{{ 'روز ' + cycleDayNumber}}</div>
+      <div class="text-body1">{{fertilityStatus}}</div>
     </div>
-    <!-- <q-carousel ref="carousolCal" class="text-white" infinite arrows @slide="changeMonthSlide"  v-model="slide"> -->
-    <!-- <q-carousel-slide class="bg-primary" v-for="(month) of monthList" :key="month"> -->
-    <!-- <Calendar :current="month" v-if="(index - slide) < 2 && (index - slide) > -2"/> -->
-    <!-- </q-carousel-slide> -->
-    <!-- </q-carousel> -->
+
+
+    <div class="q-py-md" style="width: 80vw;">
+      <!-- <q-card class="my-card">
+        <q-card-section>
+          need help
+        </q-card-section>
+      </q-card> -->
+
+    </div>
+    <q-space />
+
   </div>
 </template>
 
@@ -41,58 +51,42 @@ import { saveSymptom, getCycleDaysSortedByDate } from '../db'
 import { home as labels, bleedingPrediction as predictLabels, shared } from '../i18n/en/labels'
 import { getFertilityStatusForDay } from '../lib/sympto-adapter'
 import { longSelectedDayObj } from '../state'
+import { map } from 'rxjs/operators';
 
-@Component({})
+@Component({
+  subscriptions() {
+    return {
+      todayLabel: longSelectedDayObj.pipe(map(d => d.day + ' ' + d.monthName))
+    }
+  }
+})
 export default class Home extends Vue {
   today = LocalDate.now()
   todayDateString = this.today.toString()
   cycleDayNumber: number | null = 0
-  prediction: string[][] = []
+  prediction: string[][]
   predictionText = ''
   bleedingPredictionRange = ''
   fertilityStatus = {}
-  cycleDays = []
   // getBleedingPrediction = cycleModule().getPredictedMenses
-
+  
   created() {
-    // saveSymptom('bleeding', this.today.toString(), { value: 2 })
-    // saveSymptom('bleeding', this.today.minusDays(1).toString(), { value: 1 })
-    // saveSymptom('bleeding', this.today.minusDays(2).toString(), { value: 1 })
-    // saveSymptom('bleeding', this.today.minusDays(3).toString(), { value: 1 })
-
-    // saveSymptom('bleeding', this.today.minusDays(32).toString(), { value: 2 })
-    // saveSymptom('bleeding', this.today.minusDays(33).toString(), { value: 1 })
-    // saveSymptom('bleeding', this.today.minusDays(34).toString(), { value: 1 })
-    // saveSymptom('bleeding', this.today.minusDays(35).toString(), { value: 1 })
-
-    // saveSymptom('bleeding', this.today.minusDays(64).toString(), { value: 2 })
-    // saveSymptom('bleeding', this.today.minusDays(65).toString(), { value: 1 })
-    // saveSymptom('bleeding', this.today.minusDays(66).toString(), { value: 1 })
-    // saveSymptom('bleeding', this.today.minusDays(67).toString(), { value: 1 })
-
-    // saveSymptom('bleeding', this.today.minusDays(98).toString(), { value: 1 })
-
-    // saveSymptom('bleeding', this.today.minusDays(128).toString(), { value: 1 })
 
     cycleModule().then(day => {
       this.cycleDayNumber = day.getCycleDayNumber(LocalDate.now().toString())
-      this.prediction = day.getPredictedMenses()
       this.predictionText = determinePredictionText(this.prediction)
       this.bleedingPredictionRange = getBleedingPredictionRange(this.prediction)
       console.log(day.getPreviousCycle(LocalDate.now().toString()))
     })
-    getCycleDaysSortedByDate().then(days => {
-      this.cycleDays = days
-    })
-    getFertilityStatusForDay(this.todayDateString).then((status: any) => {
+    getFertilityStatusForDay(this.todayDateString).then((status) => {
       console.log(status)
-      this.fertilityStatus = status
+      this.fertilityStatus = status.status
     })
   }
 }
 
 function determinePredictionText(bleedingPrediction: string[][]) {
-  if (!bleedingPrediction.length) return predictLabels.noPrediction
+  if (!bleedingPrediction) return predictLabels.noPrediction
   const todayDate = LocalDate.now()
   const bleedingStart = LocalDate.parse(bleedingPrediction[0][0])
   const bleedingEnd = LocalDate.parse(
@@ -121,7 +115,7 @@ function determinePredictionText(bleedingPrediction: string[][]) {
 }
 
 function getBleedingPredictionRange(prediction: string[][]) {
-  if (!prediction.length) return labels.unknown
+  if (!prediction) return labels.unknown
   const todayDate = LocalDate.now()
   const bleedingStart = LocalDate.parse(prediction[0][0])
   const bleedingEnd = LocalDate.parse(prediction[0][prediction[0].length - 1])
@@ -135,15 +129,12 @@ function getBleedingPredictionRange(prediction: string[][]) {
 }
 </script>
 
-<style scoped>
-@import url("../main.styl");
+<style lang="stylus" scoped>
+@import url('../main.styl');
+
 .container {
-  display: flex;
   width: 100%;
-  height: 100%;
-  flex-flow: column nowrap;
-  justify-content: stretch;
-  align-content: center;
+  height: 100vh;
 }
 
 .month {
@@ -155,24 +146,23 @@ function getBleedingPredictionRange(prediction: string[][]) {
 
 .monthname {
   margin: 0;
-  font-family: "Iransans-bold";
+  font-family: 'Iransans-bold';
   font-size: 18px;
 }
 
-.week {
-  display: grid;
-  grid: repeat(2, 1fr) / repeat(7, 1fr);
-  width: var(--calendar-width);
-  height: var(--calendar-height) + 5 * 10px;
-  grid-column-gap: 0;
-  justify-items: center;
-  font-size: 15px;
-  padding-right: 3%;
-  margin-left: 1%;
-  font-family: "Iransans-medium";
-  margin-bottom: 5vh;
-}
-
+// .week {
+// display: grid;
+// // grid: repeat(2, 1fr) / repeat(7, 1fr);
+// width: var(--calendar-width);
+// height: var(--calendar-height) + 5 * 10px;
+// grid-column-gap: 0;
+// justify-items: center;
+// font-size: 15px;
+// padding-right: 3%;
+// margin-left: 1%;
+// font-family: "Iransans-medium";
+// margin-bottom: 5vh;
+// }
 .weekday {
   font-size: 12px;
 }
@@ -187,20 +177,19 @@ function getBleedingPredictionRange(prediction: string[][]) {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  /* display: inline-block;
-    position: relative; */
   border-radius: 50%;
   width: 80vmin;
   height: 80vmin;
-  /* padding: 50% 0; */
-  background: #6cc4d9;
+  background: $pink-1;
   line-height: 0;
   text-align: center;
-  /* position: relative; */
-  align-self: center;
+    background: #DE6262; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FFB88C, #DE6262); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #FFB88C, #DE6262);
 }
 
 .date {
   text-align: center;
 }
+
 </style>

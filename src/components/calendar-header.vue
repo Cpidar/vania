@@ -55,7 +55,7 @@ import PeriodModal from './edit-period.vue'
   components: {
     PeriodModal,
     PoseTransition,
-    Placeholder: posed.h5({
+    Placeholder: posed.div({
       enter: {
         opacity: 1,
         y: 0

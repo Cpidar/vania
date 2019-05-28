@@ -11,7 +11,7 @@ secondarySymptom: string;
 export interface OvuPhaseModel {
     cycleDays: CycleDaySchema[];
     start: { date: string | null, time?: string };
-    end: { date: string | null, time?: string };
+    end?: { date: string | null, time?: string };
 }
 
 export interface PhaseModel {
