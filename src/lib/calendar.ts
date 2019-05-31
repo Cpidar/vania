@@ -1,5 +1,4 @@
-import { model$ } from "src/state";
-import { filter, take, map, observeOn, share } from "rxjs/operators";
+import { map, observeOn, share } from "rxjs/operators";
 import jMoment from 'moment-jalaali'
 import { range, asapScheduler } from "rxjs";
 
@@ -26,14 +25,7 @@ export const computeDaysInMonth = (counter: number, m: string) => {
     }
 }
 
-export const getMonthList = (no: number) => model$.pipe(
-    filter(m => (m.status === 'INIT')),
-    take(1),
-    map(m => {
-        const ar = Array.from({ length: 2 * no + 1 }, (v, i) => i - no)
-        return ar.map(v => moment(m.month).clone().add(v, 'jMonth').format('jYYYY-jMM-jDD'))
-    })
-)
+
 
 export const daysInMonth = (month: string) => range(-moment(month).clone().weekday(), 42).pipe(
     // observeOn(asyncScheduler),

@@ -82,11 +82,11 @@ export const pain = {
     headache: 'سردرد',
     lowerBackPain:  'درد پایین کمر',
     neckaches: 'گردن درد',
-    ovulationPain: 'درد تخمک گذاری',
+    // ovulationPain: 'درد تخمک گذاری',
     pms: 'درد قبل از پریود',
     shoulderAche: 'درد شانه',
     tender: 'درد سینه',
-    migraine: 'میگرن',
+    // migraine: 'میگرن',
     nausea: 'حالت تهوع',
   },
   explainer: 'How did your body feel today?'

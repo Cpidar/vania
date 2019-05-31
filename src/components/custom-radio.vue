@@ -34,7 +34,7 @@ export default class CustomCheckBox extends Vue {
     return this.modelValue === this.value
   }
   updateInput() {
-    this.$emit('change', this.value)
+    this.shouldBeChecked ? this.$emit('change', -1) : this.$emit('change', this.value)
   }
 }
 </script>

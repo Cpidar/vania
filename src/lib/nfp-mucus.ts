@@ -15,5 +15,5 @@ export default function (feeling: any, texture: any ) {
   }
   const nfpFeelingValue = feelingMapping[feeling]
   const nfpTextureValue = textureMapping[texture]
-  return Math.max(nfpFeelingValue, nfpTextureValue)
+  return Math.max(nfpFeelingValue, nfpTextureValue) || -1
 }

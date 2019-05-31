@@ -30,19 +30,12 @@ import { getCycleDay } from '../db';
 export default class Day extends Vue {
   @Prop({ type: String, required: true }) date: string
   @Prop({ type: Boolean, default: false }) today: boolean
-  @Prop({default: () => ({ cycle: '', events: [] })}) eventType: any
   @Prop() inactive: any
   @Prop() hasNote: boolean
   @Prop() period: string
   @Prop() fertility: string
   // v-model for class select
   @Model('select', {type: String}) selectedDay: string
-
-  // @Watch('eventType')
-  // getEv(val) {
-  //   console.log(val)
-  //   // this.events = Object.assign(this.events, val)
-  // }
 
   @Emit('select')
   selectDay(ev: any) {

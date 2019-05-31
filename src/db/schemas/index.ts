@@ -57,39 +57,71 @@ export interface SexSchema extends Base {
     value: number
 }
 
-export interface PainSchema extends Base {
-    acne: boolean;
-    bodyAche: boolean;
-    backaches: boolean;
-    bloating: boolean;
-    constipation: boolean;
-    cramps: boolean;
-    diarrhea: boolean;
-    dizziness: boolean;
-    headache: boolean;
-    lowerBackPain: boolean;
-    nausea: boolean;
-    neckaches: boolean;
-    ovulationPain: boolean;
-    pms: boolean;
-    shoulderAche: boolean;
-    tender: boolean;
-}
+// export interface PainSchema extends Base {
+//     acne: boolean;
+//     bodyAche: boolean;
+//     backaches: boolean;
+//     bloating: boolean;
+//     constipation: boolean;
+//     cramps: boolean;
+//     diarrhea: boolean;
+//     dizziness: boolean;
+//     headache: boolean;
+//     lowerBackPain: boolean;
+//     nausea: boolean;
+//     neckaches: boolean;
+//     // ovulationPain: boolean;
+//     pms: boolean;
+//     shoulderAche: boolean;
+//     tender: boolean;
+// }
+export type PainSchema = (
+    | 'acne'
+    | 'bodyAche'
+    | 'backaches'
+    | 'bloating'
+    | 'constipation'
+    | 'cramps'
+    | 'diarrhea'
+    | 'dizziness'
+    | 'headache'
+    | 'lowerBackPain'
+    | 'nausea'
+    | 'neckaches'
+    // | 'ovulationPain'
+    | 'pms'
+    | 'shoulderAche'
+    | 'tender'
+)[]
 
-export interface MoodSchema extends Base {
-    happy: boolean;
-    sad: boolean;
-    stressed: boolean;
-    normal: boolean;
-    swings: boolean;
-    anxious: boolean;
-    frisky: boolean;
-    tired: boolean;
-    angry: boolean;
-    tense: boolean;
-    panicky: boolean;
-    lonely: boolean;
-}
+// export interface MoodSchema extends Base {
+//     happy: boolean;
+//     sad: boolean;
+//     stressed: boolean;
+//     normal: boolean;
+//     swings: boolean;
+//     anxious: boolean;
+//     frisky: boolean;
+//     tired: boolean;
+//     angry: boolean;
+//     tense: boolean;
+//     panicky: boolean;
+//     lonely: boolean;
+// }
+export type MoodSchema = (
+    |'happy' 
+    | 'sad'
+    | 'stressed'
+    | 'normal'
+    | 'swings'
+    | 'anxious'
+    | 'frisky'
+    | 'tired'
+    | 'angry'
+    | 'tense'
+    | 'panicky'
+    | 'lonely'
+    )[]
 
 export interface CycleDaySchema extends Base {
     _id?: string;
@@ -107,3 +139,4 @@ export interface CycleDaySchema extends Base {
     pain: PainSchema;
     mood: MoodSchema;
 }
+

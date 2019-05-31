@@ -20,58 +20,65 @@
         :event-type="events[day.jDate]"
         :period="period.get(day.mDate)"
         :fertility="fertility.get(day.mDate)"
-      >
-        {{day.day}}
-      </Day>
+      >{{day.day}}</Day>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-
-import { daysInMonth } from '../lib/calendar'
-import Day from './day.vue'
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import { reduce, mergeDeepRight } from 'ramda'
-import { bufferTime } from 'rxjs/operators'
-import { getCycleDaysInRange } from '../db';
-import { CycleDaySchema } from '../db/schemas';
-import cycleModule from '../lib/cycle'
-import { getFertilityStatusForDay } from '../lib/sympto-adapter';
+import { daysInMonth } from "../lib/calendar";
+import Day from "./day.vue";
+import { Vue, Component, Prop } from "vue-property-decorator";
+import { reduce, mergeDeepRight } from "ramda";
+import { bufferTime } from "rxjs/operators";
+import { getCycleDaysInRange } from "../db";
+import { CycleDaySchema } from "../db/schemas";
+import cycleModule from "../lib/cycle";
+import { getFertilityStatusForDay } from "../lib/sympto-adapter";
 
 @Component<Calendar>({
   components: { Day }
 })
 export default class Calendar extends Vue {
-  @Prop({ type: String, required: true }) current: string
-  events = {}
-  selectedDay = ''
-  month: any = []
-  @Prop({ default: () => new Map<string, string>() }) period: Map<string, string>
-  fertility = new Map<string, string>()
+  @Prop({ type: String, required: true }) current: string;
+  events = {};
+  selectedDay = "";
+  month: any = [];
+  @Prop({ default: () => new Map<string, string>() }) period: Map<
+    string,
+    string
+  >;
+  fertility = new Map<string, string>();
 
-  mounted() {
-    this.$subscribeTo(daysInMonth(this.current),
+  created() {
+    this.$subscribeTo(
+      daysInMonth(this.current),
       (d: any) => {
-        this.month = [...this.month, d]
-        if (d.isToday) { this.selectedDay = d.jDate }
+        this.month = [...this.month, d];
+        if (d.isToday) {
+          this.selectedDay = d.jDate;
+        }
         getFertilityStatusForDay(d.mDate).then(status => {
-            this.fertility.set(d.mDate, status.status)
-        })
+          this.fertility.set(d.mDate, status.status);
+        });
       },
-      function (err) { console.log(err) },
-      () => { console.log('complete') }
-    )
-    this.selectedDay = this.selectedDay || this.current
-    
+      function(err) {
+        console.log(err);
+      },
+      () => {
+        console.log("complete");
+      }
+    );
   }
 
+  mounted() {
+    this.selectedDay = this.selectedDay || this.current;
+  }
 }
-
 </script>
 
 <style lang="stylus" scoped>
-@import url("../main.styl");
+@import url('../main.styl');
 
 .calendar {
   display: flex;
@@ -90,7 +97,7 @@ export default class Calendar extends Vue {
 }
 
 .todaycal {
-  grid-row: 1/3;
+  grid-row: 1 / 3;
   grid-column: 1;
 }
 

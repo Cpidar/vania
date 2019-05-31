@@ -1,6 +1,6 @@
 <template>
   <section class="q-px-md q-py-md">
-    <q-banner dense class="bg-grey-3" v-if="events !== undefined && events.length > 0">
+    <q-banner dense class="bg-grey-3" v-if="events && events.length > 0">
       <template v-slot:avatar>
         <q-icon name="event_available" color="secondary" />
       </template>
@@ -9,23 +9,15 @@
       </div>
     </q-banner>
     <q-timeline color="secondary">
-      <!-- <q-timeline-entry heading>
-        Timeline heading
-      </q-timeline-entry> -->
-      <!-- <transition-group
-        appear
-        enter-active-class="animated fadeIn"
-        leave-active-class="animated fadeOut"
-      > -->
-        <q-timeline-entry icon="delete" key="weight-temp" v-if="weight !== undefined && temperature !== undefined && weight !== -1 && temperature !== -1">
+        <q-timeline-entry icon="delete" key="weight-temp" v-if="weight || temperature">
           <div>
-            <q-chip v-if="weight !== -1 && weight !== undefined">
+            <q-chip v-if="weight">
               <q-avatar size="28px">
                 <img :src="'./assets/icons/ic_weigth.png'" />
               </q-avatar>
               {{ weight + " Kg" }}
             </q-chip>
-            <q-chip v-if="temperature !== -1 && temperature !== undefined">
+            <q-chip v-if="temperature">
               <q-avatar size="28px">
                 <img :src="'./assets/icons/ic_tempreture.png'" />
               </q-avatar>
@@ -49,7 +41,7 @@
           </div>
         </q-timeline-entry>
 
-        <q-timeline-entry icon="img:./assets/calendar-icons/ic_calendar_sym_headache_c.png" key="pain" v-if="pains.length">
+        <q-timeline-entry icon="img:./assets/calendar-icons/ic_calendar_sym_headache_c.png" key="pain" v-if="pains">
           <div>
             <q-chip v-for="pain of pains" :key="pain">
               <q-avatar size="28px">
@@ -60,8 +52,8 @@
           </div>
         </q-timeline-entry>
 
-        <q-timeline-entry icon="mood" key="mood" v-if="moods.length">
-          <div>
+        <q-timeline-entry icon="mood" key="mood" v-if="moods">
+          <div >
             <q-chip v-for="mood of moods" :key="mood">
               <q-avatar size="28px">
                 <img :src="'../assets/icons/ic_mood_' + mood + '.png'" />
@@ -88,11 +80,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { shortSelectedDay, getSelectedEvents } from '../state'
+import { shortSelectedDay, getSelectedEvents, model$, initialCycleDay } from '../state'
 import { getCycleDay } from '../db'
 import { CycleDaySchema } from '../db/schemas';
 import { bleeding, pain, sex, mood } from '../i18n/fa/cycle-day';
-import { pickBy, keys, pick, compose, values, map } from 'ramda';
+import { pluck, combineLatest, map } from 'rxjs/operators';
 
 interface PhnList {
   label?: string;
@@ -100,64 +92,51 @@ interface PhnList {
 }
 
 @Component({
-  components: { PhnModal: () => import('./phn-modal.vue') },
   subscriptions() {
     return {
-      // phnValues: getPHNValuesArray,
-      getSelectedDay$: shortSelectedDay,
-      events: getSelectedEvents
+      events: getSelectedEvents,
     }
   }
 })
 export default class PhnSection extends Vue {
-  @Prop({ default: () => ({
-      pain: {},
-      bleeding: {},
-      mood: {},
-      sex: {}
-    })  }) phn: CycleDaySchema
-  phnModalState = false
-  getSelectedDay$: string = ''
-  phnInfo = {}
+  @Prop() phn: CycleDaySchema
+
   painLabels = pain.categories
   moodLabels = mood.categories
   bleedingLabel = bleeding.labels
   sexLabels = sex.categories
-  events: { type: string, title: string }[] = []
-
-  get checkExistEvents () {
-    return this.events.length
-  }
 
 
   get pains() {
-    let attr = this.phn['pain']
-    return attr ? Object.keys(attr).filter(key => attr[key]) : []
+    let attr = this.phn && this.phn['pain']
+    // return (attr && Object.keys(attr).filter(key => attr[key]))
+    return attr
   }
 
   get moods() {
-    let attr = this.phn['mood']
-    return attr ? Object.keys(attr).filter(key => attr[key]) : []
+    let attr = this.phn && this.phn['mood']
+    // return (attr && Object.keys(attr).filter(key => attr[key]))
+    return attr
   }
 
   get bleeding() {
-    let attr = this.phn.bleeding
-    return attr ? attr.value : undefined
+    let attr = this.phn && this.phn.bleeding
+    return (attr && attr.value)
   }
 
   get sex() {
-    let attr = this.phn.sex
-    return attr ? attr.value : undefined
+    let attr = this.phn && this.phn.sex
+    return (attr && attr.value)
   }
 
   get temperature() {
-    let attr = this.phn.temperature
-    return attr ? attr.value : undefined
+    let attr = this.phn && this.phn.temperature
+    return (attr && attr.value)
   }
 
   get weight() {
-    let attr = this.phn.weight
-    return attr ? attr.value : undefined
+    let attr = this.phn && this.phn.weight
+    return (attr && attr.value)
   }
 }
 

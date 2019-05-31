@@ -20,7 +20,7 @@ import { PainSchema, BleedingSchema, MoodSchema, SexSchema, DesireSchema } from 
 
 @Component({})
 export default class CustomCheckbox extends Vue {
-  @Model('change') readonly modelValue: PainSchema | MoodSchema | DesireSchema
+  @Model('change') readonly modelValue: string[]
   @Prop({ default: false }) styled: boolean
   @Prop() value: string
   @Prop() label: string
@@ -30,23 +30,23 @@ export default class CustomCheckbox extends Vue {
   @Prop() uncheckedColor: string
 
   icon = this.uncheckedIcon
+  updatedModel = this.modelValue || []
 
   get shouldBeChecked() {
-    // let checked = [''].concat(this.modelValue)
-    let updatedModel = this.modelValue
-    return updatedModel[this.value]
+    // let updatedModel = this.modelValue
+    // return updatedModel[this.value]
+    return this.updatedModel.includes(this.value)
   }
 
   updateInput() {
-    // let checked = [''].concat(this.modelValue)
-    // if (checked.includes(this.value)) {
-    //   checked.splice(checked.indexOf(this.value), 1)
-    // } else {
-    //   checked.push(this.value)
-    // }
-    let updatedModel = this.modelValue
-    updatedModel[this.value] = !updatedModel[this.value]
-    this.$emit('change', updatedModel)
+    if (this.updatedModel.includes(this.value)) {
+      this.updatedModel.splice(this.updatedModel.indexOf(this.value), 1)
+    } else {
+      this.updatedModel.push(this.value)
+    }
+    // let updatedModel = this.modelValue
+    // updatedModel[this.value] = !updatedModel[this.value]
+    this.$emit('change', this.updatedModel)
   }
 }
 </script>

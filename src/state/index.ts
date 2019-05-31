@@ -1,7 +1,7 @@
 
 import jMoment from 'moment-jalaali'
 import { Subject, Observable, of, from } from 'rxjs'
-import { map, shareReplay, switchMap, share, filter, tap, catchError } from 'rxjs/operators'
+import { map, shareReplay, switchMap, share, filter, tap, catchError, take } from 'rxjs/operators'
 
 import { getCycleDay } from 'src/db';
 import { CycleDaySchema } from 'src/db/schemas';
@@ -23,6 +23,14 @@ interface Model {
   currentCycle: { start: string, cycleLength: number, bleedindLength: number };
 }
 
+export interface LongDateModel {
+  date: string;
+  mDate: string;
+  day: string;
+  monthName: string;
+  fullYear: string;
+}
+
 export const initialModel: Model = {
   status: 'INIT',
   month: jMoment().startOf('jMonth').format('jYYYY-jMM-jDD'),
@@ -31,72 +39,6 @@ export const initialModel: Model = {
   events: [],
   PHN: {} as any,
   currentCycle: { start: '', cycleLength: 0, bleedindLength: 0 },
-}
-
-export const initialCycleDay: CycleDaySchema =  {
-  date: miladi(initialModel.today),
-  isBleedingDay: false,
-  isCycleStart: false,
-  bleeding: { value: -1, exclude: false },
-  pain: {
-    acne: false,
-    bodyAche: false,
-    backaches: false,
-    bloating: false,
-    constipation: false,
-    cramps: false,
-    diarrhea: false,
-    dizziness: false,
-    headache: false,
-    lowerBackPain: false,
-    nausea: false,
-    neckaches: false,
-    ovulationPain: false,
-    pms: false,
-    shoulderAche: false,
-    tender: false,
-    migraine: false,
-    other: false
-  },
-  mood: {
-    happy: false,
-    sad: false,
-    stressed: false,
-    normal: false,
-    swings: false,
-    anxious: false,
-    frisky: false,
-    tired: false,
-    angry: false,
-    tense: false,
-    panicky: false,
-    lonely: false
-  },
-  sex: { value: -1 },
-  mucus: {
-    feeling: -1,
-    texture: -1,
-    value: -1,
-  },
-  cervix: {
-    firmness: -1,
-    opening: -1,
-    position: -1
-  },
-  desire: {
-    value: -1
-  },
-  temperature: {
-    value: -1,
-    time: ''
-  },
-  weight: {
-    value: -1,
-    time: ''
-  },
-  note: {
-    value: ''
-  }
 }
 
 export const present = async (data: { type: string, payload: any}) => {
@@ -112,52 +54,9 @@ export const present = async (data: { type: string, payload: any}) => {
       initialModel.events = data.payload.events
       initialModel.PHN = data.payload.phn
       return initialModel
-
-    case 'goToNextMonth':
-      const nextMonth = moment(initialModel.month).add(+1, 'jMonth').format('jYYYY-jMM-jDD')
-      const s = moment(initialModel.selectedDay).add(+1, 'jMonth').format('jYYYY-jMM-jDD')
-      initialModel.status = 'NEXT_MONTH'
-      initialModel.month = nextMonth
-      initialModel.selectedDay = s
-      return initialModel
-
-    case 'goToPrevMonth':
-      const prevMonth = moment(initialModel.month).subtract(+1, 'jMonth').format('jYYYY-jMM-jDD')
-      const p = moment(initialModel.selectedDay).subtract(+1, 'jMonth').format('jYYYY-jMM-jDD')
-      initialModel.status = 'NEXT_MONTH'
-      initialModel.month = prevMonth
-      initialModel.selectedDay = p
-      return initialModel
-
-    case 'goToMonth':
-      const month = moment(data.payload).format('jYYYY-jMM-jDD')
-      initialModel.status = 'CHANGE_MONTH'
-      initialModel.month = month
-      initialModel.selectedDay = month
-      return initialModel
-
-    case 'gotPeriod':
-      initialModel.status = 'PERIOD_STARTS'
-      initialModel.currentCycle.start = initialModel.selectedDay
-      return initialModel
-
-    case 'endPeriod':
-      const newPerLength = moment(data.payload).diff(moment(initialModel.currentCycle.start), 'days')
-
-      initialModel.status = 'PERIOD-ENDS'
-      initialModel.currentCycle.bleedindLength = newPerLength
-      return initialModel
-
-    case 'changePeriod':
-      initialModel.status = 'PERIOD_CHANGE'
-      initialModel.currentCycle.bleedindLength = data.payload.periodLength
-      initialModel.currentCycle.cycleLength = data.payload.cycleLength
-      return initialModel
-
-    case 'addEvent':
-      initialModel.status = 'EVENT_ADD'
-      initialModel.events.push(data.payload)
-      return initialModel
+    
+    case 'ADD_PHN':
+      initialModel.status = 'PHN_ADDED'
 
     default:
       return initialModel
@@ -174,8 +73,15 @@ export const model$: Observable<Model> = action$.pipe(
   switchMap(present),
   shareReplay()
 )
-// no: number of month after or before of current month
 
+// no: number of month after or before of current month
+export const getMonthList = (no: number) => model$.pipe(
+  take(1),
+  map((m: Model) => {
+      const ar = Array.from({ length: 2 * no + 1 }, (v, i) => i - no)
+      return ar.map(v => moment(m.month).clone().add(v, 'jMonth').format('jYYYY-jMM-jDD'))
+  })
+)
   
 // export const saveInitialCycleConfig = () => model$.pipe(
 //   filter(m => (m.status === 'INIT')),
@@ -206,7 +112,7 @@ export const shortSelectedDay = model$.pipe(
   share()
 )
 
-export const longSelectedDayObj = model$.pipe(
+export const longSelectedDayObj: Observable<LongDateModel> = model$.pipe(
   // distinctUntilKeyChanged('selectedDay'),
   // filter(m => (m.status === ('INIT' || 'SELECTED_DAY'))),
   map((m) => {
@@ -222,7 +128,7 @@ export const longSelectedDayObj = model$.pipe(
 )
 
 export const getSelectedCycleDay = longSelectedDayObj.pipe(
-  switchMap(m => from(getCycleDay(m.mDate)).pipe(catchError((x) => {console.log('not-found'); return of(initialCycleDay)}))),
+  switchMap(m => from(getCycleDay(m.mDate)).pipe(catchError((x) => {console.log('not-found'); return of({})}))),
   tap(console.log),
   shareReplay()
 )
@@ -230,26 +136,6 @@ export const getSelectedCycleDay = longSelectedDayObj.pipe(
 export const getSelectedEvents = longSelectedDayObj.pipe(
   switchMap(day => getBadTimeEvents(day.date))
 )
-
-export const calendarReloadHook = model$.pipe(
-  filter(m => m.status === 'PERIOD_CHANGE'),
-  map(() => Math.round(Math.random() * 100000))
-)
-
-// بعد اینو اضاف کن که اگر قبل از آخرین پریودی واقعی چیزی وارد کرد روی پریودی پیش بینی تاثیر نذار
-//  برای این کار براساس مقدار diff حالتهای مختلف تعریف کن
-// export const possibleClosePeriod = model$.pipe(
-//   filter(m => (m.status === 'SELECTED_DAY')),
-//   map(m => {
-//     const diff = moment(m.selectedDay).diff(moment(m.currentCycle.start), 'days')
-//     console.log(diff)
-//     if (diff > 8 || diff < -m.currentCycle.bleedindLength) {
-//       return ({ canPeriod: true, diff })
-//     } else {
-//       return ({ canPeriod: false, diff })
-//     }
-//   })
-// )
 
 export const dispatch = (type: string, payload?: any) => {
   model$.subscribe()
