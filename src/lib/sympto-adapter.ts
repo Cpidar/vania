@@ -38,7 +38,7 @@ export async function getFertilityStatusForDay(dateString: string) {
   return formatStatus(phaseNameForDay, dateString, status)
 }
 
-export async function getCycleStatusForDay(dateString: string, opts?: any) {
+export async function getCycleStatusForDay(dateString: string, opts = {} as any) {
   let options = opts || { excludeEarlierCycles: false }
   const {
     getCycleForDay,
@@ -59,7 +59,7 @@ export async function getCycleStatusForDay(dateString: string, opts?: any) {
   if (previousCycle && !options.excludeEarlierCycles) {
     const earlierCycles = getCyclesBefore(previousCycle[0])
     if (earlierCycles) {
-      cycleInfo.earlierCycles = (earlierCycles as CycleDaySchema[][]).map(formatCycleForSympto)
+      cycleInfo.earlierCycles = earlierCycles.map(formatCycleForSympto)
     }
   }
 

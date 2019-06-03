@@ -15,14 +15,17 @@
       transition-show="slide-up"
       transition-hide="slide-down"
     >
-      <q-card class="bg-teal text-white" style="width: 300px">
+      <q-card style="width: 300px">
         <q-card-section>
           <div class="text-h6">{{ tempLabels.temperature.header }}</div>
           <div class="text-caption">{{ tempLabels.temperature.explainer }}</div>
         </q-card-section>
 
         <q-card-section>
-          <smooth-picker ref="tempPicker" :data="tempValList" style="color: black;"/>
+          <scroll-picker-group style="display: flex; font-size: 18px;">
+            <scroll-picker :options="tempDecList" v-model="temperatureDec"/>
+            <scroll-picker :options="tempIntList" v-model="temperatureInt"/>
+          </scroll-picker-group>
         </q-card-section>
 
         <q-card-actions align="left" class="bg-white text-teal">
@@ -34,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { BleedingSchema, MucusSchema, TemperatureSchema } from "../db/schemas";
 import iRadio from "./custom-radio.vue";
 import { temperature, sharedDialogs } from "../i18n/fa/cycle-day";
@@ -52,7 +55,7 @@ interface PhnIcon {
 function range(start: number, end: number) {
   var ans = [];
   for (let i = start; i <= end; i++) {
-    ans.push(i);
+    ans.push({ value: i, name: i });
   }
   return ans;
 }
@@ -61,11 +64,7 @@ function range(start: number, end: number) {
   components: { iRadio }
 })
 export default class TemperatureDialog extends Vue {
-  @Prop({ default: () => ({
-    value: -1,
-    time: '',
-    exclude: false
-  }) }) data: TemperatureSchema;
+  @Prop() data: TemperatureSchema;
   @Prop() date: string;
 
   showDialog = false;
@@ -73,42 +72,31 @@ export default class TemperatureDialog extends Vue {
   tempLabels = temperature;
   title = headerTitles.TemperatureEditView;
 
-  exclude = this.data.exclude;
+  exclude = false;
+  temperatureInt = 32
+  temperatureDec = 0.4
 
-  tempValList: any = [
-    {
-      divider: true,
-      flex: 1
-    },
-    {
-      currentIndex: 0,
-      flex: 3,
-      list: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-      textAlign: "center",
-      className: "row-group"
-    },
-    {
-      currentIndex: 1,
-      flex: 3,
-      list: range(33, 45),
-      textAlign: "center",
-      className: "row-group"
-    },
-    {
-      divider: true,
-      flex: 1
-    }
+  @Watch('data')
+  onDataChange() {
+    this.temperatureInt = Math.trunc(this.data.value)
+    this.temperatureDec = this.data.value - this.temperatureInt
+    this.exclude = this.data.exclude
+  }
+
+  tempIntList: any = [
+    ...range(33, 45)
   ];
 
+  tempDecList = [
+    ...range(1, 9).map(x => ({ value: x.value / 10, name: x.name /10 }))
+  ]
+
   get value() {
-    return this.data.value;
+    return this.data && this.data.value;
   }
 
   save() {
-    const ciList = (this.$refs.tempPicker as any).getCurrentIndexList();
-    const tempInt = this.tempValList[2].list[ciList[2]];
-    const tempDec = this.tempValList[1].list[ciList[1]];
-    const temp = tempInt + tempDec;
+    const temp = this.temperatureInt + this.temperatureDec;
     saveSymptom("temperature", this.date, {
       value: temp,
       exclude: this.exclude

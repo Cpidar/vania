@@ -51,7 +51,6 @@
 import {
   dispatch,
   longSelectedDayObj,
-  calendarReloadHook,
   getSelectedCycleDay,
   model$,
   getMonthList

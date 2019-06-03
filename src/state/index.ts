@@ -3,9 +3,10 @@ import jMoment from 'moment-jalaali'
 import { Subject, Observable, of, from } from 'rxjs'
 import { map, shareReplay, switchMap, share, filter, tap, catchError, take } from 'rxjs/operators'
 
-import { getCycleDay } from 'src/db';
+import { getCycleDay, saveBulkCycleDay } from 'src/db';
 import { CycleDaySchema } from 'src/db/schemas';
 import { getBadTimeEvents } from 'src/lib/cal-events/event';
+import { saveInitialCycleConfig } from 'src/local-storage';
 
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
@@ -20,7 +21,7 @@ interface Model {
   today: string;
   events: { type: string, title: string }[];
   PHN: CycleDaySchema;
-  currentCycle: { start: string, cycleLength: number, bleedindLength: number };
+  // currentCycle: { start: string, cycleLength: number, bleedindLength: number };
 }
 
 export interface LongDateModel {
@@ -38,14 +39,13 @@ export const initialModel: Model = {
   today: jMoment().startOf('day').format('jYYYY-jMM-jDD'),
   events: [],
   PHN: {} as any,
-  currentCycle: { start: '', cycleLength: 0, bleedindLength: 0 },
 }
+
 
 export const present = async (data: { type: string, payload: any}) => {
   switch (data.type) {
     case 'init':
       initialModel.status = 'INIT'
-      initialModel.currentCycle = data.payload
       return initialModel
 
     case 'selectDay':
@@ -63,6 +63,21 @@ export const present = async (data: { type: string, payload: any}) => {
   }
 }
 
+export const importInitialCycleConfig = (m: any) => {
+  saveInitialCycleConfig(m)
+  let docs: Partial<CycleDaySchema>[] = []
+  for(let i = 0; i < m.bleedindLength; i++) {
+    let date = moment(m.start).add(i, 'day').format('YYYY-MM-DD')
+    if(date > jMoment().format('YYYY-MM-DD')) break
+    docs.push({
+      _id: `cycleday-${date}`,
+      date: date,
+      isCycleStart: i === 0 ? true : false,
+      isBleedingDay: true
+    })
+  }
+  return saveBulkCycleDay(docs)
+}
 
 
 // Wiring
@@ -82,28 +97,6 @@ export const getMonthList = (no: number) => model$.pipe(
       return ar.map(v => moment(m.month).clone().add(v, 'jMonth').format('jYYYY-jMM-jDD'))
   })
 )
-  
-// export const saveInitialCycleConfig = () => model$.pipe(
-//   filter(m => (m.status === 'INIT')),
-//   map((m: Model) => {
-//     let docs: Partial<CycleDaySchema>[] = []
-//     for(let i = 0; i < m.currentCycle.bleedindLength; i++) {
-//       let date = moment(m.currentCycle.start).add(i, 'day').format('YYYY-MM-DD')
-//       console.log(date)
-//       if(date > jMoment().format('YYYY-MM-DD')) break
-//       docs.push({
-//         _id: `cycleday-${date}`,
-//         date: date,
-//         isCycleStart: i === 0 ? true : false,
-//         isBleedingDay: true
-//       })
-//     }
-//     return docs
-//   }),
-//   switchMap(c => saveBulkCycleDay(c as Partial<CycleDaySchema>[])),
-// )
-
-
 
 export const shortSelectedDay = model$.pipe(
   // filter(m => (m.status === ('INIT' || 'SELECTED_DAY'))),

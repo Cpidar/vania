@@ -30,10 +30,11 @@
     "quasar": "^1.0.0-rc.2",
     "ramda": "^0.26.1",
     "rxjs": "^6.5.1",
+    "vue-persian-datetime-picker": "^2.0.1",
     "vue-pose": "^0.5.1",
     "vue-property-decorator": "^8.1.1",
     "vue-rx": "^6.1.0",
-    "vue-smooth-picker": "^0.4.2"
+    "vue-scroll-picker": "^0.2.0"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0-rc.4",

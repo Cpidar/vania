@@ -78,3 +78,12 @@ function setObvWithInitValue(key: string, obv: any, defaultValue: any) {
   }
   obv.set(value)
 }
+
+export function saveInitialCycleConfig(cycle: any) {
+  LocalStorage.set('appOpenedBefore', true)
+  LocalStorage.set('initialCycle', cycle)
+}
+
+export function getInitialCycleConfig() {
+  return LocalStorage.getItem('initialCycle')
+}

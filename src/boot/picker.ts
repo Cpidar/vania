@@ -1,7 +1,7 @@
-import 'vue-smooth-picker/dist/css/style.css'
-import SmoothPicker from 'vue-smooth-picker'
+import "vue-scroll-picker/dist/style.css"
+import VueScrollPicker from "vue-scroll-picker"
 
 // @ts-ignore
 export default ({ Vue }) => {
-    Vue.use(SmoothPicker)
+    Vue.use(VueScrollPicker)
   }

@@ -129,3 +129,19 @@ export const fertilityStatus = {
     )
   }
 }
+
+export const entryPage = {
+  explainer: 'برای اینکه این اپلیکیشن قادر به پیش بینی باشد سوالات لازم است جواب داده شود',
+  cycleLengthTitle: 'طول دوره',
+  cyclelengthQuestion: 'طول دوره تان به طور میانگین چند روز است؟',
+  cyclelengthExplainer: 'منظور از طول دوره شروع خونریزی تا شروع خونریزی بعدی است',
+  bleedingLengthTitle: 'طول پریودی',
+  bleedinlengthQuestion: 'طول دوره خونریزی به طور میانگین چند روز است؟',
+  bleedinlengthExplainer: '',
+  lastCycleStartTitle: 'تاریخ آخرین دوره',
+  lastCycleStartQuestion: 'روز شروع آخرین دوره تان را وارد کنید؟',
+  lastCycleStartExplainer: '',
+  continue: 'ادامه',
+  back: 'بازگشت',
+  finish: 'ورود'
+}
