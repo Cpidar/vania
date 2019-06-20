@@ -12,10 +12,7 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
   const { cycle, previousCycle, earlierCycles = [], secondarySymptom = 'mucus', excludePreOvu } = cycleInfo
   throwIfArgsAreNotInRequiredFormat([cycle, ...earlierCycles])
 
-  const status: StatusModel = {
-    status: '',
-    phases: {} as PhaseModel
-  }
+  const status: StatusModel = initializeStatus(cycle)
 
   // if there was no first higher measurement in the previous cycle,
   // no infertile pre-ovulatory phase may be assumed
@@ -54,9 +51,10 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
     const lastPreDay = prePhase.cycleDays[prePhase.cycleDays.length - 1]
     periPhase.cycleDays = cycle.slice(cycle.indexOf(lastPreDay) + 1)
   } else {
-    const cycleLength = getInitialCycleConfig().cycleLength
-    periPhase.start.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5).toString()
-    periPhase.end.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1).toString()
+    // const cycleLength = getInitialCycleConfig().cycleLength
+    // periPhase.start.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5).toString()
+    // periPhase.end.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1).toString()
+    periPhase.start.date = cycle[0].date
     periPhase.cycleDays = [...cycle]
   }
 
@@ -132,4 +130,30 @@ function throwIfArgsAreNotInRequiredFormat(cycles: any) {
       assert.equal(typeof cycle[0].isBleedingDay, 'boolean', "Bleeding value must be a number")
     })
   })
+}
+
+const initializeStatus = (cycle: any) => {
+  const status: StatusModel = {
+    status: '',
+    phases: {} as PhaseModel
+  }
+  const cycleLength = getInitialCycleConfig().cycleLength
+  const periPhaseStart = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5)
+  const periPhaseEnd = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1)
+  status.phases.preOvulatoryStd = {
+    start: { date: cycle[0].date },
+    end: { date: periPhaseStart.minusDays(1).toString() },
+    cycleDays: []
+  }
+  status.phases.periOvulatoryStd = {
+    start: { date: periPhaseStart.toString() },
+    end: { date: periPhaseEnd.toString() },
+    cycleDays: []
+  }
+  status.phases.postOvulatoryStd = {
+    start: { date: periPhaseEnd.toString() },
+    cycleDays: []
+  }
+
+  return status
 }

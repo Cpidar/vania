@@ -99,6 +99,36 @@ function formatStatus(phaseNameForDay: string, dateString: string, status: Statu
         phase: 3,
         statusText: labels.postOvuText(status.temperatureShift.rule)
       }
+    },
+    preOvulatoryStd: () => {
+      return {
+        status: labels.infertile,
+        phase: 1,
+        statusText: labels.preOvuText
+      }
+    },
+    periOvulatoryStd: (dateString: string, status: StatusModel) => {
+      // there might not actually be any data for the phase
+      const peri = status.phases.periOvulatory
+      const phaseEnd = peri && peri.end
+      let s: string
+      if (phaseEnd && phaseEnd.date === dateString) {
+        s = labels.fertileUntilEvening
+      } else {
+        s = labels.fertile
+      }
+      return {
+        status: s,
+        phase: 2,
+        statusText: labels.periOvuText
+      }
+    },
+    postOvulatoryStd: (dateString: string, status: StatusModel) => {
+      return {
+        status: labels.infertile,
+        phase: 3,
+        // statusText: labels.postOvuText(status.temperatureShift.rule)
+      }
     }
   }
 

@@ -19,6 +19,9 @@ export interface PhaseModel {
     preOvulatory?: OvuPhaseModel;
     periOvulatory?: OvuPhaseModel;
     postOvulatory?: OvuPhaseModel;
+    preOvulatoryStd?: OvuPhaseModel;
+    periOvulatoryStd?: OvuPhaseModel;
+    postOvulatoryStd?: OvuPhaseModel;
 }
 
 export interface TemperatureDaysModel {
