@@ -7,6 +7,7 @@ import { getCycleDay, saveBulkCycleDay } from 'src/db';
 import { CycleDaySchema } from 'src/db/schemas';
 import { getBadTimeEvents } from 'src/lib/cal-events/event';
 import { saveInitialCycleConfig } from 'src/local-storage';
+import { getFertilityStatusForDay } from 'src/lib/sympto-adapter';
 
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
@@ -118,6 +119,11 @@ export const longSelectedDayObj: Observable<LongDateModel> = model$.pipe(
     }
   }),
   shareReplay()
+)
+
+export const fertilityStatus = longSelectedDayObj.pipe(
+  switchMap(m => getFertilityStatusForDay(m.mDate)),
+  tap(console.log)
 )
 
 export const getSelectedCycleDay = longSelectedDayObj.pipe(

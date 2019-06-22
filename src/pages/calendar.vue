@@ -53,7 +53,8 @@ import {
   longSelectedDayObj,
   getSelectedCycleDay,
   model$,
-  getMonthList
+  getMonthList,
+  fertilityStatus
   // getDaysHaveEvents,
 } from '../state'
 
@@ -101,7 +102,8 @@ import jMoment from 'moment-jalaali'
       isAfterToday: model$.pipe(map( m => m.selectedDay > m.today)),
       bleeding: getSelectedCycleDay.pipe(pluck('bleeding')),
       mucus: getSelectedCycleDay.pipe(pluck('mucus')),
-      temperature: getSelectedCycleDay.pipe(pluck('temperature'))
+      temperature: getSelectedCycleDay.pipe(pluck('temperature')),
+      fertilityStatus
     }
   }
 })

@@ -103,7 +103,7 @@ export async function saveSymptom(symptom: string, date: string, val: any) {
     } else if (bleedingValueAddedOrChanged(symptom, val)) {
       cycleDay.bleeding = val
       cycleDay.isBleedingDay = true
-      cycleDay.isCycleStart = isMensesStart(date)
+      cycleDay.isCycleStart = isMensesStart(cycleDay)
       maybeClearOldCycleStarts(cycleDay)
     } else {
       cycleDay[symptom] = val
@@ -118,7 +118,7 @@ export async function saveSymptom(symptom: string, date: string, val: any) {
     const mensesDaysAfter = getMensesDaysRightAfter(dayWithDeletedBleeding)
     if (!mensesDaysAfter.length) return
     const nextOne = mensesDaysAfter[mensesDaysAfter.length - 1]
-    if (isMensesStart(nextOne.date)) {
+    if (isMensesStart(nextOne)) {
       nextOne.isCycleStart = true
     }
   }
@@ -147,7 +147,7 @@ export async function updateCycleStartsForAllCycleDays() {
     const isMensesStart = cycle.isMensesStart
 
     return await Promise.all(days.map((day: CycleDaySchema) => {
-      if (isMensesStart(day.date)) {
+      if (isMensesStart(day)) {
         day.isCycleStart = true
       }
       return db.put({

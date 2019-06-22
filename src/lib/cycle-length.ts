@@ -1,4 +1,6 @@
 import assert from 'assert'
+// import * as assert from 'assert'
+
 
 export interface CycleLengthState {
   minimum: number;

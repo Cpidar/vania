@@ -79,7 +79,7 @@ export default class TemperatureDialog extends Vue {
   @Watch('data')
   onDataChange() {
     this.temperatureInt = Math.trunc(this.data.value)
-    this.temperatureDec = this.data.value - this.temperatureInt
+    this.temperatureDec = +(this.data.value - this.temperatureInt).toFixed(2)
     this.exclude = this.data.exclude
   }
 
@@ -88,7 +88,7 @@ export default class TemperatureDialog extends Vue {
   ];
 
   tempDecList = [
-    ...range(1, 9).map(x => ({ value: x.value / 10, name: x.name /10 }))
+    ...range(1, 99).map(x => ({ value: x.value / 100, name: x.name /100 }))
   ]
 
   get value() {

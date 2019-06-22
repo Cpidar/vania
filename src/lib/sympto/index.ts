@@ -51,9 +51,10 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
     const lastPreDay = prePhase.cycleDays[prePhase.cycleDays.length - 1]
     periPhase.cycleDays = cycle.slice(cycle.indexOf(lastPreDay) + 1)
   } else {
-    // const cycleLength = getInitialCycleConfig().cycleLength
-    // periPhase.start.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5).toString()
-    // periPhase.end.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1).toString()
+    const conf = getInitialCycleConfig() || { cycleLength: 28 }
+    const cycleLength = conf.cycleLength
+    periPhase.start.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5).toString()
+    periPhase.end.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1).toString()
     periPhase.start.date = cycle[0].date
     periPhase.cycleDays = [...cycle]
   }
@@ -137,7 +138,8 @@ const initializeStatus = (cycle: any) => {
     status: '',
     phases: {} as PhaseModel
   }
-  const cycleLength = getInitialCycleConfig().cycleLength
+  const conf = getInitialCycleConfig() || { cycleLength: 28 }
+  const cycleLength = conf.cycleLength
   const periPhaseStart = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5)
   const periPhaseEnd = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1)
   status.phases.preOvulatoryStd = {

@@ -11,7 +11,6 @@ export default async function config(opts?: any) {
   let cycleStartsSortedByDate: CycleDaySchema[]
   let cycleDaysSortedByDate: CycleDaySchema[]
   let maxBreakInBleeding: number
-  let maxBleedingLength: number
   let maxCycleLength: number
   let minCyclesForPrediction: number
 
@@ -23,9 +22,8 @@ export default async function config(opts?: any) {
     cycleDaysSortedByDate = await getCycleDaysSortedByDate()
     // maximum day break between bleeding
     maxBreakInBleeding = 1
-    maxBleedingLength = 6
     maxCycleLength = 99
-    minCyclesForPrediction = 0
+    minCyclesForPrediction = 3
   } else {
     bleedingDaysSortedByDate = opts.bleedingDaysSortedByDate || []
     cycleStartsSortedByDate = opts.cycleStartsSortedByDate || []
@@ -127,22 +125,21 @@ export default async function config(opts?: any) {
     return getCycleForCycleStartDay(cycleStart, todayDate)
   }
 
-  function isMensesStart(date: string) {
-    // if (!cycleDay.isBleedingDay || (cycleDay.bleeding as BleedingSchema).exclude) return false
-    if (noBleedingDayWithinThresholdBefore(date)) return true
+  function isMensesStart(cycleDay: CycleDaySchema) {
+    if (!cycleDay.isBleedingDay || (cycleDay.bleeding as BleedingSchema).exclude) return false
+    if (noBleedingDayWithinThresholdBefore(cycleDay)) return true
     return false
 
     // checks that there are no relevant bleeding days before
     // the input cycleDay (returns boolean)
-    function noBleedingDayWithinThresholdBefore(date: string) {
-      const localDate = LocalDate.parse(date)
-      const threshold = localDate.minusDays(maxBleedingLength + 1).toString()
+    function noBleedingDayWithinThresholdBefore(cycleDay: CycleDaySchema) {
+      const localDate = LocalDate.parse(cycleDay.date)
+      const threshold = localDate.minusDays(maxBreakInBleeding + 1).toString()
       const bleedingDays = bleedingDaysSortedByDate
-      const index = bleedingDays.findIndex(day => day.date === date)
+      const index = bleedingDays.findIndex(day => day.date === cycleDay.date)
       const candidates = bleedingDays.slice(index + 1)
       return !candidates.some(day => {
-        return day.date >= threshold
-        // && !(day.bleeding as BleedingSchema).exclude
+        return day.date >= threshold && !(day.bleeding as BleedingSchema).exclude
       })
     }
   }
@@ -152,10 +149,10 @@ export default async function config(opts?: any) {
   // changes
   function getMensesDaysRightAfter(cycleDay: CycleDaySchema) {
     const bleedingDays = bleedingDaysSortedByDate
-    // .filter(d => !(d.bleeding as BleedingSchema).exclude)
-    // .reverse()
+    .filter(d => !((d.bleeding as BleedingSchema).exclude))
+    .reverse()
     const firstFollowingBleedingDayIndex = bleedingDays.findIndex(day => {
-      return day.date === cycleDay.date
+      return day.date > cycleDay.date
     })
     return recurse(cycleDay, firstFollowingBleedingDayIndex - 1, [])
 
@@ -167,7 +164,7 @@ export default async function config(opts?: any) {
       if (!next) return mensesDays
       if (!isWithinThreshold(day, next)) return mensesDays
       mensesDays.unshift(next)
-      return recurse(next, nextIndex - 1, mensesDays)
+      return recurse(next, nextIndex + 1, mensesDays)
     }
 
     // checks whether the two days belong to one menses episode

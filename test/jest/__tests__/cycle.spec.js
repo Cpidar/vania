@@ -1,5 +1,6 @@
 import cycleModule from 'src/lib/cycle'
 
+const map = new Map()
 describe('getCycleDayNumber', () => {
   it('works for a simple example', async () => {
     const cycleStarts = [{
@@ -650,7 +651,7 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      expect(result).toEqual([])
+      expect(result).toEqual(map)
     })
 
     test('if one bleeding is documented (no completed cycle)', async () => {
@@ -672,7 +673,7 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      expect(result).toEqual([])
+      expect(result).toEqual(map)
     })
 
     test('if number of cycles is below minCyclesForPrediction', async () => {
@@ -700,7 +701,7 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      expect(result).toEqual([])
+      expect(result).toEqual(map)
     })
 
     test(
@@ -743,11 +744,11 @@ describe('getPredictedMenses', () => {
         })
         const { getPredictedMenses } = cycleMod
         const result = getPredictedMenses()
-        expect(result).toEqual([])
+        expect(result).toEqual(map)
       }
     )
   })
-  describe('works', () => {
+  describe('PredictedCycleDay', () => {
     test('for one completed cycle with minCyclesForPrediction = 1', async () => {
       const cycleDaysSortedByDate = [
         {
@@ -769,29 +770,28 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      const expectedResult = [
+      const expectedResult = new Map(
         [
-          '2018-07-27',
-          '2018-07-28',
-          '2018-07-29',
-          '2018-07-30',
-          '2018-07-31'
-        ],
-        [
-          '2018-08-10',
-          '2018-08-11',
-          '2018-08-12',
-          '2018-08-13',
-          '2018-08-14'
-        ],
-        [
-          '2018-08-24',
-          '2018-08-25',
-          '2018-08-26',
-          '2018-08-27',
-          '2018-08-28'
-        ]
-      ]
+          ['2018-07-27', 'period-pr-start'],
+          ['2018-07-28', 'period-pr'],
+          ['2018-07-29', 'period-pr'],
+          ['2018-07-30', 'period-pr'],
+          ['2018-07-31', 'period-pr-end'],
+      
+        
+          ['2018-08-10', 'period-pr-start'],
+          ['2018-08-11', 'period-pr'],
+          ['2018-08-12', 'period-pr'],
+          ['2018-08-13', 'period-pr'],
+          ['2018-08-14', 'period-pr-end'],
+        
+        
+          ['2018-08-24', 'period-pr-start'],
+          ['2018-08-25', 'period-pr'],
+          ['2018-08-26', 'period-pr'],
+          ['2018-08-27', 'period-pr'],
+          ['2018-08-28', 'period-pr-end']
+      ])
       expect(result).toEqual(expectedResult)
     })
 
@@ -821,23 +821,23 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      const expectedResult = [
-        [
-          '2018-09-01',
-          '2018-09-02',
-          '2018-09-03'
-        ],
-        [
-          '2018-10-02',
-          '2018-10-03',
-          '2018-10-04'
-        ],
-        [
-          '2018-11-02',
-          '2018-11-03',
-          '2018-11-04'
-        ]
-      ]
+      const expectedResult = new Map([
+    
+          ['2018-09-01', 'period-pr-start'],
+          ['2018-09-02', 'period-pr'],
+          ['2018-09-03', 'period-pr-end'],
+        
+      
+          ['2018-10-02', 'period-pr-start'],
+          ['2018-10-03', 'period-pr'],
+          ['2018-10-04', 'period-pr-end'],
+        
+      
+          ['2018-11-02', 'period-pr-start'],
+          ['2018-11-03', 'period-pr'],
+          ['2018-11-04', 'period-pr-end']
+        
+      ])
       expect(result).toEqual(expectedResult)
     })
 
@@ -866,23 +866,19 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      const expectedResult = [
-        [
-          '2018-08-14',
-          '2018-08-15',
-          '2018-08-16'
-        ],
-        [
-          '2018-08-28',
-          '2018-08-29',
-          '2018-08-30'
-        ],
-        [
-          '2018-09-11',
-          '2018-09-12',
-          '2018-09-13'
-        ]
-      ]
+      const expectedResult = new Map([
+          ['2018-08-14', 'period-pr-start'],
+          ['2018-08-15', 'period-pr'],
+          ['2018-08-16', 'period-pr-end'],
+
+          ['2018-08-28', 'period-pr-start'],
+          ['2018-08-29', 'period-pr'],
+          ['2018-08-30', 'period-pr-end'],
+
+          ['2018-09-11', 'period-pr-start'],
+          ['2018-09-12', 'period-pr'],
+          ['2018-09-13', 'period-pr-end'],
+      ])
       expect(result).toEqual(expectedResult)
     })
 
@@ -911,29 +907,25 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      const expectedResult = [
-        [
-          '2018-08-13',
-          '2018-08-14',
-          '2018-08-15',
-          '2018-08-16',
-          '2018-08-17'
-        ],
-        [
-          '2018-08-27',
-          '2018-08-28',
-          '2018-08-29',
-          '2018-08-30',
-          '2018-08-31'
-        ],
-        [
-          '2018-09-10',
-          '2018-09-11',
-          '2018-09-12',
-          '2018-09-13',
-          '2018-09-14'
-        ]
-      ]
+      const expectedResult = new Map([
+          ['2018-08-13', 'period-pr-start'],
+          ['2018-08-14', 'period-pr'],
+          ['2018-08-15', 'period-pr'],
+          ['2018-08-16', 'period-pr'],
+          ['2018-08-17', 'period-pr-end'],
+ 
+          ['2018-08-27', 'period-pr-start'],
+          ['2018-08-28', 'period-pr'],
+          ['2018-08-29', 'period-pr'],
+          ['2018-08-30', 'period-pr'],
+          ['2018-08-31', 'period-pr-end'],
+
+          ['2018-09-10', 'period-pr-start'],
+          ['2018-09-11', 'period-pr'],
+          ['2018-09-12', 'period-pr'],
+          ['2018-09-13', 'period-pr'],
+          ['2018-09-14', 'period-pr-end']
+      ])
       expect(result).toEqual(expectedResult)
     })
 
@@ -967,29 +959,25 @@ describe('getPredictedMenses', () => {
       })
       const { getPredictedMenses } = cycleMod
       const result = getPredictedMenses()
-      const expectedResult = [
-        [
-          '2018-08-13',
-          '2018-08-14',
-          '2018-08-15',
-          '2018-08-16',
-          '2018-08-17'
-        ],
-        [
-          '2018-08-27',
-          '2018-08-28',
-          '2018-08-29',
-          '2018-08-30',
-          '2018-08-31'
-        ],
-        [
-          '2018-09-10',
-          '2018-09-11',
-          '2018-09-12',
-          '2018-09-13',
-          '2018-09-14'
-        ]
-      ]
+      const expectedResult = new Map([
+          ['2018-08-13', 'period-pr-start'],
+          ['2018-08-14', 'period-pr'],
+          ['2018-08-15', 'period-pr'],
+          ['2018-08-16', 'period-pr'],
+          ['2018-08-17', 'period-pr-end'],
+
+          ['2018-08-27', 'period-pr-start'],
+          ['2018-08-28', 'period-pr'],
+          ['2018-08-29', 'period-pr'],
+          ['2018-08-30', 'period-pr'],
+          ['2018-08-31', 'period-pr-end'],
+
+          ['2018-09-10', 'period-pr-start'],
+          ['2018-09-11', 'period-pr'],
+          ['2018-09-12', 'period-pr'],
+          ['2018-09-13', 'period-pr'],
+          ['2018-09-14', 'period-pr-end'],
+      ])
       expect(result).toEqual(expectedResult)
     })
   })
@@ -1023,7 +1011,7 @@ describe('isMensesStart', () => {
     })
     const { isMensesStart } = cycleMod
     const start = isMensesStart(cycleDaysSortedByDate[3])
-    expect(start).toBeTruthy()
+    expect(start).toBeFalsy()
     expect(isMensesStart(cycleDaysSortedByDate[0])).toBeFalsy()
     expect(isMensesStart(cycleDaysSortedByDate[1])).toBeFalsy()
     expect(isMensesStart(cycleDaysSortedByDate[2])).toBeFalsy()
@@ -1051,7 +1039,7 @@ describe('isMensesStart', () => {
     })
     const { isMensesStart } = cycleMod
     const start = isMensesStart(cycleDaysSortedByDate[1])
-    expect(start).toBeTruthy()
+    expect(start).toBeFalsy()
     const notStart = isMensesStart(cycleDaysSortedByDate[2])
     expect(notStart).toBeFalsy()
   })
@@ -1122,19 +1110,21 @@ describe('isMensesStart', () => {
         },
         {
           date: '2018-04-30',
-          bleeding: { value: 2 }
+          isBleedingDay: true,
+          bleeding: { value: 2, exclude: false }
         },
         {
           date: '2018-04-29'
         },
         {
           date: '2018-04-28',
+          isBleedingDay: true,
           bleeding: { value: 2, exclude: true }
         }
       ]
       const cycleMod = await cycleModule({
         cycleDaysSortedByDate,
-        bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.bleeding)
+        bleedingDaysSortedByDate: cycleDaysSortedByDate.filter(d => d.isBleedingDay)
       })
       const { isMensesStart } = cycleMod
       const start = isMensesStart(cycleDaysSortedByDate[2])
@@ -1173,13 +1163,17 @@ describe('isMensesStart', () => {
       async () => {
         const bleedingDays = [{
           date: '2018-05-14',
+          isBleedingDay: true,
           bleeding: {
-            value: 2
+            value: 2,
+            exclude: false
           }
         }, {
           date: '2018-05-09',
+          isBleedingDay: true,
           bleeding: {
-            value: 2
+            value: 2,
+            exclude: false
           }
         }]
         const cycleMod = await cycleModule({
@@ -1202,15 +1196,15 @@ describe('getMensesDaysRightAfter', () => {
       },
       {
         date: '2018-05-03',
-        bleeding: { value: 1 }
+        bleeding: { value: 1, exclude: false }
       },
       {
         date: '2018-05-02',
-        bleeding: { value: 1 }
+        bleeding: { value: 1, exclude: false }
       },
       {
         date: '2018-05-01',
-        bleeding: { value: 1 }
+        bleeding: { value: 1, exclude: false }
       },
       {
         date: '2018-04-30'
@@ -1225,11 +1219,11 @@ describe('getMensesDaysRightAfter', () => {
     expect(days).toEqual([
       {
         date: '2018-05-03',
-        bleeding: { value: 1 }
+        bleeding: { value: 1, exclude: false }
       },
       {
         date: '2018-05-02',
-        bleeding: { value: 1 }
+        bleeding: { value: 1, exclude: false }
       }
     ])
   })

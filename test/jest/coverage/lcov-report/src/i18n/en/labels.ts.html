@@ -3,12 +3,12 @@
 <head>
     <title>Code coverage report for src/i18n/en/labels.ts</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="..\..\..\prettify.css" />
-    <link rel="stylesheet" href="..\..\..\base.css" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(..\..\..\sort-arrow-sprite.png);
+            background-image: url(../../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -16,7 +16,7 @@
 <div class='wrapper'>
   <div class='pad1'>
     <h1>
-      <a href="..\..\..\index.html">All files</a> / <a href="index.html">src/i18n/en</a> labels.ts
+      <a href="../../../index.html">All files</a> / <a href="index.html">src/i18n/en</a> labels.ts
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
@@ -299,7 +299,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import labels from './settings'</span>
 const settingsTitles = <span class="cstat-no" title="statement not covered" >labels.menuTitles</span>
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >shared = {</span>
+export const shared = <span class="cstat-no" title="statement not covered" >{</span>
   cancel: 'Cancel',
   save: 'Save',
   errorTitle: 'Error',
@@ -318,7 +318,7 @@ export const <span class="cstat-no" title="statement not covered" >shared = {</s
   enter: 'Enter'
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >headerTitles = {</span>
+export const headerTitles = <span class="cstat-no" title="statement not covered" >{</span>
   Home: 'Home',
   Calendar: 'Calendar',
   Chart: 'Chart',
@@ -342,7 +342,7 @@ export const <span class="cstat-no" title="statement not covered" >headerTitles 
   InfoSymptom: 'Info'
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >menuTitles = {</span>
+export const menuTitles = <span class="cstat-no" title="statement not covered" >{</span>
   Home: 'Home',
   Calendar: 'Calendar',
   Chart: 'Chart',
@@ -350,7 +350,7 @@ export const <span class="cstat-no" title="statement not covered" >menuTitles = 
   Settings: 'Settings'
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >stats = {</span>
+export const stats = <span class="cstat-no" title="statement not covered" >{</span>
   cycleLengthTitle: 'Cycle length',
   cycleLengthExplainer: 'Basic statistics about the length of your cycles.',
   emptyStats: 'At least one completed cycle is needed to present you with stats here.',
@@ -366,7 +366,7 @@ export const <span class="cstat-no" title="statement not covered" >stats = {</sp
   stdLabel: 'Standard deviation'
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >bleedingPrediction = {</span>
+export const bleedingPrediction = <span class="cstat-no" title="statement not covered" >{</span>
   noPrediction: 'There is not enough period data to predict the next one.',
   predictionInFuture: <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span></span>tartDays: string, endDays: string) =&gt; `Your next period is likely to start in ${startDays} to ${endDays} days.`,
   predictionStartedXDaysLeft: <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(n</span></span>umberOfDays: number) =&gt; `Your period is likely to start today or during the next ${numberOfDays} days.`,
@@ -375,7 +375,7 @@ export const <span class="cstat-no" title="statement not covered" >bleedingPredi
   predictionInPast: <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span></span>tartDate: string, endDate: string) =&gt; `Based on your documented data, your period was likely to start between ${startDate} and ${endDate}.`
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >passwordPrompt = {</span>
+export const passwordPrompt = <span class="cstat-no" title="statement not covered" >{</span>
   title: 'Unlock app',
   enterPassword: 'Enter password here',
   deleteDatabaseExplainer: "If you've forgotten your password, unfortunately, there is nothing we can do to recover your data, because it is encrypted with the password only you know. You can, however, delete all your encrypted data and start fresh. Once all data has been erased, you can set a new password in the settings, if you like.",
@@ -387,7 +387,7 @@ export const <span class="cstat-no" title="statement not covered" >passwordPromp
   reallyDeleteData: 'Yes, I am sure'
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >home = {</span>
+export const home = <span class="cstat-no" title="statement not covered" >{</span>
   editToday: 'add data for today',
   cycleDayNotEnoughInfo: "We don't have enough information to know what your current cycle day is.",
   unknown: '?',
@@ -405,7 +405,7 @@ const <span class="fstat-no" title="function not covered" >getDaysDescriptor </s
 <span class="cstat-no" title="statement not covered" >  return `${c</span>ycleDayNumber - 1} days ago`
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >fertilityStatus = {</span>
+export const fertilityStatus = <span class="cstat-no" title="statement not covered" >{</span>
   fertile: 'fertile',
   infertile: 'infertile',
   fertileUntilEvening: 'Fertile phase ends in the evening',
@@ -427,10 +427,10 @@ export const <span class="cstat-no" title="statement not covered" >fertilityStat
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Fri May 24 2019 14:45:22 GMT+0430 (Iran Daylight Time)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Jun 22 2019 23:03:22 GMT+0430 (+0430)
 </div>
 </div>
-<script src="..\..\..\prettify.js"></script>
+<script src="../../../prettify.js"></script>
 <script>
 window.onload = function () {
         if (typeof prettyPrint === 'function') {
@@ -438,7 +438,7 @@ window.onload = function () {
         }
 };
 </script>
-<script src="..\..\..\sorter.js"></script>
-<script src="..\..\..\block-navigation.js"></script>
+<script src="../../../sorter.js"></script>
+<script src="../../../block-navigation.js"></script>
 </body>
 </html>

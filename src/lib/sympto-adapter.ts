@@ -16,6 +16,8 @@ export async function getFertilityStatusForDay(dateString: string) {
     }
   }
 
+  console.log(status)
+
   const phases = Object.keys(status.phases)
   const phaseNameForDay = phases.find(phaseName => {
     const phase = status.phases[phaseName]
