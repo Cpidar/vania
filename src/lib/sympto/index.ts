@@ -51,10 +51,6 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
     const lastPreDay = prePhase.cycleDays[prePhase.cycleDays.length - 1]
     periPhase.cycleDays = cycle.slice(cycle.indexOf(lastPreDay) + 1)
   } else {
-    const conf = getInitialCycleConfig() || { cycleLength: 28 }
-    const cycleLength = conf.cycleLength
-    periPhase.start.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5).toString()
-    periPhase.end.date = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1).toString()
     periPhase.start.date = cycle[0].date
     periPhase.cycleDays = [...cycle]
   }
@@ -63,7 +59,7 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
 
   if (!temperatureShift.detected) return status
 
-  const tempEvalEndIndex = cycle.indexOf(temperatureShift.evaluationCompleteDay as CycleDaySchema)
+  const tempEvalEndIndex = cycle.indexOf(temperatureShift.evaluationCompleteDay)
 
   let secondaryShift: SymptomShiftModel = {} as SymptomShiftModel
   if (secondarySymptom === 'mucus') {
@@ -74,14 +70,14 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
 
   if (!secondaryShift.detected) return status
 
-  let periOvulatoryEnd: CycleDaySchema = {} as CycleDaySchema
-  const tempOver = (temperatureShift.evaluationCompleteDay as CycleDaySchema).date
-  const secondarySymptomOver = (secondaryShift.evaluationCompleteDay as CycleDaySchema).date
+  let periOvulatoryEnd = {} as any
+  const tempOver = (temperatureShift.evaluationCompleteDay).date
+  const secondarySymptomOver = (secondaryShift.evaluationCompleteDay).date
 
   if (tempOver >= secondarySymptomOver) {
-    periOvulatoryEnd = (temperatureShift.evaluationCompleteDay as CycleDaySchema)
+    periOvulatoryEnd = (temperatureShift.evaluationCompleteDay)
   } else if (secondarySymptom > tempOver) {
-    periOvulatoryEnd = (secondaryShift.evaluationCompleteDay as CycleDaySchema)
+    periOvulatoryEnd = (secondaryShift.evaluationCompleteDay)
   }
 
   const previousPeriDays = periPhase.cycleDays
@@ -138,7 +134,7 @@ const initializeStatus = (cycle: any) => {
     status: '',
     phases: {} as PhaseModel
   }
-  const conf = getInitialCycleConfig() || { cycleLength: 28 }
+  const conf = { cycleLength: 28 }
   const cycleLength = conf.cycleLength
   const periPhaseStart = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5)
   const periPhaseEnd = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1)

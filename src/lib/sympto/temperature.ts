@@ -1,13 +1,12 @@
-import { CycleDaySchema } from "src/db/schemas";
 import { SymptomShiftModel, TemperatureDaysModel } from "src/lib/cycle.models";
 
-export default function (cycleDays: CycleDaySchema[]) {
+export default function (cycleDays: any) {
   const temperatureDays: TemperatureDaysModel[] = cycleDays
-    .filter((day: CycleDaySchema) => day.temperature && !day.temperature.exclude)
-    .map((day: CycleDaySchema) => {
+    .filter((day: any) => day.temperature && !day.temperature.exclude)
+    .map((day: any) => {
       return {
         originalCycleDay: day,
-        temp: rounded(day.temperature.value, 0.05)
+        temp: rounded(day.temperature, 0.05)
       }
     })
 

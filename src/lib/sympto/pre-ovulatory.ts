@@ -3,7 +3,7 @@ import apply8DayRule from './minus-8-day-rule'
 import { CycleDaySchema } from 'src/db/schemas';
 import { OvuPhaseModel } from 'src/lib/cycle.models';
 
-export default function (cycle: CycleDaySchema[], previousCycles: CycleDaySchema[][], secondarySymptom: string): OvuPhaseModel {
+export default function (cycle: any, previousCycles: any, secondarySymptom: string): OvuPhaseModel {
   let preOvuPhaseLength = 5
 
   const minus8DayRuleResult = apply8DayRule(previousCycles, secondarySymptom)
@@ -11,7 +11,7 @@ export default function (cycle: CycleDaySchema[], previousCycles: CycleDaySchema
 
   const startDate = LocalDate.parse(cycle[0].date)
   const preOvuEndDate = startDate.plusDays(preOvuPhaseLength - 1).toString()
-  const maybePreOvuDays = cycle.slice(0, preOvuPhaseLength).filter(d => {
+  const maybePreOvuDays = cycle.slice(0, preOvuPhaseLength).filter((d: any) => {
     return d.date <= preOvuEndDate
   })
   const preOvulatoryDays = getDaysUntilFertileSecondarySymptom(maybePreOvuDays, secondarySymptom)
@@ -36,10 +36,10 @@ export default function (cycle: CycleDaySchema[], previousCycles: CycleDaySchema
   }
 }
 
-function getDaysUntilFertileSecondarySymptom(days: CycleDaySchema[], secondarySymptom = 'mucus') {
-  const firstFertileSecondarySymptomDayIndex = days.findIndex((day: CycleDaySchema): boolean => {
+function getDaysUntilFertileSecondarySymptom(days: any, secondarySymptom = 'mucus') {
+  const firstFertileSecondarySymptomDayIndex = days.findIndex((day: any): boolean => {
     if (secondarySymptom === 'mucus') {
-      return day.mucus && day.mucus.value > 1
+      return day.mucus && day.mucus > 1
     } else if (secondarySymptom === 'cervix') {
       return (day.cervix && day.cervix.opening > 0) ||
         day.cervix && day.cervix.firmness > 0

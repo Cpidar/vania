@@ -1,29 +1,29 @@
 import { CycleDaySchema } from "src/db/schemas";
 import { SymptomShiftModel } from "src/lib/cycle.models";
 
-export default function (cycleDays: CycleDaySchema[], tempEvalEndIndex: number): SymptomShiftModel {
+export default function (cycleDays: any, tempEvalEndIndex: number): SymptomShiftModel {
   const notDetected = { detected: false }
-  const mucusDays = cycleDays.filter(day => day.mucus && !day.mucus.exclude)
+  const mucusDays = cycleDays.filter((day: any) => day.mucus && !day.mucus.exclude)
   let currentBestQuality = 0
 
   for (let i = 0; i < mucusDays.length; i++) {
     const day = mucusDays[i]
 
-    if (day.mucus.value > currentBestQuality) {
-      currentBestQuality = day.mucus.value
+    if (day.mucus > currentBestQuality) {
+      currentBestQuality = day.mucus
     }
 
     // if mucus only changes from dry to nothing, it doesn't constitute a shift
     if (currentBestQuality < 2) continue
 
-    if (day.mucus.value !== currentBestQuality) continue
+    if (day.mucus !== currentBestQuality) continue
 
     // the three following days must be of lower quality
     const threeFollowingDays = mucusDays.slice(i + 1, i + 4)
     if (threeFollowingDays.length < 3) continue
 
-    const bestQualityOccursIn3FollowingDays = threeFollowingDays.some(day => {
-      return day.mucus.value >= currentBestQuality
+    const bestQualityOccursIn3FollowingDays = threeFollowingDays.some((day: any) => {
+      return day.mucus >= currentBestQuality
     })
     if (bestQualityOccursIn3FollowingDays) continue
 
@@ -37,10 +37,10 @@ export default function (cycleDays: CycleDaySchema[], tempEvalEndIndex: number):
     // been completed
     const relevantDays = cycleDays
       .slice(cycleDayIndex + 1, tempEvalEndIndex + 1)
-      .filter(day => day.mucus && !day.mucus.exclude)
+      .filter((day: any) => day.mucus && !day.mucus.exclude)
 
-    const noBestQualityUntilEndOfTempEval = relevantDays.every(day => {
-      return day.mucus.value < currentBestQuality
+    const noBestQualityUntilEndOfTempEval = relevantDays.every((day: any) => {
+      return day.mucus < currentBestQuality
     })
 
     if (noBestQualityUntilEndOfTempEval) {

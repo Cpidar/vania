@@ -154,7 +154,7 @@ export default async function config(opts?: any) {
     const firstFollowingBleedingDayIndex = bleedingDays.findIndex(day => {
       return day.date > cycleDay.date
     })
-    return recurse(cycleDay, firstFollowingBleedingDayIndex - 1, [])
+    return recurse(cycleDay, firstFollowingBleedingDayIndex, [])
 
     // we look at the current bleeding day as well as the next, and decide
     // whether they belong to one menses. if they do, we collect them, once

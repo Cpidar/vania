@@ -2,9 +2,9 @@ import { LocalDate } from 'js-joda'
 import getNfpStatus from './index'
 import { CycleDaySchema } from 'src/db/schemas';
 
-export default function (previousCycles: CycleDaySchema[][], secondarySymptom: string) {
+export default function (previousCycles: any, secondarySymptom: string) {
   const fhms = previousCycles
-    .map(cycle => {
+    .map((cycle: any) => {
       const status = getNfpStatus({ cycle, secondarySymptom })
       if (status.temperatureShift) {
         const day = status.temperatureShift.firstHighMeasurementDay
@@ -14,7 +14,7 @@ export default function (previousCycles: CycleDaySchema[][], secondarySymptom: s
       }
       return null
     })
-    .filter(val => typeof val === 'number')
+    .filter((val: any) => typeof val === 'number')
 
   const preOvuLength = Math.min(...fhms) - 8
 

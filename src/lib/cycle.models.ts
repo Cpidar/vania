@@ -9,7 +9,7 @@ secondarySymptom: string;
 }
 
 export interface OvuPhaseModel {
-    cycleDays: CycleDaySchema[];
+    cycleDays: any[];
     start: { date: string | null, time?: string };
     end?: { date: string | null, time?: string };
 }

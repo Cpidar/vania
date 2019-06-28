@@ -24,10 +24,10 @@ function convertToSymptoFormat(val) {
 }
 
 export const cervixShiftAndFhmOnSameDay = [
-  { date: '2018-08-01', bleeding: 1 },
-  { date: '2018-08-02', bleeding: 2 },
-  { date: '2018-08-03', temperature: 36.6, bleeding: 2 },
-  { date: '2018-08-04', temperature: 36.55, bleeding: 1 },
+  { date: '2018-08-01', bleeding: 1, isBleedingDay: true },
+  { date: '2018-08-02', bleeding: 2, isBleedingDay: true },
+  { date: '2018-08-03', temperature: 36.6, bleeding: 2, isBleedingDay: true },
+  { date: '2018-08-04', temperature: 36.55, bleeding: 1, isBleedingDay: true },
   { date: '2018-08-05', temperature: 36.6, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-08-06', temperature: 36.65, cervix: { opening: 0, firmness: 1 } },
   { date: '2018-08-07', temperature: 36.71, cervix: { opening: 1, firmness: 0 } },
@@ -41,13 +41,13 @@ export const cervixShiftAndFhmOnSameDay = [
   { date: '2018-08-15', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-08-16', temperature: 36.95, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-08-17', temperature: 36.95, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const cycleWithFhmNoCervixShift = [
-  { date: '2018-08-01', bleeding: 1 },
-  { date: '2018-08-02', bleeding: 2 },
-  { date: '2018-08-03', temperature: 36.6, bleeding: 2 },
-  { date: '2018-08-04', temperature: 36.55, bleeding: 1 },
+  { date: '2018-08-01', bleeding: 1, isBleedingDay: true },
+  { date: '2018-08-02', bleeding: 2, isBleedingDay: true },
+  { date: '2018-08-03', temperature: 36.6, bleeding: 2, isBleedingDay: true },
+  { date: '2018-08-04', temperature: 36.55, bleeding: 1, isBleedingDay: true },
   { date: '2018-08-05', temperature: 36.6 },
   { date: '2018-08-06', temperature: 36.65, cervix: { opening: 0, firmness: 1 } },
   { date: '2018-08-07', temperature: 36.7, cervix: { opening: 1, firmness: 0 } },
@@ -57,10 +57,10 @@ export const cycleWithFhmNoCervixShift = [
   { date: '2018-08-11', temperature: 36.9, cervix: { opening: 1, firmness: 0 } },
   { date: '2018-08-12', temperature: 36.95, cervix: { opening: 0, firmness: 1 } },
   { date: '2018-08-13', temperature: 36.95, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const cycleWithoutFhmNoCervixShift = [
-  { date: '2018-06-02', temperature: 36.6, bleeding: 2 },
+  { date: '2018-06-02', temperature: 36.6, bleeding: 2, isBleedingDay: true },
   { date: '2018-06-03', temperature: 36.65 },
   { date: '2018-06-04', temperature: 36.6 },
   { date: '2018-06-05', temperature: 36.55 },
@@ -68,10 +68,10 @@ export const cycleWithoutFhmNoCervixShift = [
   { date: '2018-06-09', temperature: 36.8 },
   { date: '2018-06-10', temperature: 36.9, cervix: { opening: 2, firmness: 0 } },
   { date: '2018-06-13', temperature: 36.9, cervix: { opening: 1, firmness: 1 } }
-].map(convertToSymptoFormat)
+]
 
 export const longCycleWithoutAnyShifts = [
-  { date: '2018-07-01', temperature: 36.65, bleeding: 1 },
+  { date: '2018-07-01', temperature: 36.65, bleeding: 1, isBleedingDay: true },
   { date: '2018-07-02', temperature: 36.45 },
   { date: '2018-07-03', temperature: 36.65 },
   { date: '2018-07-04', temperature: 36.65 },
@@ -97,10 +97,10 @@ export const longCycleWithoutAnyShifts = [
   { date: '2018-07-24', temperature: 36.65, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-07-25', temperature: 36.65, cervix: { opening: 0, firmness: 1 } },
   { date: '2018-07-26', temperature: 36.65, cervix: { opening: 2, firmness: 1 } }
-].map(convertToSymptoFormat)
+]
 
 export const longAndComplicatedCycle = [
-  { date: '2018-06-01', temperature: 36.6, bleeding: 2 },
+  { date: '2018-06-01', temperature: 36.6, bleeding: 2, isBleedingDay: true },
   { date: '2018-06-02', temperature: 36.65 },
   { date: '2018-06-04', temperature: 36.6 },
   { date: '2018-06-05', temperature: 36.55 },
@@ -122,13 +122,13 @@ export const longAndComplicatedCycle = [
   { date: '2018-06-25', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-06-26', temperature: 36.8, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-06-27', temperature: 36.9, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const tempShift3DaysAfterCervixShift = [
-  { date: '2018-05-08', bleeding: 3 },
-  { date: '2018-05-09', bleeding: 2 },
-  { date: '2018-05-10', bleeding: 2 },
-  { date: '2018-05-11', bleeding: 1 },
+  { date: '2018-05-08', bleeding: 3, isBleedingDay: true },
+  { date: '2018-05-09', bleeding: 2, isBleedingDay: true },
+  { date: '2018-05-10', bleeding: 2, isBleedingDay: true },
+  { date: '2018-05-11', bleeding: 1, isBleedingDay: true },
   { date: '2018-05-12', temperature: 36.3 },
   { date: '2018-05-13', temperature: 36.4, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-05-14', temperature: 36.3, cervix: { opening: 1, firmness: 1 } },
@@ -147,13 +147,13 @@ export const tempShift3DaysAfterCervixShift = [
   { date: '2018-05-27', temperature: 36.8, cervix: { opening: 1, firmness: 0 } },
   { date: '2018-05-28', temperature: 36.6, cervix: { opening: 1, firmness: 0 } },
   { date: '2018-05-29', bleeding: 2 }
-].map(convertToSymptoFormat)
+]
 
 export const cervixShift3DaysAfterTempShift = [
-  { date: '2018-04-05', bleeding: 3 },
-  { date: '2018-04-06', bleeding: 2 },
-  { date: '2018-04-07', bleeding: 2 },
-  { date: '2018-04-08', bleeding: 1 },
+  { date: '2018-04-05', bleeding: 3, isBleedingDay: true },
+  { date: '2018-04-06', bleeding: 2, isBleedingDay: true },
+  { date: '2018-04-07', bleeding: 2, isBleedingDay: true },
+  { date: '2018-04-08', bleeding: 1, isBleedingDay: true },
   { date: '2018-04-09', temperature: 36.5 },
   { date: '2018-04-10', temperature: 36.5, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-04-11', temperature: 36.55, cervix: { opening: 1, firmness: 1 } },
@@ -169,13 +169,13 @@ export const cervixShift3DaysAfterTempShift = [
   { date: '2018-04-22', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-04-23', temperature: 37.1, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-04-24', temperature: 36.75, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const cervixShift4DaysAfterTempShift = [
-  { date: '2018-04-05', bleeding: 3 },
-  { date: '2018-04-06', bleeding: 2 },
-  { date: '2018-04-07', bleeding: 2 },
-  { date: '2018-04-08', bleeding: 1 },
+  { date: '2018-04-05', bleeding: 3, isBleedingDay: true },
+  { date: '2018-04-06', bleeding: 2, isBleedingDay: true },
+  { date: '2018-04-07', bleeding: 2, isBleedingDay: true },
+  { date: '2018-04-08', bleeding: 1, isBleedingDay: true },
   { date: '2018-04-09', temperature: 36.5 },
   { date: '2018-04-10', temperature: 36.5, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-04-11', temperature: 36.55, cervix: { opening: 1, firmness: 1 } },
@@ -191,13 +191,13 @@ export const cervixShift4DaysAfterTempShift = [
   { date: '2018-04-22', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-04-23', temperature: 37.1, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-04-24', temperature: 36.75, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const noOvulationDetected = [
-  { date: '2018-03-08', bleeding: 3 },
-  { date: '2018-03-09', bleeding: 3 },
-  { date: '2018-03-10', bleeding: 3 },
-  { date: '2018-03-11', bleeding: 3 },
+  { date: '2018-03-08', bleeding: 3, isBleedingDay: true },
+  { date: '2018-03-09', bleeding: 3, isBleedingDay: true },
+  { date: '2018-03-10', bleeding: 3, isBleedingDay: true },
+  { date: '2018-03-11', bleeding: 3, isBleedingDay: true },
   { date: '2018-03-12', temperature: 36.3, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-03-13', temperature: 36.5, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-03-14', temperature: 36.45, cervix: { opening: 1, firmness: 1 } },
@@ -210,15 +210,15 @@ export const noOvulationDetected = [
   { date: '2018-03-21', temperature: 36.7, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-03-22', temperature: 36.7, cervix: { opening: 0, firmness: 1 } },
   { date: '2018-03-23', temperature: 36.7, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const fiveDayCycle = [
-  { date: '2018-08-01', bleeding: 2 },
-  { date: '2018-08-03', bleeding: 3 }
-].map(convertToSymptoFormat)
+  { date: '2018-08-01', bleeding: 2, isBleedingDay: true },
+  { date: '2018-08-03', bleeding: 3, isBleedingDay: true }
+]
 
 export const fhmOnDay12 = [
-  { date: '2018-06-01', temperature: 36.6, bleeding: 2 },
+  { date: '2018-06-01', temperature: 36.6, bleeding: 2, isBleedingDay: true },
   { date: '2018-06-02', temperature: 36.65 },
   { date: '2018-06-04', temperature: 36.6 },
   { date: '2018-06-05', temperature: 36.55 },
@@ -229,10 +229,10 @@ export const fhmOnDay12 = [
   { date: '2018-06-14', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-06-17', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-06-18', temperature: 36.9, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const fhmOnDay15 = [
-  { date: '2018-06-01', temperature: 36.6, bleeding: 2 },
+  { date: '2018-06-01', temperature: 36.6, bleeding: 2, isBleedingDay: true },
   { date: '2018-06-02', temperature: 36.65 },
   { date: '2018-06-04', temperature: 36.6 },
   { date: '2018-06-05', temperature: 36.55 },
@@ -246,10 +246,10 @@ export const fhmOnDay15 = [
   { date: '2018-06-16', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-06-17', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-06-18', temperature: 36.9, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
 
 export const cycleWithEarlyCervix = [
-  { date: '2018-06-01', temperature: 36.6, bleeding: 2 },
+  { date: '2018-06-01', temperature: 36.6, bleeding: 2, isBleedingDay: true },
   { date: '2018-06-02', temperature: 36.65, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-06-05', temperature: 36.55 },
   { date: '2018-06-06', temperature: 36.7, cervix: { opening: 0, firmness: 0 } },
@@ -269,10 +269,10 @@ export const cycleWithEarlyCervix = [
   { date: '2018-06-24', temperature: 36.85, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-06-26', temperature: 36.8, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-06-27', temperature: 36.9, cervix: { opening: 1, firmness: 1 } }
-].map(convertToSymptoFormat)
+]
 
 export const cycleWithCervixOnFirstDay = [
-  { date: '2018-06-01', temperature: 36.6, bleeding: 2, cervix: { opening: 1, firmness: 1 } },
+  { date: '2018-06-01', temperature: 36.6, bleeding: 2, isBleedingDay: true, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-06-02', temperature: 36.65 },
   { date: '2018-06-05', temperature: 36.55 },
   { date: '2018-06-06', temperature: 36.7, cervix: { opening: 0, firmness: 0 } },
@@ -292,10 +292,10 @@ export const cycleWithCervixOnFirstDay = [
   { date: '2018-06-24', temperature: 36.85, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-06-26', temperature: 36.8, cervix: { opening: 1, firmness: 1 } },
   { date: '2018-06-27', temperature: 36.9, cervix: { opening: 1, firmness: 1 } }
-].map(convertToSymptoFormat)
+]
 
 export const fertileCervixOnlyAfterEndOfTempEval = [
-  { date: '2018-06-01', temperature: 36.6, bleeding: 2 },
+  { date: '2018-06-01', temperature: 36.6, bleeding: 2, isBleedingDay: true },
   { date: '2018-06-02', temperature: 36.65 },
   { date: '2018-06-04', temperature: 36.6 },
   { date: '2018-06-05', temperature: 36.55 },
@@ -320,4 +320,4 @@ export const fertileCervixOnlyAfterEndOfTempEval = [
   },
   { date: '2018-07-01', temperature: 36.9, cervix: { opening: 0, firmness: 0 } },
   { date: '2018-07-02', temperature: 36.9, cervix: { opening: 0, firmness: 0 } }
-].map(convertToSymptoFormat)
+]
