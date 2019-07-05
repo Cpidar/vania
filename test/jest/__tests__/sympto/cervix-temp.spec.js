@@ -28,7 +28,7 @@ describe('sympto', () => {
           previousCycle: cycleWithoutFhmNoCervixShift,
           secondarySymptom: 'cervix'
         })
-        expect(Object.keys(status.phases)).toHaveLength(1)
+        expect(Object.keys(status.phases)).toHaveLength(4)
         expect(status).toEqual({
           phases: {
             periOvulatory: {
@@ -44,7 +44,7 @@ describe('sympto', () => {
           previousCycle: cycleWithoutFhmNoCervixShift,
           secondarySymptom: 'cervix'
         })
-        expect(Object.keys(status.phases)).toHaveLength(1)
+        expect(Object.keys(status.phases)).toHaveLength(4)
         expect(status).toEqual({
           phases: {
             periOvulatory: {
@@ -61,7 +61,7 @@ describe('sympto', () => {
             cycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.temperatureShift.evaluationCompleteDay.date).toEqual('2018-08-15')
           expect(status.cervixShift.evaluationCompleteDay.date).toEqual('2018-08-15')
           expect(status.temperatureShift.rule).toEqual(0)
@@ -88,7 +88,7 @@ describe('sympto', () => {
             previousCycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(1)
+          expect(Object.keys(status.phases)).toHaveLength(4)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: fiveDayCycle,
             start: { date: '2018-08-01' },
@@ -105,7 +105,7 @@ describe('sympto', () => {
             secondarySymptom: 'cervix'
           })
 
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: longCycleWithoutAnyShifts
               .filter(({date}) => date <= '2018-07-05'),
@@ -127,7 +127,7 @@ describe('sympto', () => {
             previousCycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(3)
+          expect(Object.keys(status.phases)).toHaveLength(6)
           expect(status.temperatureShift.evaluationCompleteDay.date).toEqual('2018-08-15')
           expect(status.cervixShift.evaluationCompleteDay.date).toEqual('2018-08-15')
 
@@ -160,7 +160,7 @@ describe('sympto', () => {
             previousCycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(3)
+          expect(Object.keys(status.phases)).toHaveLength(6)
           expect(getType(status.cervixShift)).toBe('object')
           expect(getType(status.temperatureShift)).toBe('object')
           expect(status.cervixShift.evaluationCompleteDay.date).toEqual('2018-05-18')
@@ -195,7 +195,7 @@ describe('sympto', () => {
             previousCycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(3)
+          expect(Object.keys(status.phases)).toHaveLength(6)
           expect(status.temperatureShift.rule).toEqual(0)
           expect(status.temperatureShift.evaluationCompleteDay.date).toEqual('2018-04-17')
           expect(status.cervixShift.evaluationCompleteDay.date).toEqual('2018-04-20')
@@ -229,7 +229,7 @@ describe('sympto', () => {
             previousCycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
 
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: cervixShift4DaysAfterTempShift
@@ -258,7 +258,7 @@ describe('sympto', () => {
           expect(status.temperatureShift).toBeUndefined()
           expect(status.cervixShift).toBeUndefined()
 
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.preOvulatory).toEqual({
             start: { date: '2018-06-01' },
             end: { date: '2018-06-05' },
@@ -282,7 +282,7 @@ describe('sympto', () => {
             previousCycle: cervixShiftAndFhmOnSameDay,
             secondarySymptom: 'cervix'
           })
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: noOvulationDetected
               .filter(({date}) => date <= '2018-03-12'),
@@ -309,7 +309,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.cervixShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-04' },
@@ -344,7 +344,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.cervixShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-04' },
@@ -379,7 +379,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.cervixShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-01' },
@@ -410,7 +410,7 @@ describe('sympto', () => {
             secondarySymptom: 'cervix'
           })
 
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(getType(status.temperatureShift)).toBe('object')
           expect(getType(status.cervixShift)).toBe('object')
 
@@ -439,7 +439,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.cervixShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-07' },
@@ -467,7 +467,7 @@ describe('sympto', () => {
           earlierCycles: Array(10).fill(fhmOnDay15),
           secondarySymptom: 'cervix'
         })
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -499,7 +499,7 @@ describe('sympto', () => {
           secondarySymptom: 'cervix'
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(2)
+        expect(Object.keys(status.phases)).toHaveLength(5)
         expect(status.phases.periOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-26', time: '18:00' },

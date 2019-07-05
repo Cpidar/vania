@@ -2,7 +2,7 @@ import getMucusStatus from 'src/lib/sympto/mucus'
 
 function turnIntoCycleDayObject(value, fakeDate) {
   return {
-    mucus: { value },
+    mucus: value,
     date: fakeDate
   }
 }
@@ -18,11 +18,11 @@ describe('sympto', () => {
           detected: true,
           mucusPeak: {
             date: 10,
-            mucus: { value: 3 }
+            mucus: 3 
           },
           evaluationCompleteDay: {
             date: 13,
-            mucus: { value: 0 }
+            mucus: 0 
           }
         })
       })
@@ -40,7 +40,7 @@ describe('sympto', () => {
       test('detects no mucus shift when there are no mucus values', () => {
         const status = getMucusStatus(Array(10).fill({
           date: 1,
-          temperature: { value: 35 }
+          temperature: 35
         }))
         expect(status).toEqual({ detected: false })
       })
@@ -73,11 +73,11 @@ describe('sympto', () => {
           detected: true,
           mucusPeak: {
             date: 10,
-            mucus: { value: 3 }
+            mucus: 3 
           },
           evaluationCompleteDay: {
             date: 13,
-            mucus: { value: 0 }
+            mucus: 0 
           }
         })
       })

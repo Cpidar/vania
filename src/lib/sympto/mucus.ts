@@ -1,12 +1,18 @@
-import { CycleDaySchema } from "src/db/schemas";
 import { SymptomShiftModel } from "src/lib/cycle.models";
 
 export default function (cycleDays: any, tempEvalEndIndex: number): SymptomShiftModel {
   const notDetected = { detected: false }
-  const mucusDays = cycleDays.filter((day: any) => day.mucus && !day.mucus.exclude)
+  const mucusDays = cycleDays.filter((day: any) => typeof day.mucus === 'number')
   let currentBestQuality = 0
 
   for (let i = 0; i < mucusDays.length; i++) {
+
+    let print
+    if (i === 13) {
+      print = true
+    } else {
+      print === false
+    }
     const day = mucusDays[i]
 
     if (day.mucus > currentBestQuality) {
@@ -37,7 +43,7 @@ export default function (cycleDays: any, tempEvalEndIndex: number): SymptomShift
     // been completed
     const relevantDays = cycleDays
       .slice(cycleDayIndex + 1, tempEvalEndIndex + 1)
-      .filter((day: any) => day.mucus && !day.mucus.exclude)
+      .filter((day: any) => typeof day.mucus === 'number')
 
     const noBestQualityUntilEndOfTempEval = relevantDays.every((day: any) => {
       return day.mucus < currentBestQuality

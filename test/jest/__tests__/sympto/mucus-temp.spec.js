@@ -45,7 +45,7 @@ describe('sympto', () => {
           })
           expect(getType(status.temperatureShift)).toBe('object')
           expect(getType(status.mucusShift)).toBe('object')
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.periOvulatory).toEqual({
             start: { date: '2018-06-01' },
             end: { date: '2018-06-21', time: '18:00' },
@@ -70,7 +70,7 @@ describe('sympto', () => {
             cycle: fiveDayCycle,
             previousCycle: cycleWithFhm
           })
-          expect(Object.keys(status.phases)).toHaveLength(1)
+          expect(Object.keys(status.phases)).toHaveLength(4)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: fiveDayCycle,
             start: { date: '2018-06-01' },
@@ -84,7 +84,7 @@ describe('sympto', () => {
             cycle: cycleWithTempAndNoMucusShift,
             previousCycle: cycleWithFhm
           })
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: cycleWithTempAndNoMucusShift
               .filter(({date}) => date <= '2018-06-05'),
@@ -102,7 +102,7 @@ describe('sympto', () => {
             cycle: cycleWithEarlyMucus,
             previousCycle: cycleWithFhm
           })
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: [cycleWithEarlyMucus[0]],
             start: { date: '2018-06-01' },
@@ -120,7 +120,7 @@ describe('sympto', () => {
             cycle: longAndComplicatedCycle,
             previousCycle: cycleWithFhm
           })
-          expect(Object.keys(status.phases)).toHaveLength(3)
+          expect(Object.keys(status.phases)).toHaveLength(6)
           expect(status.phases.preOvulatory).toEqual({
             cycleDays: longAndComplicatedCycle
               .filter(({date}) => date <= '2018-06-05'),
@@ -151,7 +151,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -185,7 +185,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -215,7 +215,7 @@ describe('sympto', () => {
           previousCycle: cycleWithFhm
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(2)
+        expect(Object.keys(status.phases)).toHaveLength(5)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -234,7 +234,7 @@ describe('sympto', () => {
           previousCycle: cycleWithFhm
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(2)
+        expect(Object.keys(status.phases)).toHaveLength(5)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -256,7 +256,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -287,7 +287,7 @@ describe('sympto', () => {
         })
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-01' },
@@ -319,7 +319,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-04' },
@@ -352,7 +352,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -388,7 +388,7 @@ describe('sympto', () => {
           expect(status.temperatureShift).toBeUndefined()
           expect(status.mucusShift).toBeUndefined()
 
-          expect(Object.keys(status.phases)).toHaveLength(2)
+          expect(Object.keys(status.phases)).toHaveLength(5)
           expect(status.phases.preOvulatory).toEqual({
             start: { date: '2018-06-01' },
             end: { date: '2018-06-05' },
@@ -416,7 +416,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-04' },
@@ -450,7 +450,7 @@ describe('sympto', () => {
         expect(getType(status.temperatureShift)).toBe('object')
         expect(getType(status.mucusShift)).toBe('object')
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-04' },
@@ -481,7 +481,7 @@ describe('sympto', () => {
           earlierCycles: Array(10).fill(fhmOnDay12)
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(2)
+        expect(Object.keys(status.phases)).toHaveLength(5)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-01' },
@@ -505,7 +505,7 @@ describe('sympto', () => {
             earlierCycles: Array(10).fill(fhmOnDay12)
           })
 
-          expect(Object.keys(status.phases)).toHaveLength(1)
+          expect(Object.keys(status.phases)).toHaveLength(4)
 
           expect(status.phases.periOvulatory).toEqual({
             start: { date: '2018-06-01' },
@@ -520,7 +520,7 @@ describe('sympto', () => {
           earlierCycles: Array(11).fill(fhmOnDay15)
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-07' },
@@ -551,7 +551,7 @@ describe('sympto', () => {
           earlierCycles: Array(10).fill(fhmOnDay15)
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(3)
+        expect(Object.keys(status.phases)).toHaveLength(6)
         expect(status.phases.preOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-05' },
@@ -582,7 +582,7 @@ describe('sympto', () => {
           earlierCycles: [...Array(12).fill(fhmOnDay15)]
         })
 
-        expect(Object.keys(status.phases)).toHaveLength(2)
+        expect(Object.keys(status.phases)).toHaveLength(5)
         expect(status.phases.periOvulatory).toEqual({
           start: { date: '2018-06-01' },
           end: { date: '2018-06-21', time: '18:00' },

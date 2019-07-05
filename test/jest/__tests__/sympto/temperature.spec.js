@@ -2,7 +2,7 @@ import getTemperatureStatus from 'src/lib/sympto/temperature'
 
 function turnIntoCycleDayObject(value, fakeDate) {
   return {
-    temperature: { value },
+    temperature: value,
     date: fakeDate
   }
 }
@@ -27,11 +27,11 @@ describe('sympto', () => {
           ltl: 36.6,
           firstHighMeasurementDay: {
             date: 7,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
           evaluationCompleteDay: {
             date: 9,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
           rule: 0
         })
@@ -49,11 +49,11 @@ describe('sympto', () => {
             ltl: 36.6,
             firstHighMeasurementDay: {
               date: 7,
-              temperature: { value: 36.8 }
+              temperature: 36.8 
             },
             evaluationCompleteDay: {
               date: 9,
-              temperature: { value: 36.8 }
+              temperature: 36.8 
             },
             rule: 0
           })
@@ -94,11 +94,11 @@ describe('sympto', () => {
           ltl: 36.6,
           firstHighMeasurementDay: {
             date: 10,
-            temperature: { value: 36.7 }
+            temperature: 36.7 
           },
           evaluationCompleteDay: {
             date: 12,
-            temperature: { value: 36.9 }
+            temperature: 36.9 
           },
           detected: true,
           rule: 0
@@ -127,12 +127,12 @@ describe('sympto', () => {
           ltl: 36.6,
           firstHighMeasurementDay: {
             date: 7,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
 
           evaluationCompleteDay: {
             date: 10,
-            temperature: { value: 36.63 }
+            temperature: 36.63
           },
           detected: true,
           rule: 1
@@ -167,12 +167,12 @@ describe('sympto', () => {
           ltl: 36.6,
           firstHighMeasurementDay: {
             date: 10,
-            temperature: { value: 36.7 }
+            temperature: 36.7 
           },
 
           evaluationCompleteDay: {
             date: 13,
-            temperature: { value: 36.7 }
+            temperature: 36.7 
           },
           detected: true,
           rule: 1
@@ -191,12 +191,12 @@ describe('sympto', () => {
           ltl: 36.6,
           firstHighMeasurementDay: {
             date: 7,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
 
           evaluationCompleteDay: {
             date: 10,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
           detected: true,
           rule: 2
@@ -213,12 +213,12 @@ describe('sympto', () => {
           ltl: 36.6,
           firstHighMeasurementDay: {
             date: 7,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
 
           evaluationCompleteDay: {
             date: 10,
-            temperature: { value: 36.8 }
+            temperature: 36.8 
           },
           detected: true,
           rule: 2
@@ -252,12 +252,12 @@ describe('sympto', () => {
           ltl: 36.85,
           firstHighMeasurementDay: {
             date: 11,
-            temperature: { value: 36.9 }
+            temperature: 36.9 
           },
 
           evaluationCompleteDay: {
             date: 14,
-            temperature: { value: 37.04 }
+            temperature: 37.04
           },
           detected: true,
           rule: 2
