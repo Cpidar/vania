@@ -91,14 +91,12 @@ import jMoment from 'moment-jalaali'
   subscriptions() {
     const monthList = getMonthList(10)
     const currentDay = longSelectedDayObj.pipe(pluck('date'))
-    const isMenseStart = longSelectedDayObj.pipe(switchMap(day => CycleModule().then(m => m.isMensesStart(day.mDate))))
     return {
       getSelectedDay$: longSelectedDayObj,
       mDate: longSelectedDayObj.pipe(pluck('mDate')),
       monthList,
       phn: getSelectedCycleDay,
       currentDay,
-      isMenseStart,
       isAfterToday: model$.pipe(map( m => m.selectedDay > m.today)),
       bleeding: getSelectedCycleDay.pipe(pluck('bleeding')),
       mucus: getSelectedCycleDay.pipe(pluck('mucus')),

@@ -3,7 +3,7 @@
     <q-btn
       class="glossy"
       round
-      :outline="value === -1"
+      :outline="value === undefined"
       color="deep-orange"
       icon="mdi-thermometer"
       @click="showDialog = true"
@@ -78,9 +78,10 @@ export default class TemperatureDialog extends Vue {
 
   @Watch('data')
   onDataChange() {
-    this.temperatureInt = Math.trunc(this.data.value)
-    this.temperatureDec = +(this.data.value - this.temperatureInt).toFixed(2)
-    this.exclude = this.data.exclude
+    const val = this.data && this.data.value
+    this.temperatureInt = Math.trunc(val)
+    this.temperatureDec = +(val- this.temperatureInt).toFixed(2)
+    this.exclude = this.data && this.data.exclude
   }
 
   tempIntList: any = [

@@ -80,7 +80,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { shortSelectedDay, getSelectedEvents, model$, initialCycleDay } from '../state'
+import { shortSelectedDay, getSelectedEvents, model$ } from '../state'
 import { getCycleDay } from '../db'
 import { CycleDaySchema } from '../db/schemas';
 import { bleeding, pain, sex, mood } from '../i18n/fa/cycle-day';
