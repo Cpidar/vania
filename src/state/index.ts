@@ -15,7 +15,7 @@ jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
 const moment = (str: string) => jMoment(str, 'jYYYY-jMM-jDD')
 const miladi = (str: string) => jMoment(str, 'jYYYY-jMM-jDD').format('YYYY-MM-DD')
 
-interface Model {
+export interface Model {
   status: string;
   month: string;
   selectedDay: string;

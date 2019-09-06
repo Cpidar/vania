@@ -921,6 +921,13 @@
   dependencies:
     "@hapi/hoek" "6.x.x"
 
+"@ionic-native/wheel-selector@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/wheel-selector/-/wheel-selector-5.13.0.tgz#bd2d7bb75ff7d940cdcc9edc1b671f6def2a194e"
+  integrity sha512-VtGZX5H8Ci3PZhEiC8tGcvey72TUSJ/uIkr3bdRXTk4RKxjRlif8IOgsNyROdnfqrBJ9x+mbNUdv+E2cqpzmAQ==
+  dependencies:
+    "@types/cordova" latest
+
 "@jest/console@^24.7.1":
   version "24.7.1"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.7.1.tgz#32a9e42535a97aedfe037e725bd67e954b459545"
@@ -1286,6 +1293,11 @@
   integrity sha512-XYVgHF2sQ0YblLRMLNPB3CkFMewzFmlDsH/TneZFHUXDlABQgh88uOxuez7ZcXxayLFrqLwtDH1t+FmlFwNZxw==
   dependencies:
     "@babel/types" "^7.3.0"
+
+"@types/cordova@latest":
+  version "0.0.34"
+  resolved "https://registry.yarnpkg.com/@types/cordova/-/cordova-0.0.34.tgz#ea7addf74ecec3d7629827a0c39e2c9addc73d04"
+  integrity sha1-6nrd907Ow9dimCegw54smt3HPQQ=
 
 "@types/debug@*":
   version "4.1.4"

@@ -54,22 +54,40 @@ import Component from 'vue-class-component'
 import { model$ } from '../state'
 import { pluck } from 'rxjs/operators'
 import cbtn from '../components/circle-button.vue'
+import { WheelSelector } from '@ionic-native/wheel-selector/ngx'
+
+function range(start: number, end: number) {
+  var ans = [];
+  for (let i = start; i <= end; i++) {
+    ans.push({ description: `${i}`, id: i });
+  }
+  return ans;
+}
 
 @Component({
-  components: { cbtn }
+  components: {cbtn}
 })
 export default class Me extends Vue {
   periodLength = 5;
   cycleLength = 28;
   lock = false;
+  private selector: WheelSelector = new WheelSelector()
 
-  beforeCreate() {
-    this.$subscribeTo(model$.pipe(pluck('period')),
-      (p) => {
-        this.periodLength = p.periodLength
-        this.cycleLength = p.cylceLength
-      })
+  wheelSelectorData = {
+    cycleLength: range(18, 42),
+    bleedingLength: range(3, 7)
   }
+
+  changeCycleLength() {
+    this.selector.show({
+      title: "How Many?",
+      items: [ this.wheelSelectorData.cycleLength ],
+    }).then(
+      result => console.log(result),
+      err => console.error(err)
+     )
+  }
+
 }
 </script>
 
