@@ -1,7 +1,7 @@
 {
   "@quasar/typescript": {
     "webpack": "plugin",
-    "rename": true
+    "rename": false
   },
   "@quasar/testing": {
     "harnesses": [
