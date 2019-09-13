@@ -1,6 +1,6 @@
 import { map, observeOn, share } from "rxjs/operators";
 import jMoment from 'moment-jalaali'
-import { range, asapScheduler } from "rxjs";
+import { range, asapScheduler, asyncScheduler } from "rxjs";
 
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
@@ -31,6 +31,6 @@ export const daysInMonth = (month: string) => range(-moment(month).clone().weekd
     // observeOn(asyncScheduler),
     map((m) => computeDaysInMonth(m, month)),
     // tap(console.log),
-    observeOn(asapScheduler),
+    observeOn(asyncScheduler),
     share()
 )

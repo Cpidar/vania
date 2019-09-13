@@ -17,12 +17,12 @@
       @click="goToPrevMonth"
     />
     <!-- <h5 v-if="!visible" class="monthname">{{date.day}} {{date.monthName}} {{date.fullYear}}</h5> -->
-    <PoseTransition mode="out-in">
-      <Placeholder
+    <!-- <PoseTransition mode="out-in"> -->
+      <div
         class="monthname"
         :key="date.date"
-      >{{date.day}} {{date.monthName}} {{date.fullYear}}</Placeholder>
-    </PoseTransition>
+      >{{date.day}} {{date.monthName}} {{date.fullYear}}</div>
+    <!-- </PoseTransition> -->
     <q-btn
       flat
       color="secondary"

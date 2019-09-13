@@ -2,6 +2,7 @@ import { RouteConfig, NavigationGuard } from 'vue-router'
 import Mylayout from '../layouts/MyLayout.vue'
 import HomePage from '../pages/home.vue'
 import CalendarPage from '../pages/calendar.vue'
+import MePage from '../pages/me.vue'
 import InitialConfigPage from '../pages/initial-config.vue'
 import { LocalStorage } from 'quasar'
 import { dispatch } from 'src/state';
@@ -24,6 +25,7 @@ const routes: RouteConfig[] = [
       { path: '', component: HomePage },
       // { path: 'calendar', component: () => import('pages/calendar.vue') },
       { path: 'calendar', component: CalendarPage },
+      { path: 'me', component: MePage }
     ]
   },
   {

@@ -54,18 +54,19 @@ import {
   getSelectedCycleDay,
   model$,
   getMonthList,
-  fertilityStatus
+  fertilityStatus,
+  getMenses
   // getDaysHaveEvents,
 } from '../state'
 
-import Calendar from '../components/calendar-comp.vue'
+// import Calendar from '../components/calendar-comp.vue'
 import CalendarHeader from '../components/calendar-header.vue'
 import CalendarFooter from '../components/calendar-footer.vue'
-import PhnSection from '../components/phn-section.vue'
-import PhnModal from '../components/phn-modal.vue'
-import TempDialog from '../components/temperature-dialog.vue'
-import BleedDialog from '../components/bleeding-dialog.vue'
-import MucusDialog from '../components/mucus-dialog.vue'
+// import PhnSection from '../components/phn-section.vue'
+// import PhnModal from '../components/phn-modal.vue'
+// import TempDialog from '../components/temperature-dialog.vue'
+// import BleedDialog from '../components/bleeding-dialog.vue'
+// import MucusDialog from '../components/mucus-dialog.vue'
 
 
 import { Vue, Component, Watch } from 'vue-property-decorator'
@@ -79,14 +80,14 @@ import jMoment from 'moment-jalaali'
 
 @Component<CalendarPage>({
   components: {
-    Calendar,
+    Calendar: () => import('../components/calendar-comp.vue'),
     CalendarHeader,
     CalendarFooter,
-    PhnSection,
-    PhnModal,
-    TempDialog,
-    BleedDialog,
-    MucusDialog
+    PhnSection: () => import('../components/phn-section.vue'),
+    PhnModal: () => import('../components/phn-modal.vue'),
+    TempDialog: () => import('../components/temperature-dialog.vue'),
+    BleedDialog: () => import('../components/bleeding-dialog.vue'),
+    MucusDialog: () => import('../components/mucus-dialog.vue')
   },
   subscriptions() {
     const monthList = getMonthList(10)
@@ -101,7 +102,8 @@ import jMoment from 'moment-jalaali'
       bleeding: getSelectedCycleDay.pipe(pluck('bleeding')),
       mucus: getSelectedCycleDay.pipe(pluck('mucus')),
       temperature: getSelectedCycleDay.pipe(pluck('temperature')),
-      fertilityStatus
+      fertilityStatus,
+      periodDays: getMenses
     }
   }
 })
@@ -121,10 +123,10 @@ export default class CalendarPage extends Vue {
   }
 
   created() {
-    CycleModule().then(m => {
-      const p = m.getMenses()
-      this.periodDays = p
-    })
+    // CycleModule().then(m => {
+    //   const p = m.getMenses()
+    //   this.periodDays = p
+    // })
   }
 
   goToToday() {
@@ -152,16 +154,16 @@ export default class CalendarPage extends Vue {
   justify-content: stretch;
 }
 
-.container::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background: url('../assets/Back.jpg');
-  background-size: auto 100%;
-  filter: blur(1px) opacity(30%);
-  z-index: -10;
-}
+// .container::before {
+//   content: '';
+//   width: 100%;
+//   height: 100%;
+//   position: fixed;
+//   background: url('../assets/Back.jpg');
+//   background-size: auto 100%;
+//   filter: blur(1px) opacity(30%);
+//   z-index: -10;
+// }
 
 footer {
   display: flex;

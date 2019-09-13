@@ -4,6 +4,7 @@ import { Subject, Observable, of, from } from 'rxjs'
 import { map, shareReplay, switchMap, share, filter, tap, catchError, take } from 'rxjs/operators'
 
 import { getCycleDay, saveBulkCycleDay } from 'src/db';
+import CycleModule from '../lib/cycle'
 import { CycleDaySchema } from 'src/db/schemas';
 import { getBadTimeEvents } from 'src/lib/cal-events/event';
 import { saveInitialCycleConfig } from 'src/local-storage';
@@ -131,6 +132,8 @@ export const getSelectedCycleDay = longSelectedDayObj.pipe(
   tap(console.log),
   shareReplay()
 )
+
+export const getMenses = from(CycleModule().then(cm => cm.getMenses())).pipe(shareReplay())
 
 export const getSelectedEvents = longSelectedDayObj.pipe(
   switchMap(day => getBadTimeEvents(day.date))

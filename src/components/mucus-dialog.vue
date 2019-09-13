@@ -29,8 +29,8 @@
             :key="f.key"
             :value="i"
             :label="f.label"
-            :unchecked-icon="f.icon"
-            :checked-icon="f.icon"
+            :unchecked-icon="f.icon()"
+            :checked-icon="f.icon()"
             checked-color="pink"
             v-model="feeling"
           />
@@ -45,8 +45,8 @@
             :key="f.key"
             :value="i"
             :label="f.label"
-            :unchecked-icon="f.icon"
-            :checked-icon="f.icon"
+            :unchecked-icon="f.icon()"
+            :checked-icon="f.icon()"
             checked-color="pink"
             v-model="texture"
           />
@@ -128,22 +128,22 @@ const mucusFeelingIcons = [
   {
     key: 'discharge',
     label: mucus.feeling.categories[0],
-    icon: '../assets/icons/ic_mucus_discharge.png'
+    icon() { return require('../assets/icons/ic_mucus_discharge.png') }
   },
   {
     key: 'spotting',
     label: mucus.feeling.categories[1],
-    icon: '../assets/icons/ic_mucus_spotting.png'
+    icon() { return require('../assets/icons/ic_mucus_spotting.png') }
   },
   {
     key: 'watery',
     label: mucus.feeling.categories[2],
-    icon: '../assets/icons/ic_mucus_watery.png'
+    icon() { return require('../assets/icons/ic_mucus_watery.png') }
   },
   {
     key: 'sticky',
     label: mucus.feeling.categories[3],
-    icon: '../assets/icons/ic_mucus_sticky.png'
+    icon() { return require('../assets/icons/ic_mucus_sticky.png') }
   },
 ]
 
@@ -151,17 +151,17 @@ const mucusTextureIcons = [
   {
     key: 'nodischarge',
     label: mucus.feeling.categories[1],
-    icon: '../assets/icons/ic_mucus_nodischarge.png'
+    icon() { return require('../assets/icons/ic_mucus_nodischarge.png') }
   },
   {
     key: 'creamy',
     label: mucus.feeling.categories[0],
-    icon: '../assets/icons/ic_mucus_creamy.png'
+    icon() { return require('../assets/icons/ic_mucus_creamy.png') }
   },
   {
     key: 'eggwhite',
     label: mucus.feeling.categories[1],
-    icon: '../assets/icons/ic_mucus_eggwhite.png'
+    icon() { return require('../assets/icons/ic_mucus_eggwhite.png') }
   }
 ]
 </script>

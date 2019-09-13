@@ -76,7 +76,6 @@ export default class Home extends Vue {
       this.cycleDayNumber = day.getCycleDayNumber(LocalDate.now().toString())
       this.predictionText = determinePredictionText(this.prediction)
       this.bleedingPredictionRange = getBleedingPredictionRange(this.prediction)
-      console.log(day.getPreviousCycle(LocalDate.now().toString()))
     })
     getFertilityStatusForDay(this.todayDateString).then((status) => {
       console.log(status)
