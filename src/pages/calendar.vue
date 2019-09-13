@@ -6,7 +6,6 @@
       @prev-month="$refs.carousel.previous()"
     />
     <q-carousel
-      animated
       swipeable
       height="100%"
       transition-next="slide-left"
@@ -130,8 +129,8 @@ export default class CalendarPage extends Vue {
   }
 
   goToToday() {
-    this.slide = 10
     dispatch('selectDay', { selectedDay: jMoment().format('jYYYY-jMM-jDD') })
+    this.slide = 10
   }
 
   changePeriod(ev: any) {

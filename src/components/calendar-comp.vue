@@ -39,11 +39,11 @@
 </template>
 
 <script lang="ts">
-import { daysInMonth } from "../lib/calendar";
+import { daysInMonth, currentMonth } from "../lib/calendar";
 import Day from "./day.vue";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { reduce, mergeDeepRight } from "ramda";
-import { bufferTime } from "rxjs/operators";
+import { bufferTime, tap } from "rxjs/operators";
 import { getCycleDaysInRange } from "../db";
 import { CycleDaySchema } from "../db/schemas";
 import cycleModule from "../lib/cycle";
@@ -51,8 +51,10 @@ import { getFertilityStatusForDay } from "../lib/sympto-adapter";
 
 @Component<Calendar>({
   components: { Day },
-  mounted() {
-    
+  subscriptions() {
+    return {
+      month: daysInMonth
+    }
   }
 })
 export default class Calendar extends Vue {
@@ -73,25 +75,32 @@ export default class Calendar extends Vue {
   fertility = new Map<string, string>();
   innerLoading = true
 
+  @Watch('current')
+  updateCalendar(m: string) {
+    currentMonth.next(m)
+  }
+
   created() {
-    this.$subscribeTo(
-      daysInMonth(this.current),
-      (d: any) => {
-        this.month = [...this.month, d];
-        if (d.isToday) {
-          this.selectedDay = d.jDate;
-        }
-        // getFertilityStatusForDay(d.mDate).then(status => {
-        //   this.fertility.set(d.mDate, status.status);
-        // });
-      },
-      function(err) {
-        console.log(err);
-      },
-      () => {
-        this.innerLoading = false
-      }
-    );
+    currentMonth.next(this.current)
+    this.selectedDay = this.selectedDay || this.current;
+    // this.$subscribeTo(
+    //   daysInMonth(this.current),
+    //   (d: any) => {
+    //     this.month = d;
+    //     if (d.isToday) {
+    //       this.selectedDay = d.jDate;
+    //     }
+    //     // getFertilityStatusForDay(d.mDate).then(status => {
+    //     //   this.fertility.set(d.mDate, status.status);
+    //     // });
+    //   },
+    //   function(err) {
+    //     console.log(err);
+    //   },
+    //   () => {
+    //     this.innerLoading = false
+    //   }
+    // );
   }
 
   log(e: any) {
@@ -101,7 +110,8 @@ export default class Calendar extends Vue {
   }
 
   mounted() {
-    this.selectedDay = this.selectedDay || this.current;
+    
+    this.innerLoading = false
   }
 }
 </script>
