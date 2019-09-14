@@ -30,7 +30,7 @@
                   :key="i"
                   :value="m.key"
                   :label="m.label"
-                  :unchecked-icon="m.icon()"
+                  :unchecked-icon="m.icon"
                   checked-color="teal-10"
                   v-model="mood"
                 />
@@ -45,7 +45,7 @@
                   :key="i"
                   :value="p.key"
                   :label="p.label"
-                  :unchecked-icon="p.icon()"
+                  :unchecked-icon="p.icon"
                   checked-color="purple-10"
                   v-model="pain"
                 />
@@ -60,7 +60,7 @@
                   :key="i"
                   :value="s.key"
                   :label="s.label"
-                  :unchecked-icon="s.icon()"
+                  :unchecked-icon="s.icon"
                   checked-color="pink"
                   v-model="sex"
                 />
@@ -82,6 +82,7 @@ import iRadio from "./custom-radio.vue";
 import {
   shortSelectedDay,
   longSelectedDayObj,
+  initialCycleDay,
   LongDateModel
 } from "../state";
 
@@ -103,8 +104,8 @@ import jMoment from "moment-jalaali";
 interface PhnIcon {
   key: number | string;
   label: string;
-  icon: () => any;
-  checkedIcon?: () => any;
+  icon: string;
+  checkedIcon?: string;
 }
 
 @Component({
@@ -117,18 +118,18 @@ export default class PhnModal extends Vue {
   painIcons: PhnIcon[] = Object.keys(pain.categories).map((key, index) => ({
     key,
     label: (<any>pain.categories)[key],
-    icon() { return  require(`../assets/icons/ic_sy_${key}.png`) }
+    icon: `../assets/icons/ic_sy_${key}.png`
   }));
   moodIcons: PhnIcon[] = Object.keys(mood.categories).map((key, index) => ({
     key,
     label: (<any>mood.categories)[key],
-    icon() { return  require(`../assets/icons/ic_mood_${key}.png`) }
+    icon: `../assets/icons/ic_mood_${key}.png`
   }));
   sexIcons: PhnIcon[] = sex.categories.map((x, i) => ({
     key: i,
     label: x,
-    icon() { return  require(`../assets/icons/ic_sex_${i}.png`) },
-    checkedIcon() { return  require(`../assets/icons/ic_sex_${i}_l.png`) }
+    icon: `../assets/icons/ic_sex_${i}.png`,
+    checkedIcon: `../assets/icons/ic_sex_${i}_l.png`
   }));
 
   showModal = false;
