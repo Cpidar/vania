@@ -74,7 +74,7 @@ export default class Me extends Vue {
 
 
   changeCycleLength() {
-    window.SelectorCordovaPlugin.showSelector(this.config, result => console.log(result), err => console.error(err))
+    (window as any).SelectorCordovaPlugin.showSelector(this.config, (result: any) => console.log(result), (err: any) => console.error(err))
   }
 
 }

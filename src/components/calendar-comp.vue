@@ -21,25 +21,49 @@
         :period="period.get(day.mDate)"
         :fertility="fertility.get(day.mDate)"
       >{{day.day}}</Day>
+      <!-- <svg width="100vmin" height="40vmin" direction="rtl" lang="fa" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <g v-for="(day, i) of month" :key="'r'+i">
+            <rect v-if="i>=20 && i <=23" :x="(i%7)*cellW+'%'" :y="(Math.floor(i/7))*cellH+'%'" :width="cellW+'%'" :height="cellH+'%'" stroke="pink" fill="transparent" stroke-width="1">/</rect>
+          </g>
+          <circle :cx="cx" :cy="cy" :r="cellH/4+'%'" stroke="red" fill="blue" :stroke-width="0"></circle>
+          <g v-for="(day, i) of month" :key="'t'+i">
+            <text :x="cellW/2+(i%7)*cellW+'%'" :y="cellH/2+(Math.floor(i/7))*cellH+'%'" text-anchor="middle" dy=".3em" @click="log">{{day.day}}</text>
+          </g>
+      </svg> -->
     </section>
+    <q-inner-loading :showing="innerLoading">
+      <q-spinner-cube size="50px" color="primary" />
+        در حال محاسبه
+    </q-inner-loading>
   </div>
 </template>
 
 <script lang="ts">
-import { daysInMonth } from "../lib/calendar";
+import { daysInMonth, currentMonth } from "../lib/calendar";
 import Day from "./day.vue";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { reduce, mergeDeepRight } from "ramda";
-import { bufferTime } from "rxjs/operators";
+import { bufferTime, tap } from "rxjs/operators";
 import { getCycleDaysInRange } from "../db";
 import { CycleDaySchema } from "../db/schemas";
 import cycleModule from "../lib/cycle";
 import { getFertilityStatusForDay } from "../lib/sympto-adapter";
 
 @Component<Calendar>({
-  components: { Day }
+  components: { Day },
+  subscriptions() {
+    return {
+      month: daysInMonth
+    }
+  }
 })
 export default class Calendar extends Vue {
+  values= [...Array(42).keys()]
+  cellW = 100/7
+  cellH = 100/6
+  cx = 0
+  cy = 0
+  bleedingLength =  4
   @Prop({ type: String, required: true }) current: string;
   events = {};
   selectedDay = "";
@@ -49,30 +73,45 @@ export default class Calendar extends Vue {
     string
   >;
   fertility = new Map<string, string>();
+  innerLoading = true
+
+  @Watch('current')
+  updateCalendar(m: string) {
+    currentMonth.next(m)
+  }
 
   created() {
-    this.$subscribeTo(
-      daysInMonth(this.current),
-      (d: any) => {
-        this.month = [...this.month, d];
-        if (d.isToday) {
-          this.selectedDay = d.jDate;
-        }
-        getFertilityStatusForDay(d.mDate).then(status => {
-          this.fertility.set(d.mDate, status.status);
-        });
-      },
-      function(err) {
-        console.log(err);
-      },
-      () => {
-        console.log("complete");
-      }
-    );
+    currentMonth.next(this.current)
+    this.selectedDay = this.selectedDay || this.current;
+    // this.$subscribeTo(
+    //   daysInMonth(this.current),
+    //   (d: any) => {
+    //     this.month = d;
+    //     if (d.isToday) {
+    //       this.selectedDay = d.jDate;
+    //     }
+    //     // getFertilityStatusForDay(d.mDate).then(status => {
+    //     //   this.fertility.set(d.mDate, status.status);
+    //     // });
+    //   },
+    //   function(err) {
+    //     console.log(err);
+    //   },
+    //   () => {
+    //     this.innerLoading = false
+    //   }
+    // );
+  }
+
+  log(e: any) {
+    console.log(e.target.x.baseVal[0].value)
+    this.cx = e.target.x.baseVal[0].value
+    this.cy = e.target.y.baseVal[0].value
   }
 
   mounted() {
-    this.selectedDay = this.selectedDay || this.current;
+    
+    this.innerLoading = false
   }
 }
 </script>
@@ -85,6 +124,7 @@ export default class Calendar extends Vue {
   width: 100%;
   flex-wrap: wrap;
   margin: 0 auto;
+  height 60vmin
 }
 
 .calendarday > div {
@@ -107,5 +147,8 @@ export default class Calendar extends Vue {
   background-color: white;
   margin-top: 0;
   animation: all 0.2;
+}
+circle {
+  transition: all 100ms ease-in-out;
 }
 </style>
