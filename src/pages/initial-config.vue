@@ -40,14 +40,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { importInitialCycleConfig, dispatch } from "src/state";
-import Calendar from "../components/calendar-comp.vue";
-import jMoment from "moment-jalaali";
-import { entryPage as labels } from "../i18n/fa/labels";
+import jMoment from 'moment-jalaali';
+import { dispatch, importInitialCycleConfig } from 'src/state';
+import { Component, Vue } from 'vue-property-decorator';
+import Calendar from '../components/calendar-comp.vue';
+import { entryPage as labels } from '../i18n/fa/labels';
 
 function range(start: number, end: number) {
-  var ans = [];
+  const ans = [];
   for (let i = start; i <= end; i++) {
     ans.push({ value: i, name: i });
   }
@@ -58,40 +58,40 @@ function range(start: number, end: number) {
   components: { Calendar }
 })
 export default class InitialConfigPage extends Vue {
-  month = jMoment()
-    .startOf("jMonth")
-    .format("jYYYY-jMM-jDD");
-  prevMonth = jMoment()
-    .startOf("jMonth")
+  public month = jMoment()
+    .startOf('jMonth')
+    .format('jYYYY-jMM-jDD');
+  public prevMonth = jMoment()
+    .startOf('jMonth')
     .clone()
-    .subtract(1, "jMonth")
-    .format("jYYYY-jMM-jDD");
-  earlierMonth = jMoment()
-    .startOf("jMonth")
+    .subtract(1, 'jMonth')
+    .format('jYYYY-jMM-jDD');
+  public earlierMonth = jMoment()
+    .startOf('jMonth')
     .clone()
-    .subtract(2, "jMonth")
-    .format("jYYYY-jMM-jDD");
+    .subtract(2, 'jMonth')
+    .format('jYYYY-jMM-jDD');
 
-  step = 1;
-  cycleLength = 28;
-  bleedingLength = 4;
-  lastCycleStart = "";
+  public step = 1;
+  public cycleLength = 28;
+  public bleedingLength = 4;
+  public lastCycleStart = '';
 
-  labels = labels;
+  public labels = labels;
 
-  cycleLengthValues = [...range(18, 42)];
+  public cycleLengthValues = [...range(18, 42)];
 
-  BleedingLengthValues = [...range(3, 7)];
+  public BleedingLengthValues = [...range(3, 7)];
 
-  save() {
+  public save() {
     const payload = {
       start: this.lastCycleStart,
       cycleLength: this.cycleLength,
       bleedindLength: this.bleedingLength
     };
     importInitialCycleConfig(payload);
-    dispatch("init");
-    this.$router.replace("home");
+    dispatch('init');
+    this.$router.replace('home');
   }
 }
 </script>

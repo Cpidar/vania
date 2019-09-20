@@ -15,22 +15,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator'
-import { PainSchema, BleedingSchema, MoodSchema, SexSchema, DesireSchema } from '../db/schemas';
+import { Component, Emit, Model, Prop, Vue } from 'vue-property-decorator'
+import { BleedingSchema, DesireSchema, MoodSchema, PainSchema, SexSchema } from '../db/schemas';
 
 @Component({})
 export default class CustomCheckbox extends Vue {
-  @Model('change') readonly modelValue: string[]
-  @Prop({ default: false }) styled: boolean
-  @Prop() value: string
-  @Prop() label: string
-  @Prop() checkedIcon: string
-  @Prop() uncheckedIcon: string
-  @Prop() checkedColor: string
-  @Prop() uncheckedColor: string
+  @Model('change') public readonly modelValue: string[]
+  @Prop({ default: false }) public styled: boolean
+  @Prop() public value: string
+  @Prop() public label: string
+  @Prop() public checkedIcon: string
+  @Prop() public uncheckedIcon: string
+  @Prop() public checkedColor: string
+  @Prop() public uncheckedColor: string
 
-  icon = this.uncheckedIcon
-  updatedModel = this.modelValue || []
+  private icon = this.uncheckedIcon
+  private updatedModel = this.modelValue || []
 
   get shouldBeChecked() {
     // let updatedModel = this.modelValue
@@ -38,7 +38,7 @@ export default class CustomCheckbox extends Vue {
     return this.updatedModel.includes(this.value)
   }
 
-  updateInput() {
+  private updateInput() {
     if (this.updatedModel.includes(this.value)) {
       this.updatedModel.splice(this.updatedModel.indexOf(this.value), 1)
     } else {

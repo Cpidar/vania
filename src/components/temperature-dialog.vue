@@ -23,13 +23,27 @@
 
         <q-card-section>
           <scroll-picker-group style="display: flex; font-size: 18px;">
-            <scroll-picker :options="tempDecList" v-model="temperatureDec"/>
-            <scroll-picker :options="tempIntList" v-model="temperatureInt"/>
+            <scroll-picker
+              :options="tempDecList"
+              v-model="temperatureDec"
+            />
+            <scroll-picker
+              :options="tempIntList"
+              v-model="temperatureInt"
+            />
           </scroll-picker-group>
         </q-card-section>
 
-        <q-card-actions align="left" class="bg-white text-teal">
-          <q-btn flat :label="sharedLabels.save" @click="save" v-close-popup></q-btn>
+        <q-card-actions
+          align="left"
+          class="bg-white text-teal"
+        >
+          <q-btn
+            flat
+            :label="sharedLabels.save"
+            @click="save"
+            v-close-popup
+          ></q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -37,13 +51,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import { BleedingSchema, MucusSchema, TemperatureSchema } from "../db/schemas";
-import iRadio from "./custom-radio.vue";
-import { temperature, sharedDialogs } from "../i18n/fa/cycle-day";
-import { saveSymptom } from "../db";
-import { headerTitles } from "../i18n/fa/labels";
-import { dispatch } from "src/state";
+import { dispatch } from 'src/state';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { saveSymptom } from '../db';
+import { BleedingSchema, MucusSchema, TemperatureSchema } from '../db/schemas';
+import { sharedDialogs, temperature } from '../i18n/fa/cycle-day';
+import { headerTitles } from '../i18n/fa/labels';
+import iRadio from './custom-radio.vue';
 
 interface PhnIcon {
   key: number | string;
@@ -53,7 +67,7 @@ interface PhnIcon {
 }
 
 function range(start: number, end: number) {
-  var ans = [];
+  const ans = [];
   for (let i = start; i <= end; i++) {
     ans.push({ value: i, name: i });
   }
@@ -64,41 +78,41 @@ function range(start: number, end: number) {
   components: { iRadio }
 })
 export default class TemperatureDialog extends Vue {
-  @Prop() data: TemperatureSchema;
-  @Prop() date: string;
+  @Prop() public data: TemperatureSchema;
+  @Prop() public date: string;
 
-  showDialog = false;
-  sharedLabels = sharedDialogs;
-  tempLabels = temperature;
-  title = headerTitles.TemperatureEditView;
+  public showDialog = false;
+  public sharedLabels = sharedDialogs;
+  public tempLabels = temperature;
+  public title = headerTitles.TemperatureEditView;
 
-  exclude = false;
-  temperatureInt = 32
-  temperatureDec = 0.4
+  public exclude = false;
+  public temperatureInt = 32
+  public temperatureDec = 0.4
 
-  @Watch('data')
-  onDataChange() {
-    const val = this.data && this.data.value
-    this.temperatureInt = Math.trunc(val)
-    this.temperatureDec = +(val- this.temperatureInt).toFixed(2)
-    this.exclude = this.data && this.data.exclude
-  }
-
-  tempIntList: any = [
+  public tempIntList: any = [
     ...range(33, 45)
   ];
 
-  tempDecList = [
-    ...range(1, 99).map(x => ({ value: x.value / 100, name: x.name /100 }))
+  public tempDecList = [
+    ...range(1, 99).map(x => ({ value: x.value / 100, name: x.name / 100 }))
   ]
+
+  @Watch('data')
+  public onDataChange() {
+    const val = this.data && this.data.value
+    this.temperatureInt = Math.trunc(val)
+    this.temperatureDec = +(val - this.temperatureInt).toFixed(2)
+    this.exclude = this.data && this.data.exclude
+  }
 
   get value() {
     return this.data && this.data.value;
   }
 
-  save() {
+  public save() {
     const temp = this.temperatureInt + this.temperatureDec;
-    saveSymptom("temperature", this.date, {
+    saveSymptom('temperature', this.date, {
       value: temp,
       exclude: this.exclude
     }).then(res => {

@@ -75,7 +75,7 @@ export interface SexSchema extends Base {
 //     shoulderAche: boolean;
 //     tender: boolean;
 // }
-export type PainSchema = (
+export type PainSchema = Array<
     | 'acne'
     | 'bodyAche'
     | 'backaches'
@@ -92,7 +92,7 @@ export type PainSchema = (
     | 'pms'
     | 'shoulderAche'
     | 'tender'
-)[]
+>
 
 // export interface MoodSchema extends Base {
 //     happy: boolean;
@@ -108,8 +108,8 @@ export type PainSchema = (
 //     panicky: boolean;
 //     lonely: boolean;
 // }
-export type MoodSchema = (
-    |'happy' 
+export type MoodSchema = Array<
+    |'happy'
     | 'sad'
     | 'stressed'
     | 'normal'
@@ -121,7 +121,7 @@ export type MoodSchema = (
     | 'tense'
     | 'panicky'
     | 'lonely'
-    )[]
+    >
 
 export interface CycleDaySchema extends Base {
     _id?: string;
@@ -139,4 +139,3 @@ export interface CycleDaySchema extends Base {
     pain: PainSchema;
     mood: MoodSchema;
 }
-

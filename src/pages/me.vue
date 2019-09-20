@@ -43,13 +43,13 @@
 </template>
 
 <script lang="ts">
+import { pluck } from 'rxjs/operators'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { model$ } from '../state'
-import { pluck } from 'rxjs/operators'
 
 function range(start: number, end: number) {
-  var ans = [];
+  const ans = [];
   for (let i = start; i <= end; i++) {
     ans.push({ description: `${i}` });
   }
@@ -58,22 +58,21 @@ function range(start: number, end: number) {
 
 @Component({})
 export default class Me extends Vue {
-  periodLength = 5;
-  cycleLength = 28;
-  lock = false;
+  public periodLength = 5;
+  public cycleLength = 28;
+  public lock = false;
 
-  wheelSelectorData = {
+  public wheelSelectorData = {
     cycleLength: range(18, 42),
     bleedingLength: range(3, 7)
   }
 
-  config = {
-      title: "How Many?",
+  public config = {
+      title: 'How Many?',
       items: [[this.wheelSelectorData.cycleLength]],
   }
 
-
-  changeCycleLength() {
+  public changeCycleLength() {
     window.SelectorCordovaPlugin.showSelector(this.config, result => console.log(result), err => console.error(err))
   }
 

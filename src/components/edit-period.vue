@@ -63,45 +63,39 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 // eslint-disable-next-line no-unused-vars
 import { dispatch } from '../state'
 
 @Component({})
 export default class PeriodModal extends Vue {
-  @Prop({ default: () => 4 }) periodLength: number
-  @Prop({ default: () => 28 }) cycleLength: number
-  @Prop({ default: () => false }) modalState: boolean
-  cycleHelper = 'تعداد روزهای بین دو سیکل پریودی'
-  periodHelper: string = 'تعداد روز بین شروع و پایان پریودی'
-  periodLen: number = 0
-  cycleLen: number = 0
-  showModal: boolean = false
+  @Prop({ default: () => 4 }) public periodLength: number
+  @Prop({ default: () => 28 }) public cycleLength: number
+  @Prop({ default: () => false }) public modalState: boolean
+  public cycleHelper = 'تعداد روزهای بین دو سیکل پریودی'
+  public periodHelper: string = 'تعداد روز بین شروع و پایان پریودی'
+  public periodLen: number = 0
+  public cycleLen: number = 0
+  public showModal: boolean = false
 
-  mounted() {
+  public mounted() {
     this.periodLen = this.periodLength
     this.cycleLen = this.cycleLength
   }
-  onOk() {
-    console.log(this.periodLen, this.cycleLen)
+  public onOk() {
     dispatch('changePeriod', { periodLength: this.periodLen, cycleLength: this.cycleLen })
   }
 
-  onCancel() {
+  public onCancel() {
     this.$emit('close')
   }
 
-  onShow() { }
-
-  onHide() { }
-
-  async choose(okFn: any) {
+  public async choose(okFn: any) {
     await okFn()
     await this.$emit('close')
     // await this.$q.notify({ message: `success` })
   }
 }
-
 </script>
 
 <style lang="stylus" scoped>

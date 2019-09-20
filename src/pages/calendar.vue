@@ -50,43 +50,42 @@
 <script lang="ts">
 import {
   dispatch,
-  longSelectedDayObj,
-  getSelectedCycleDay,
-  model$,
+  fertilityStatus,
+  getMenses,
   getMonthList,
-  fertilityStatus
+  getSelectedCycleDay,
+  longSelectedDayObj,
+  model$
   // getDaysHaveEvents,
 } from '../state'
 
-import Calendar from '../components/calendar-comp.vue'
-import CalendarHeader from '../components/calendar-header.vue'
+// import Calendar from '../components/calendar-comp.vue'
 import CalendarFooter from '../components/calendar-footer.vue'
-import PhnSection from '../components/phn-section.vue'
-import PhnModal from '../components/phn-modal.vue'
-import TempDialog from '../components/temperature-dialog.vue'
-import BleedDialog from '../components/bleeding-dialog.vue'
-import MucusDialog from '../components/mucus-dialog.vue'
+import CalendarHeader from '../components/calendar-header.vue'
+// import PhnSection from '../components/phn-section.vue'
+// import PhnModal from '../components/phn-modal.vue'
+// import TempDialog from '../components/temperature-dialog.vue'
+// import BleedDialog from '../components/bleeding-dialog.vue'
+// import MucusDialog from '../components/mucus-dialog.vue'
 
-
-import { Vue, Component, Watch } from 'vue-property-decorator'
-import { Observable, of, combineLatest, zip } from 'rxjs';
-import { merge, catchError, pluck, switchMap, map, filter } from 'rxjs/operators';
-import { getCycleDay, getCycleDaysInRange } from '../db';
-import { CycleDaySchema, BleedingSchema, TemperatureSchema, MucusSchema } from '../db/schemas';
-import CycleModule from '../lib/cycle'
 import jMoment from 'moment-jalaali'
-
+import { combineLatest, Observable, of, zip } from 'rxjs';
+import { catchError, filter, map, merge, pluck, switchMap } from 'rxjs/operators';
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { getCycleDay, getCycleDaysInRange } from '../db';
+import { BleedingSchema, CycleDaySchema, MucusSchema, TemperatureSchema } from '../db/schemas';
+import CycleModule from '../lib/cycle'
 
 @Component<CalendarPage>({
   components: {
-    Calendar,
+    Calendar: () => import('../components/calendar-comp.vue'),
     CalendarHeader,
     CalendarFooter,
-    PhnSection,
-    PhnModal,
-    TempDialog,
-    BleedDialog,
-    MucusDialog
+    PhnSection: () => import('../components/phn-section.vue'),
+    PhnModal: () => import('../components/phn-modal.vue'),
+    TempDialog: () => import('../components/temperature-dialog.vue'),
+    BleedDialog: () => import('../components/bleeding-dialog.vue'),
+    MucusDialog: () => import('../components/mucus-dialog.vue')
   },
   subscriptions() {
     const monthList = getMonthList(10)
@@ -101,38 +100,39 @@ import jMoment from 'moment-jalaali'
       bleeding: getSelectedCycleDay.pipe(pluck('bleeding')),
       mucus: getSelectedCycleDay.pipe(pluck('mucus')),
       temperature: getSelectedCycleDay.pipe(pluck('temperature')),
+      periodDays: getMenses,
       fertilityStatus
     }
   }
 })
 
 export default class CalendarPage extends Vue {
-  loading = false
-  slide = 10
-  currentDay: string = ''
-  monthList: string[] = []
-  calendarKey = 1
-  periodDays: Map<string, string> = new Map()
+  public loading = false
+  public slide = 10
+  public currentDay: string = ''
+  public monthList: string[] = []
+  public calendarKey = 1
+  public periodDays: Map<string, string> = new Map()
 
   @Watch('slide')
-  onSlideChange() {
+  public onSlideChange() {
     const selectedDay = this.monthList[this.slide]
     dispatch('selectDay', { selectedDay })
   }
 
-  created() {
-    CycleModule().then(m => {
-      const p = m.getMenses()
-      this.periodDays = p
-    })
+  public created() {
+    // CycleModule().then(m => {
+    //   const p = m.getMenses()
+    //   this.periodDays = p
+    // })
   }
 
-  goToToday() {
+  public goToToday() {
     this.slide = 10
     dispatch('selectDay', { selectedDay: jMoment().format('jYYYY-jMM-jDD') })
   }
 
-  changePeriod(ev: any) {
+  public changePeriod(ev: any) {
     CycleModule().then(m => {
       const p = m.getMenses()
       this.periodDays = p
@@ -152,16 +152,16 @@ export default class CalendarPage extends Vue {
   justify-content: stretch;
 }
 
-.container::before {
-  content: '';
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background: url('../assets/Back.jpg');
-  background-size: auto 100%;
-  filter: blur(1px) opacity(30%);
-  z-index: -10;
-}
+// .container::before {
+//   content: '';
+//   width: 100%;
+//   height: 100%;
+//   position: fixed;
+//   background: url('../assets/Back.jpg');
+//   background-size: auto 100%;
+//   filter: blur(1px) opacity(30%);
+//   z-index: -10;
+// }
 
 footer {
   display: flex;

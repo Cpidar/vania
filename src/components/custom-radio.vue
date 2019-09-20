@@ -18,22 +18,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model } from 'vue-property-decorator'
+import { Component, Model, Prop, Vue } from 'vue-property-decorator'
 
 @Component({})
 export default class CustomCheckBox extends Vue {
-  @Model('change') modelValue: any
-  @Prop() value: number
-  @Prop() label: string
-  @Prop() checkedIcon: string
-  @Prop() uncheckedIcon: string
-  @Prop() checkedColor: string
-  @Prop() uncheckedColor: string
+  @Model('change') public modelValue: any
+  @Prop() public value: number
+  @Prop() public label: string
+  @Prop() public checkedIcon: string
+  @Prop() public uncheckedIcon: string
+  @Prop() public checkedColor: string
+  @Prop() public uncheckedColor: string
 
   get shouldBeChecked() {
     return this.modelValue === this.value
   }
-  updateInput() {
+  private updateInput() {
     this.shouldBeChecked ? this.$emit('change', -1) : this.$emit('change', this.value)
   }
 }

@@ -47,7 +47,6 @@ export default [
     { id: '6/21', title: 'ولادت حضرت فاطمه زهرا سلام الله علیها و روز زن', holiday: false, type: 'lunar' }, // bugs
     { id: '6/30', title: 'ولادت امام محمد باقر علیه السلام', holiday: false, type: 'lunar' },
 
-
     // {'day': 75, title: 'ولادت حضرت فاطمه و روز زن', holiday: false, type: 'lunar'},
     // {'day': 98, title: 'ولادت امام علی', holiday: true, type: 'lunar'},
     // {'day': 112, title: 'مبعث حضرت رسول اکرم', holiday: true, type: 'lunar'},

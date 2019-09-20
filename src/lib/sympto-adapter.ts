@@ -1,11 +1,11 @@
 // @ts-nocheck
 
-import getFertilityStatus from './sympto'
+import { CycleDaySchema } from 'src/db/schemas';
+import { fertilityStatus as labels } from 'src/i18n/fa/labels'
 import cycleModule from 'src/lib/cycle'
 import { useCervixObservable } from 'src/local-storage'
-import { fertilityStatus as labels } from 'src/i18n/fa/labels'
-import { CycleDaySchema } from 'src/db/schemas';
-import { CycleInfo, StatusModel, OvuPhaseModel, FertalityStatus } from './cycle.models'
+import { CycleInfo, FertalityStatus, OvuPhaseModel, StatusModel } from './cycle.models'
+import getFertilityStatus from './sympto'
 
 export async function getFertilityStatusForDay(dateString: string) {
   const status = await getCycleStatusForDay(dateString)
@@ -15,8 +15,6 @@ export async function getFertilityStatusForDay(dateString: string) {
       phase: null
     }
   }
-
-  console.log(status)
 
   const phases = Object.keys(status.phases)
   const phaseNameForDay = phases.find(phaseName => {
@@ -41,7 +39,7 @@ export async function getFertilityStatusForDay(dateString: string) {
 }
 
 export async function getCycleStatusForDay(dateString: string, opts = {} as any) {
-  let options = opts || { excludeEarlierCycles: false }
+  const options = opts || { excludeEarlierCycles: false }
   const {
     getCycleForDay,
     getCyclesBefore,
@@ -51,7 +49,7 @@ export async function getCycleStatusForDay(dateString: string, opts = {} as any)
   const cycle = getCycleForDay(dateString)
   if (!cycle) return null
 
-  const cycleInfo:  CycleInfo = {cycle: formatCycleForSympto(cycle), secondarySymptom: ''}
+  const cycleInfo: CycleInfo = {cycle: formatCycleForSympto(cycle), secondarySymptom: ''}
 
   const previousCycle = getPreviousCycle(dateString)
 
@@ -95,13 +93,11 @@ function formatStatus(phaseNameForDay: string, dateString: string, status: Statu
         statusText: labels.periOvuText
       }
     },
-    postOvulatory: (dateString: string, status: StatusModel) => {
-      return {
-        status: labels.infertile,
-        phase: 3,
-        statusText: labels.postOvuText(status.temperatureShift.rule)
-      }
-    },
+    postOvulatory: (dateString: string, status: StatusModel) => ({
+      status: labels.infertile,
+      phase: 3,
+      statusText: labels.postOvuText(status.temperatureShift.rule)
+    }),
     preOvulatoryStd: () => {
       return {
         status: labels.infertile,
@@ -168,6 +164,5 @@ function formatCycleForSympto(cycle: CycleDaySchema[]): CycleDaySchema[] {
 }
 
 function hasIncompleteCervixValue(day: CycleDaySchema) {
-  return day.cervix && (typeof day.cervix.opening != 'number' || typeof day.cervix.firmness != 'number')
+  return day.cervix && (typeof day.cervix.opening !== 'number' || typeof day.cervix.firmness !== 'number')
 }
-

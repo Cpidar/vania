@@ -1,12 +1,11 @@
-import { RouteConfig, NavigationGuard } from 'vue-router'
-import Mylayout from '../layouts/MyLayout.vue'
-import HomePage from '../pages/home.vue'
-import CalendarPage from '../pages/calendar.vue'
-import MePage from '../pages/me.vue'
-import InitialConfigPage from '../pages/initial-config.vue'
 import { LocalStorage } from 'quasar'
 import { dispatch } from 'src/state';
-
+import { RouteConfig } from 'vue-router'
+import Mylayout from '../layouts/MyLayout.vue'
+import CalendarPage from '../pages/calendar.vue'
+import HomePage from '../pages/home.vue'
+import InitialConfigPage from '../pages/initial-config.vue'
+import MePage from '../pages/me.vue'
 
 const routes: RouteConfig[] = [
   {
@@ -14,7 +13,7 @@ const routes: RouteConfig[] = [
     component: Mylayout,
     beforeEnter: (to, from, next) => {
       const appOpenedBefore = LocalStorage.getItem('appOpenedBefore')
-      if(appOpenedBefore) {
+      if (appOpenedBefore) {
         next()
         dispatch('init')
       } else {

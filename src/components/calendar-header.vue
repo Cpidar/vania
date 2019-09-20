@@ -47,8 +47,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import posed, { PoseTransition } from 'vue-pose'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import PeriodModal from './edit-period.vue'
 
 @Component({
@@ -68,22 +68,22 @@ import PeriodModal from './edit-period.vue'
   }
 })
 export default class CalendarHeader extends Vue {
-  @Prop({ default: () => ({ day: 0, monthName: '', year: 0 }) }) date: any
-  prevDate = {}
-  newDate = {}
-  isVisible = true
-  modal = false
+  @Prop({ default: () => ({ day: 0, monthName: '', year: 0 }) }) public date: any
+  private prevDate = {}
+  private newDate = {}
+  private isVisible = true
+  private modal = false
 
   @Watch('date')
-  DateChange(newVal: any, oldVal: any) {
+  private DateChange(newVal: any, oldVal: any) {
     this.isVisible = !this.isVisible
   }
 
-  goToNextMonth() {
+  private goToNextMonth() {
     this.$emit('next-month')
   }
 
-  goToPrevMonth() {
+  private goToPrevMonth() {
     this.$emit('prev-month')
   }
 }

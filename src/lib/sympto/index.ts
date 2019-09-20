@@ -13,7 +13,7 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
   throwIfArgsAreNotInRequiredFormat([cycle, ...earlierCycles])
 
   const status: StatusModel = initializeStatus(cycle)
-
+  console.log(status)
   // if there was no first higher measurement in the previous cycle,
   // no infertile pre-ovulatory phase may be assumed
   if (!excludePreOvu && previousCycle) {

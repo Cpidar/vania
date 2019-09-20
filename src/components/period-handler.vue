@@ -34,28 +34,27 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch, Emit, Prop } from 'vue-property-decorator'
+import { Notify } from 'quasar'
+import { switchMap, take } from 'rxjs/operators';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
+import { saveSymptom } from '../db';
 // import { putToDB } from '../events/event'
 import { dispatch, shortSelectedDay } from '../state'
-import { saveSymptom } from '../db';
-import { take, switchMap } from 'rxjs/operators';
-import { Notify } from 'quasar'
 
 @Component({})
 export default class PeriodHandler extends Vue {
-  @Prop() start: boolean
-  diff = 0
-  gotPeriod = false
-  endPeriod = false
-  startPeriodDate = ''
-
-  created() {
-  }
+  @Prop() public start: boolean
+  public diff = 0
+  public gotPeriod = false
+  public endPeriod = false
+  public startPeriodDate = ''
 
   @Watch('gotPeriod')
-  Period() {
+  public Period() {
     if (this.gotPeriod === true) {
-      shortSelectedDay.pipe(take(1), switchMap(date => saveSymptom('bleeding', date, { value: 0, exclude: false }))).subscribe( res => {
+      shortSelectedDay.pipe(take(1), switchMap(date => {
+        return saveSymptom('bleeding', date, { value: 0, exclude: false });
+      })).subscribe( res => {
         Notify({
           message: 'success',
           color: 'purpel'
@@ -67,7 +66,7 @@ export default class PeriodHandler extends Vue {
   }
 
   @Emit('period')
-  changePeriod() {
+  public changePeriod() {
     return this.diff
   }
 }

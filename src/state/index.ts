@@ -1,27 +1,30 @@
 
 import jMoment from 'moment-jalaali'
-import { Subject, Observable, of, from } from 'rxjs'
-import { map, shareReplay, switchMap, share, filter, tap, catchError, take } from 'rxjs/operators'
+import { from, Observable, of, Subject } from 'rxjs'
+import { catchError, map, share, shareReplay, switchMap, take } from 'rxjs/operators'
 
 import { getCycleDay, saveBulkCycleDay } from 'src/db';
 import { CycleDaySchema } from 'src/db/schemas';
 import { getBadTimeEvents } from 'src/lib/cal-events/event';
-import { saveInitialCycleConfig } from 'src/local-storage';
+import CycleModule from 'src/lib/cycle'
 import { getFertilityStatusForDay } from 'src/lib/sympto-adapter';
+import { saveInitialCycleConfig } from 'src/local-storage';
 
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
 
 const moment = (str: string) => jMoment(str, 'jYYYY-jMM-jDD')
-const miladi = (str: string) => jMoment(str, 'jYYYY-jMM-jDD').format('YYYY-MM-DD')
 
 export interface Model {
   status: string;
   month: string;
   selectedDay: string;
   today: string;
-  events: { type: string, title: string }[];
+  events: Array<{ type: string, title: string }>;
   PHN: CycleDaySchema;
+  lazyMonthList: string[];
+  menses: Map<string, string>;
+  currentCycle: CycleDaySchema[];
   // currentCycle: { start: string, cycleLength: number, bleedindLength: number };
 }
 
@@ -39,14 +42,21 @@ export const initialModel: Model = {
   selectedDay: jMoment().startOf('day').format('jYYYY-jMM-jDD'),
   today: jMoment().startOf('day').format('jYYYY-jMM-jDD'),
   events: [],
-  PHN: {} as any,
+  PHN: {} as CycleDaySchema,
+  lazyMonthList: [],
+  menses: new Map(),
+  currentCycle: []
 }
-
 
 export const present = async (data: { type: string, payload: any}) => {
   switch (data.type) {
     case 'init':
       initialModel.status = 'INIT'
+      // const bleedingDays = await getBleedingDaysSortedByDate().then(days => days.map(day => day.date))
+      // initialModel.bleedingDaysSortedByDate = new Set(bleedingDays)
+      const menses = await CycleModule().then(cycle => cycle.getMenses())
+      const predictedMenses = await CycleModule().then(cycle => cycle.getPredictedMenses())
+      initialModel.menses = new Map([...menses, ...predictedMenses])
       return initialModel
 
     case 'selectDay':
@@ -55,7 +65,7 @@ export const present = async (data: { type: string, payload: any}) => {
       initialModel.events = data.payload.events
       initialModel.PHN = data.payload.phn
       return initialModel
-    
+
     case 'ADD_PHN':
       initialModel.status = 'PHN_ADDED'
 
@@ -66,20 +76,19 @@ export const present = async (data: { type: string, payload: any}) => {
 
 export const importInitialCycleConfig = (m: any) => {
   saveInitialCycleConfig(m)
-  let docs: Partial<CycleDaySchema>[] = []
-  for(let i = 0; i < m.bleedindLength; i++) {
-    let date = moment(m.start).add(i, 'day').format('YYYY-MM-DD')
-    if(date > jMoment().format('YYYY-MM-DD')) break
+  const docs: Array<Partial<CycleDaySchema>> = []
+  for (let i = 0; i < m.bleedindLength; i++) {
+    const date = moment(m.start).add(i, 'day').format('YYYY-MM-DD')
+    if (date > jMoment().format('YYYY-MM-DD')) break
     docs.push({
       _id: `cycleday-${date}`,
-      date: date,
+      date,
       isCycleStart: i === 0 ? true : false,
       isBleedingDay: true
     })
   }
   return saveBulkCycleDay(docs)
 }
-
 
 // Wiring
 
@@ -123,18 +132,20 @@ export const longSelectedDayObj: Observable<LongDateModel> = model$.pipe(
 
 export const fertilityStatus = longSelectedDayObj.pipe(
   switchMap(m => getFertilityStatusForDay(m.mDate)),
-  tap(console.log)
 )
 
 export const getSelectedCycleDay = longSelectedDayObj.pipe(
-  switchMap(m => from(getCycleDay(m.mDate)).pipe(catchError((x) => {console.log('not-found'); return of({})}))),
-  tap(console.log),
+  switchMap(m => from(getCycleDay(m.mDate)).pipe(catchError(() => {console.log('not-found'); return of({})}))),
   shareReplay()
 )
 
 export const getSelectedEvents = longSelectedDayObj.pipe(
   switchMap(day => getBadTimeEvents(day.date))
 )
+
+export const getMenses = from(
+  CycleModule().then(cm => new Map([...cm.getMenses(), ...cm.getPredictedMenses()]))
+).pipe(shareReplay())
 
 export const dispatch = (type: string, payload?: any) => {
   model$.subscribe()

@@ -1,8 +1,7 @@
 import * as joda from 'js-joda'
-import jMoment from 'moment-jalaali'
-import { getCycleLengthStats, CycleLengthState } from './cycle-length'
-import { getBleedingDaysSortedByDate, getCycleStartsSortedByDate, getCycleDaysSortedByDate } from '../db'
-import { CycleDaySchema, BleedingSchema } from 'src/db/schemas';
+import { BleedingSchema, CycleDaySchema } from 'src/db/schemas';
+import { getBleedingDaysSortedByDate, getCycleDaysSortedByDate, getCycleStartsSortedByDate } from '../db'
+import { getCycleLengthStats } from './cycle-length'
 const LocalDate = joda.LocalDate
 const DAYS = joda.ChronoUnit.DAYS
 
@@ -43,10 +42,9 @@ export default async function config(opts?: any) {
 
   function getMenses() {
     const starts = cycleStartsSortedByDate
-    let m = new Map<string, string>()
+    const m = new Map<string, string>()
     if (starts.length === 0) return m
-    for (let cycle of starts) {
-      console.log(cycle)
+    for (const cycle of starts) {
       const start = LocalDate.parse(cycle.date)
       const nextCycles = getMensesDaysRightAfter(cycle)
       const end = nextCycles.length ? nextCycles[0].date : ''
@@ -55,7 +53,7 @@ export default async function config(opts?: any) {
       m.set(end, 'period-end')
       let i = 1
       while (true) {
-        let date = start.plusDays(i++)
+        const date = start.plusDays(i++)
         if (date.equals(LocalDate.parse(end))) { break }
         m.set(date.toString(), 'period')
       }
@@ -132,10 +130,11 @@ export default async function config(opts?: any) {
 
     // checks that there are no relevant bleeding days before
     // the input cycleDay (returns boolean)
+    // tslint:disable-next-line:no-shadowed-variable
     function noBleedingDayWithinThresholdBefore(cycleDay: CycleDaySchema) {
       const localDate = LocalDate.parse(cycleDay.date)
       const threshold = localDate.minusDays(maxBreakInBleeding + 1).toString()
-      const bleedingDays = bleedingDaysSortedByDate
+      const bleedingDays = [cycleDay, ...bleedingDaysSortedByDate].sort((a, b) => a.date > b.date ? -1 : 1)
       const index = bleedingDays.findIndex(day => day.date === cycleDay.date)
       const candidates = bleedingDays.slice(index + 1)
       return !candidates.some(day => {
@@ -186,14 +185,14 @@ export default async function config(opts?: any) {
       .filter(length => length && length <= maxCycleLength)
   }
 
-  function getPredictedMenses(opt?: { start: string, cycleLength: number, bleedingLength: number }) {
+  function getPredictedMenses() {
 
-    let cycleLengths = getAllCycleLengths()
+    const cycleLengths = getAllCycleLengths()
 
     if (cycleLengths.length < minCyclesForPrediction) {
       return new Map<string, string>()
     }
-    
+
     const cycleInfo = getCycleLengthStats(cycleLengths as number[])
     const periodDistance = Math.round(cycleInfo.mean)
     let periodStartVariation: number
@@ -211,7 +210,7 @@ export default async function config(opts?: any) {
 
     const allMensesStarts = cycleStartsSortedByDate
     let lastStart = LocalDate.parse(allMensesStarts[0].date)
-    let predictedMenses = new Map<string, string>()
+    const predictedMenses = new Map<string, string>()
     for (let i = 0; i < 3; i++) {
       lastStart = lastStart.plusDays(periodDistance)
       predictedMenses.set(lastStart.toString(), 'period-pr')

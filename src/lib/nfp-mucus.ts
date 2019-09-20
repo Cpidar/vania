@@ -1,6 +1,6 @@
-export default function (feeling: number, texture: number ) {
+export default function(feeling: number, texture: number ) {
 
-  if (typeof feeling != 'number' || typeof texture != 'number') return null
+  if (typeof feeling !== 'number' || typeof texture !== 'number') return null
 
   const feelingMapping: any = {
     0: 0,
@@ -15,5 +15,6 @@ export default function (feeling: number, texture: number ) {
   }
   const nfpFeelingValue = feelingMapping[feeling]
   const nfpTextureValue = textureMapping[texture]
-  return typeof Math.max(nfpFeelingValue, nfpTextureValue) === 'number' ? Math.max(nfpFeelingValue, nfpTextureValue) : -1
+  return typeof Math.max(nfpFeelingValue, nfpTextureValue) === 'number' ?
+    Math.max(nfpFeelingValue, nfpTextureValue) : -1
 }

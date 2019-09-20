@@ -9,65 +9,65 @@
       </div>
     </q-banner>
     <q-timeline color="secondary">
-        <q-timeline-entry icon="delete" key="weight-temp" v-if="weight || temperature">
+        <q-timeline-entry subtitle="دما - وزن" key="weight-temp" v-if="weight || temperature">
           <div>
             <q-chip v-if="weight">
               <q-avatar size="28px">
-                <img :src="'./assets/icons/ic_weigth.png'" />
+                <img :src="require('../assets/icons/ic_weight.png')" />
               </q-avatar>
               {{ weight + " Kg" }}
             </q-chip>
             <q-chip v-if="temperature">
               <q-avatar size="28px">
-                <img :src="'./assets/icons/ic_tempreture.png'" />
+                <img :src="require('../assets/icons/ic_tempreture.png')" />
               </q-avatar>
-              {{ temperature + " °C" }}
+              {{ temperature + " درجه سانتیگراد" }}
             </q-chip>
           </div>
         </q-timeline-entry>
 
         <q-timeline-entry
-          icon="sentiment_very_dissatisfied"
+          subtitle="خونریزی"
           key="bleeding"
           v-if="bleeding !== -1 && bleeding !== undefined"
         >
           <div>
             <q-chip>
               <q-avatar size="28px">
-                <img :src="'./assets/icons/ic_bl_' + bleeding + '.png'" />
+                <img :src="require('../assets/icons/ic_bl_' + this.bleeding + '.png')" />
               </q-avatar>
               {{ bleedingLabel[bleeding] }}
             </q-chip>
           </div>
         </q-timeline-entry>
 
-        <q-timeline-entry icon="img:./assets/calendar-icons/ic_calendar_sym_headache_c.png" key="pain" v-if="pains">
+        <q-timeline-entry subtitle="وضعیت جسمی" key="pain" v-if="pains">
           <div>
             <q-chip v-for="pain of pains" :key="pain">
               <q-avatar size="28px">
-                <img :src="'../assets/icons/ic_sy_' + pain + '.png'" />
+                <img :src="require('../assets/icons/ic_sy_' + pain + '.png')" />
               </q-avatar>
               {{ painLabels[pain] }}
             </q-chip>
           </div>
         </q-timeline-entry>
 
-        <q-timeline-entry icon="mood" key="mood" v-if="moods">
+        <q-timeline-entry subtitle="وضعیت روحی" key="mood" v-if="moods">
           <div >
             <q-chip v-for="mood of moods" :key="mood">
               <q-avatar size="28px">
-                <img :src="'../assets/icons/ic_mood_' + mood + '.png'" />
+                <img :src="require('../assets/icons/ic_mood_' + mood + '.png')" />
               </q-avatar>
               {{ moodLabels[mood] }}
             </q-chip>
           </div>
         </q-timeline-entry>
 
-        <q-timeline-entry icon="delete" key="sex" v-if="(sex !== -1) && (sex !== undefined)">
+        <q-timeline-entry subtitle="نزدیکی" key="sex" v-if="(sex !== -1) && (sex !== undefined)">
           <div>
             <q-chip>
               <q-avatar size="28px">
-                <img :src="'../assets/icons/ic_sex_' + sex + '.png'" />
+                <img :src="require('../assets/icons/ic_sex_' + sex + '.png')" />
               </q-avatar>
               {{ sexLabels[sex] }}
             </q-chip>
@@ -138,6 +138,7 @@ export default class PhnSection extends Vue {
     let attr = this.phn && this.phn.weight
     return (attr && attr.value)
   }
+
 }
 
 </script>

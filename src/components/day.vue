@@ -22,23 +22,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Model, Emit } from 'vue-property-decorator'
+import { Component, Emit, Model, Prop, Vue } from 'vue-property-decorator'
+import { getCycleDay } from '../db'
 import { dispatch } from '../state'
-import { getCycleDay } from '../db';
 
 @Component({})
 export default class Day extends Vue {
-  @Prop({ type: String, required: true }) date: string
-  @Prop({ type: Boolean, default: false }) today: boolean
-  @Prop() inactive: any
-  @Prop() hasNote: boolean
-  @Prop() period: string
-  @Prop() fertility: string
+  @Prop({ type: String, required: true }) public date: string
+  @Prop({ type: Boolean, default: false }) public today: boolean
+  @Prop() public inactive: any
+  @Prop() public hasNote: boolean
+  @Prop() public period: string
+  @Prop() public fertility: string
   // v-model for class select
-  @Model('select', {type: String}) selectedDay: string
+  @Model('select', {type: String}) public selectedDay: string
 
   @Emit('select')
-  selectDay(ev: any) {
+  public selectDay(ev: any) {
     const selectedDay = ev.target.getAttribute('value')
     dispatch('selectDay', { selectedDay })
     return ev.target.getAttribute('value')

@@ -35,7 +35,7 @@ import Vue from 'vue'
 
 export default Vue.extend({
   name: 'MyLayout',
-  data () {
+  data() {
     return {
       leftDrawerOpen: false // this.$q.platform.is.desktop
     }

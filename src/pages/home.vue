@@ -44,14 +44,14 @@
 
 <script lang="ts">
 /* eslint-disable no-unused-vars */
+import { ChronoUnit, LocalDate } from 'js-joda'
+import { map } from 'rxjs/operators';
+import { Component, Vue } from 'vue-property-decorator'
+import { getCycleDaysSortedByDate, saveSymptom } from '../db'
+import { bleedingPrediction as predictLabels, home as labels, shared } from '../i18n/en/labels'
 import cycleModule from '../lib/cycle'
-import { Vue, Component } from 'vue-property-decorator'
-import { LocalDate, ChronoUnit } from 'js-joda'
-import { saveSymptom, getCycleDaysSortedByDate } from '../db'
-import { home as labels, bleedingPrediction as predictLabels, shared } from '../i18n/en/labels'
 import { getFertilityStatusForDay } from '../lib/sympto-adapter'
 import { longSelectedDayObj } from '../state'
-import { map } from 'rxjs/operators';
 
 @Component({
   subscriptions() {
@@ -61,25 +61,23 @@ import { map } from 'rxjs/operators';
   }
 })
 export default class Home extends Vue {
-  today = LocalDate.now()
-  todayDateString = this.today.toString()
-  cycleDayNumber: number | null = 0
-  prediction: string[][]
-  predictionText = ''
-  bleedingPredictionRange = ''
-  fertilityStatus = {}
+  public today = LocalDate.now()
+  public todayDateString = this.today.toString()
+  public cycleDayNumber: number | null = 0
+  public prediction: string[][]
+  public predictionText = ''
+  public bleedingPredictionRange = ''
+  public fertilityStatus = {}
   // getBleedingPrediction = cycleModule().getPredictedMenses
-  
-  created() {
+
+  public created() {
 
     cycleModule().then(day => {
       this.cycleDayNumber = day.getCycleDayNumber(LocalDate.now().toString())
       this.predictionText = determinePredictionText(this.prediction)
       this.bleedingPredictionRange = getBleedingPredictionRange(this.prediction)
-      console.log(day.getPreviousCycle(LocalDate.now().toString()))
     })
     getFertilityStatusForDay(this.todayDateString).then((status) => {
-      console.log(status)
       this.fertilityStatus = status.status
     })
   }

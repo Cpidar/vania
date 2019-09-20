@@ -1,5 +1,5 @@
-import { memoizeWith, identity, prepend, add, scan, tail, last, findIndex } from 'ramda'
 import jMoment from 'moment-jalaali'
+import { add, findIndex, identity, last, memoizeWith, prepend, scan, tail } from 'ramda'
 // for unit testing
 // import * as jMoment from 'moment-jalaali'
 jMoment.locale('fa')
@@ -10,7 +10,7 @@ export const toPersianDigit = (a: any) => {
     a = a.toString()
   }
   // tslint:disable-next-line:only-arrow-functions
-  return a.replace(/\d+/g, function (digit: any) {
+  return a.replace(/\d+/g, function(digit: any) {
     const enDigitArr = []
 
     const peDigitArr = []

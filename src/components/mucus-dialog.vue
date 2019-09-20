@@ -29,8 +29,8 @@
             :key="f.key"
             :value="i"
             :label="f.label"
-            :unchecked-icon="f.icon"
-            :checked-icon="f.icon"
+            :unchecked-icon="f.icon()"
+            :checked-icon="f.icon()"
             checked-color="pink"
             v-model="feeling"
           />
@@ -45,8 +45,8 @@
             :key="f.key"
             :value="i"
             :label="f.label"
-            :unchecked-icon="f.icon"
-            :checked-icon="f.icon"
+            :unchecked-icon="f.icon()"
+            :checked-icon="f.icon()"
             checked-color="pink"
             v-model="texture"
           />
@@ -61,14 +61,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import { MucusSchema } from "../db/schemas";
-import iRadio from "./custom-radio.vue";
-import { mucus, sharedDialogs } from "../i18n/fa/cycle-day";
-import { shared, headerTitles } from "../i18n/fa/labels";
-import { saveSymptom } from "../db";
+import { dispatch } from 'src/state';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { saveSymptom } from '../db';
+import { MucusSchema } from '../db/schemas';
+import { mucus, sharedDialogs } from '../i18n/fa/cycle-day';
+import { headerTitles, shared } from '../i18n/fa/labels';
 import computeNfpValue from '../lib/nfp-mucus'
-import { dispatch } from "src/state";
+import iRadio from './custom-radio.vue';
 
 interface PhnIcon {
   key: number | string;
@@ -81,33 +81,32 @@ interface PhnIcon {
   components: { iRadio }
 })
 export default class MucusDialog extends Vue {
-  @Prop() data: MucusSchema;
-  @Prop() date: string;
+  @Prop() public data: MucusSchema;
+  @Prop() public date: string;
 
-  symptomName = 'mucus'
+  public symptomName = 'mucus'
 
-  showDialogue = false;
-  labels = sharedDialogs;
-  mucusLabels = mucus;
-  title = headerTitles.MucusEditView;
+  public showDialogue = false;
+  public labels = sharedDialogs;
+  public mucusLabels = mucus;
+  public title = headerTitles.MucusEditView;
 
-  mucusFeelingIcons = mucusFeelingIcons
-  mucusTextureIcons = mucusTextureIcons
-  texture: number = -1
-  exclude = false
-  feeling: number = -1
-  value: number = -1
+  public mucusFeelingIcons = mucusFeelingIcons
+  public mucusTextureIcons = mucusTextureIcons
+  public texture: number = -1
+  public exclude = false
+  public feeling: number = -1
+  public value: number = -1
 
   @Watch('data')
-  onDataChange() {
+  public onDataChange() {
     this.texture = this.data && this.data.texture
     this.exclude = this.data && this.data.exclude
     this.feeling = this.data && this.data.feeling
     this.value = this.data && this.data.value
   }
 
-
-  save() {
+  public save() {
     saveSymptom(this.symptomName, this.date, {
       feeling: this.feeling,
       texture: this.texture,
@@ -128,22 +127,22 @@ const mucusFeelingIcons = [
   {
     key: 'discharge',
     label: mucus.feeling.categories[0],
-    icon: '../assets/icons/ic_mucus_discharge.png'
+    icon() { return require('../assets/icons/ic_mucus_discharge.png') }
   },
   {
     key: 'spotting',
     label: mucus.feeling.categories[1],
-    icon: '../assets/icons/ic_mucus_spotting.png'
+    icon() { return require('../assets/icons/ic_mucus_spotting.png') }
   },
   {
     key: 'watery',
     label: mucus.feeling.categories[2],
-    icon: '../assets/icons/ic_mucus_watery.png'
+    icon() { return require('../assets/icons/ic_mucus_watery.png') }
   },
   {
     key: 'sticky',
     label: mucus.feeling.categories[3],
-    icon: '../assets/icons/ic_mucus_sticky.png'
+    icon() { return require('../assets/icons/ic_mucus_sticky.png') }
   },
 ]
 
@@ -151,20 +150,19 @@ const mucusTextureIcons = [
   {
     key: 'nodischarge',
     label: mucus.feeling.categories[1],
-    icon: '../assets/icons/ic_mucus_nodischarge.png'
+    icon() { return require('../assets/icons/ic_mucus_nodischarge.png') }
   },
   {
     key: 'creamy',
     label: mucus.feeling.categories[0],
-    icon: '../assets/icons/ic_mucus_creamy.png'
+    icon() { return require('../assets/icons/ic_mucus_creamy.png') }
   },
   {
     key: 'eggwhite',
     label: mucus.feeling.categories[1],
-    icon: '../assets/icons/ic_mucus_eggwhite.png'
+    icon() { return require('../assets/icons/ic_mucus_eggwhite.png') }
   }
 ]
 </script>
 
 <style lang="stylus" scoped></style>
-

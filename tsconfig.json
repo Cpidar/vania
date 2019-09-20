@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "strictPropertyInitialization": false,
     "resolveJsonModule": true,
-    "strictNullChecks": false,
+    "strictNullChecks": false
   },
   "include": [
     "./src/**/*"

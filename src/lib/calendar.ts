@@ -1,12 +1,11 @@
-import { map, observeOn, share } from "rxjs/operators";
 import jMoment from 'moment-jalaali'
-import { range, asapScheduler } from "rxjs";
+import { animationFrameScheduler, BehaviorSubject, range } from 'rxjs';
+import { bufferCount, exhaustMap, observeOn, shareReplay, withLatestFrom } from 'rxjs/operators';
 
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
 
 const moment = (str: string) => jMoment(str, 'jYYYY-jMM-jDD')
-
 
 export const computeDaysInMonth = (counter: number, m: string) => {
     const jDate = moment(m).clone().add(counter, 'day')
@@ -25,12 +24,16 @@ export const computeDaysInMonth = (counter: number, m: string) => {
     }
 }
 
+export const currentMonth = new BehaviorSubject(jMoment().startOf('jMonth').format('jYYYY-jMM-jDD'))
 
-
-export const daysInMonth = (month: string) => range(-moment(month).clone().weekday(), 42).pipe(
-    // observeOn(asyncScheduler),
-    map((m) => computeDaysInMonth(m, month)),
-    // tap(console.log),
-    observeOn(asapScheduler),
-    share()
+export const daysPattern = currentMonth.pipe(
+    exhaustMap((month) => range(-moment(month).clone().weekday(), 42))
+    // share()
+    // subscribeOn(asyncScheduler),
+)
+export const daysInMonth = daysPattern.pipe(
+    observeOn(animationFrameScheduler),
+    withLatestFrom(currentMonth, (d, m) => computeDaysInMonth(d, m)),
+    bufferCount(42),
+    shareReplay()
 )

@@ -5,7 +5,6 @@ import { Moment } from 'moment-jalaali'
 jMoment.locale('fa')
 jMoment.loadPersian({ usePersianDigits: false, dialect: 'persian-modern' })
 
-
 const moment = (str: string) => jMoment(str, 'jYYYY-jMM-jDD')
 
 const calcuteCycle = (date: Moment, start: string, cycle: number, period: number) => {

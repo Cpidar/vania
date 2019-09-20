@@ -1,6 +1,5 @@
-import { CycleDaySchema } from "../db/schemas";
+import { CycleDaySchema } from '../db/schemas';
 
-  
 export interface CycleInfo {
 cycle: CycleDaySchema[];
 previousCycle?: CycleDaySchema[];
@@ -29,7 +28,7 @@ export interface TemperatureDaysModel {
     temp: number;
 }
 
-export interface SymptomShiftModel{
+export interface SymptomShiftModel {
     detected: boolean;
     rule?: number;
     firstHighMeasurementDay?: CycleDaySchema;
