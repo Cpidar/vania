@@ -1,3 +1,4 @@
+  // tslint:disable:max-line-length
 import labels from './settings'
 const settingsTitles = labels.menuTitles
 
@@ -86,7 +87,7 @@ export const bleedingPrediction = {
 export const passwordPrompt = {
   title: 'Unlock app',
   enterPassword: 'Enter password here',
-  deleteDatabaseExplainer: "If you've forgotten your password, unfortunately, there is nothing we can do to recover your data, because it is encrypted with the password only you know. You can, however, delete all your encrypted data and start fresh. Once all data has been erased, you can set a new password in the settings, if you like.",
+  deleteDatabaseExplainer: 'If you\'ve forgotten your password, unfortunately, there is nothing we can do to recover your data, because it is encrypted with the password only you know. You can, however, delete all your encrypted data and start fresh. Once all data has been erased, you can set a new password in the settings, if you like.',
   forgotPassword: 'Forgot your password?',
   deleteDatabaseTitle: 'Forgot your password?',
   deleteData: 'Yes, delete all my data',
@@ -97,7 +98,7 @@ export const passwordPrompt = {
 
 export const home = {
   editToday: 'add data for today',
-  cycleDayNotEnoughInfo: "We don't have enough information to know what your current cycle day is.",
+  cycleDayNotEnoughInfo: 'We don\'t have enough information to know what your current cycle day is.',
   unknown: '?',
   // @ts-ignore
   cycleDayKnown: d => `Your last period started ${getDaysDescriptor(d)}.`,
@@ -106,7 +107,7 @@ export const home = {
   // @ts-ignore
   phase: n => `${['1st', '2nd', '3rd'][n - 1]} cycle phase`
 }
-//@ts-ignore
+// @ts-ignore
 const getDaysDescriptor = cycleDayNumber => {
   if (cycleDayNumber === 1) return 'today'
   if (cycleDayNumber === 2) return 'yesterday'
@@ -118,7 +119,7 @@ export const fertilityStatus = {
   infertile: 'infertile',
   fertileUntilEvening: 'Fertile phase ends in the evening',
   unknown: 'We cannot show any cycle information because no period data has been added.',
-  preOvuText: "With NFP rules, you may assume 5 days of infertility at the beginning of your cycle, provided you don't observe any fertile mucus or cervix values.",
+  preOvuText: 'With NFP rules, you may assume 5 days of infertility at the beginning of your cycle, provided you don\'t observe any fertile mucus or cervix values.',
   periOvuText: 'We have not been able to detect both a temperature shift and mucus or cervix shift.',
   // @ts-ignore
   postOvuText: tempRule => {

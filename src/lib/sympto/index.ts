@@ -1,25 +1,23 @@
-import getTemperatureShift from './temperature'
-import getMucusShift from './mucus'
-import getCervixShift from './cervix'
-import getPreOvulatoryPhase from './pre-ovulatory'
-import { LocalDate } from 'js-joda'
 import assert from 'assert'
-import { CycleDaySchema, BleedingSchema } from 'src/db/schemas';
-import { CycleInfo, StatusModel, PhaseModel, SymptomShiftModel } from 'src/lib/cycle.models';
-import { getInitialCycleConfig } from 'src/local-storage';
+import { LocalDate } from 'js-joda'
+import { CycleDaySchema } from 'src/db/schemas';
+import { PhaseModel, StatusModel, SymptomShiftModel } from 'src/lib/cycle.models';
+import getCervixShift from './cervix'
+import getMucusShift from './mucus'
+import getPreOvulatoryPhase from './pre-ovulatory'
+import getTemperatureShift from './temperature'
 
 export default function getSymptoThermalStatus(cycleInfo: any) {
   const { cycle, previousCycle, earlierCycles = [], secondarySymptom = 'mucus', excludePreOvu } = cycleInfo
   throwIfArgsAreNotInRequiredFormat([cycle, ...earlierCycles])
 
   const status: StatusModel = initializeStatus(cycle)
-  console.log(status)
   // if there was no first higher measurement in the previous cycle,
   // no infertile pre-ovulatory phase may be assumed
   if (!excludePreOvu && previousCycle) {
     const statusForLast = getSymptoThermalStatus({
       cycle: previousCycle,
-      secondarySymptom: secondarySymptom
+      secondarySymptom
     })
     if (statusForLast.temperatureShift) {
       const preOvuPhase = getPreOvulatoryPhase(
@@ -108,23 +106,23 @@ export default function getSymptoThermalStatus(cycleInfo: any) {
 
 function throwIfArgsAreNotInRequiredFormat(cycles: any) {
   cycles.forEach((cycle: any) => {
-    assert.ok(Array.isArray(cycle), "Cycles must be arrays.")
-    assert.ok(cycle.length > 0, "Cycle must not be empty.")
-    assert.equal(typeof cycle[0].isBleedingDay, 'boolean', "First cycle day should have bleeding.")
+    assert.ok(Array.isArray(cycle), 'Cycles must be arrays.')
+    assert.ok(cycle.length > 0, 'Cycle must not be empty.')
+    assert.equal(typeof cycle[0].isBleedingDay, 'boolean', 'First cycle day should have bleeding.')
     cycle.forEach((day: any) => {
-      assert.equal(typeof day.date, 'string', "Date must be given as a string.")
-      assert.doesNotThrow(() => LocalDate.parse(day.date), "Date must be given in right string format.")
-      if (day.temperature) assert.equal(typeof day.temperature, 'number', "Temperature value must be a number.")
-      if (day.mucus) assert.equal(typeof day.mucus, 'number', "Mucus value must be a number.")
-      if (day.cervix) assert.equal(typeof day.cervix.opening, 'number', "Cervix opening value must be a number.")
-      if (day.cervix) assert.equal(typeof day.cervix.firmness, 'number', "Cervix firmness value must be a number.")
-      if (day.mucus) assert.ok(day.mucus >= 0, "Mucus value must greater or equal to 0.")
-      if (day.mucus) assert.ok(day.mucus <= 4, "Mucus value must be below 5.")
-      if (day.cervix) assert.ok(day.cervix.opening >= 0, "Cervix opening value must be 0 or bigger")
-      if (day.cervix) assert.ok(day.cervix.opening <= 2, "Cervix opening value must be 2 or smaller")
-      if (day.cervix) assert.ok(day.cervix.firmness >= 0, "Cervix firmness value must be 0 or bigger")
-      if (day.cervix) assert.ok(day.cervix.firmness <= 1, "Cervix firmness value must be 1 or smaller")
-      assert.equal(typeof cycle[0].isBleedingDay, 'boolean', "Bleeding value must be a number")
+      assert.equal(typeof day.date, 'string', 'Date must be given as a string.')
+      assert.doesNotThrow(() => LocalDate.parse(day.date), 'Date must be given in right string format.')
+      if (day.temperature) assert.equal(typeof day.temperature, 'number', 'Temperature value must be a number.')
+      if (day.mucus) assert.equal(typeof day.mucus, 'number', 'Mucus value must be a number.')
+      if (day.cervix) assert.equal(typeof day.cervix.opening, 'number', 'Cervix opening value must be a number.')
+      if (day.cervix) assert.equal(typeof day.cervix.firmness, 'number', 'Cervix firmness value must be a number.')
+      if (day.mucus) assert.ok(day.mucus >= 0, 'Mucus value must greater or equal to 0.')
+      if (day.mucus) assert.ok(day.mucus <= 4, 'Mucus value must be below 5.')
+      if (day.cervix) assert.ok(day.cervix.opening >= 0, 'Cervix opening value must be 0 or bigger')
+      if (day.cervix) assert.ok(day.cervix.opening <= 2, 'Cervix opening value must be 2 or smaller')
+      if (day.cervix) assert.ok(day.cervix.firmness >= 0, 'Cervix firmness value must be 0 or bigger')
+      if (day.cervix) assert.ok(day.cervix.firmness <= 1, 'Cervix firmness value must be 1 or smaller')
+      assert.equal(typeof cycle[0].isBleedingDay, 'boolean', 'Bleeding value must be a number')
     })
   })
 }
@@ -136,7 +134,7 @@ const initializeStatus = (cycle: any) => {
   }
   const conf = { cycleLength: 28 }
   const cycleLength = conf.cycleLength
-  const periPhaseStart = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 -5)
+  const periPhaseStart = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 - 5)
   const periPhaseEnd = LocalDate.parse(cycle[0].date).plusDays(cycleLength - 14 + 1)
   status.phases.preOvulatoryStd = {
     start: { date: cycle[0].date },

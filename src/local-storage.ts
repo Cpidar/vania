@@ -1,5 +1,5 @@
-import { LocalStorage } from 'quasar'
 import Observable from 'obv'
+import { LocalStorage } from 'quasar'
 import config from './config'
 
 export const scaleObservable = Observable()

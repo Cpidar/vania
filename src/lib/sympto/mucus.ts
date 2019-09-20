@@ -1,6 +1,6 @@
-import { SymptomShiftModel } from "src/lib/cycle.models";
+import { SymptomShiftModel } from 'src/lib/cycle.models';
 
-export default function (cycleDays: any, tempEvalEndIndex: number): SymptomShiftModel {
+export default function(cycleDays: any, tempEvalEndIndex: number): SymptomShiftModel {
   const notDetected = { detected: false }
   const mucusDays = cycleDays.filter((day: any) => typeof day.mucus === 'number')
   let currentBestQuality = 0
@@ -11,6 +11,7 @@ export default function (cycleDays: any, tempEvalEndIndex: number): SymptomShift
     if (i === 13) {
       print = true
     } else {
+      // tslint:disable-next-line:no-unused-expression
       print === false
     }
     const day = mucusDays[i]

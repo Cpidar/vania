@@ -70,17 +70,21 @@ export const stats = {
 
 export const bleedingPrediction = {
   noPrediction: 'There is not enough period data to predict the next one.',
+  // tslint:disable-next-line:max-line-length
   predictionInFuture: (startDays: string, endDays: string) => `Your next period is likely to start in ${startDays} to ${endDays} days.`,
+  // tslint:disable-next-line:max-line-length
   predictionStartedXDaysLeft: (numberOfDays: number) => `Your period is likely to start today or during the next ${numberOfDays} days.`,
   predictionStarted1DayLeft: 'Your period is likely to start today or tomorrow.',
   predictionStartedNoDaysLeft: 'Your period is likely to start today.',
+  // tslint:disable-next-line:max-line-length
   predictionInPast: (startDate: string, endDate: string) => `Based on your documented data, your period was likely to start between ${startDate} and ${endDate}.`
 }
 
 export const passwordPrompt = {
   title: 'Unlock app',
   enterPassword: 'Enter password here',
-  deleteDatabaseExplainer: "If you've forgotten your password, unfortunately, there is nothing we can do to recover your data, because it is encrypted with the password only you know. You can, however, delete all your encrypted data and start fresh. Once all data has been erased, you can set a new password in the settings, if you like.",
+  // tslint:disable-next-line:max-line-length
+  deleteDatabaseExplainer: 'If you\'ve forgotten your password, unfortunately, there is nothing we can do to recover your data, because it is encrypted with the password only you know. You can, however, delete all your encrypted data and start fresh. Once all data has been erased, you can set a new password in the settings, if you like.',
   forgotPassword: 'Forgot your password?',
   deleteDatabaseTitle: 'Forgot your password?',
   deleteData: 'Yes, delete all my data',
@@ -91,7 +95,7 @@ export const passwordPrompt = {
 
 export const home = {
   editToday: 'add data for today',
-  cycleDayNotEnoughInfo: "We don't have enough information to know what your current cycle day is.",
+  cycleDayNotEnoughInfo: 'We don\'t have enough information to know what your current cycle day is.',
   unknown: '?',
   // @ts-ignore
   cycleDayKnown: d => `Your last period started ${getDaysDescriptor(d)}.`,
@@ -100,7 +104,7 @@ export const home = {
   // @ts-ignore
   phase: n => `${['1st', '2nd', '3rd'][n - 1]} cycle phase`
 }
-//@ts-ignore
+// @ts-ignore
 const getDaysDescriptor = cycleDayNumber => {
   if (cycleDayNumber === 1) return 'today'
   if (cycleDayNumber === 2) return 'yesterday'
@@ -112,12 +116,14 @@ export const fertilityStatus = {
   infertile: 'infertile',
   fertileUntilEvening: 'Fertile phase ends in the evening',
   unknown: 'We cannot show any cycle information because no period data has been added.',
-  preOvuText: "With NFP rules, you may assume 5 days of infertility at the beginning of your cycle, provided you don't observe any fertile mucus or cervix values.",
+  // tslint:disable-next-line:max-line-length
+  preOvuText: 'With NFP rules, you may assume 5 days of infertility at the beginning of your cycle, provided you don\'t observe any fertile mucus or cervix values.',
   periOvuText: 'We have not been able to detect both a temperature shift and mucus or cervix shift.',
   // @ts-ignore
   postOvuText: tempRule => {
     return (
       'We have detected a temperature shift (' + ['regular', '1st exception', '2nd exception'][tempRule] +
+      // tslint:disable-next-line:max-line-length
       ' temperature rule), as well as a mucus shift according to NFP rules. You may assume infertility, but always remember to ' +
       'double-check for yourself. Make sure the data makes sense to you.'
     )

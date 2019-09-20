@@ -1,4 +1,4 @@
-
+    // tslint:disable:max-line-length
 export const links = {
   gitlab: {
     url: 'https://gitlab.com/bloodyhealth/drip',
@@ -59,6 +59,7 @@ export default {
     title: 'Delete app data',
     explainer: 'Delete app data from this phone',
     question: 'Do you want to delete app data from this phone?',
+    // tslint:disable-next-line:max-line-length
     message: 'Please note that deletion of the app data is permanent and irreversible. We recommend exporting existing data before deletion.',
     confirmation: 'Delete app data permanently',
     errors: {
@@ -98,7 +99,7 @@ export default {
   },
   passwordSettings: {
     title: 'App password',
-    explainerDisabled: "Encrypt the app's database with a password. You need to enter the password every time the app is started.",
+    explainerDisabled: 'Encrypt the app\'s database with a password. You need to enter the password every time the app is started.',
     explainerEnabled: 'Password protection and database encryption is currently enabled',
     setPassword: 'Set password',
     savePassword: 'Save password',
@@ -107,7 +108,7 @@ export default {
     enterCurrent: 'Please enter your current password',
     enterNew: 'Please enter a new password',
     confirmPassword: 'Please confirm your password',
-    passwordsDontMatch: "Password and confirmation don't match",
+    passwordsDontMatch: 'Password and confirmation don\'t match',
     backupReminderTitle: 'Read this before making changes to your password',
     backupReminder: 'Just to be safe, please backup your data using the export function before making changes to your password.\n\nLonger passwords are better! Consider using a passphrase.\n\nPlease also make sure you do not lose your password. There is no way to recover your data if you do.\n\nMaking any changes to your password setting will keep your data as it was before and restart the app.',
     deleteBackupReminderTitle: 'Read this before deleting your password',
@@ -125,7 +126,7 @@ export default {
     title: 'drip is an open-source cycle tracking app',
     text: `Copyright (C) 2019 Bloody Health GbR
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details: https://www.gnu.org/licenses/gpl-3.0.html 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details: https://www.gnu.org/licenses/gpl-3.0.html
 
 You can contact us by bloodyhealth@mailbox.org.`
   },

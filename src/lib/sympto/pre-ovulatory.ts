@@ -1,9 +1,8 @@
 import { LocalDate } from 'js-joda'
-import apply8DayRule from './minus-8-day-rule'
-import { CycleDaySchema } from 'src/db/schemas';
 import { OvuPhaseModel } from 'src/lib/cycle.models';
+import apply8DayRule from './minus-8-day-rule'
 
-export default function (cycle: any, previousCycles: any, secondarySymptom: string): OvuPhaseModel {
+export default function(cycle: any, previousCycles: any, secondarySymptom: string): OvuPhaseModel {
   let preOvuPhaseLength = 5
 
   const minus8DayRuleResult = apply8DayRule(previousCycles, secondarySymptom)

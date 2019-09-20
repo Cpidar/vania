@@ -1,3 +1,5 @@
+  // tslint:disable:max-line-length
+
 import {links} from './settings'
 
 export const generalInfo = {

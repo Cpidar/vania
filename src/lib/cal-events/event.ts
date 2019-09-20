@@ -1,14 +1,9 @@
 
 import { j2d } from 'jalaali-js'
-
-import { from } from 'rxjs'
-import { filter, map, tap, reduce, pluck } from 'rxjs/operators'
-
 import { jdToHijri } from '../../state/helper'
 import moonInSco from './bad-time.json'
 
 const allevents = moonInSco
-
 
 export const getBadTimeEvents = (date: string) => {
   const j = date.split('-').map(Number)

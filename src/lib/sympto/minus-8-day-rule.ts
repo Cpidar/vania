@@ -1,8 +1,7 @@
 import { LocalDate } from 'js-joda'
 import getNfpStatus from './index'
-import { CycleDaySchema } from 'src/db/schemas';
 
-export default function (previousCycles: any, secondarySymptom: string) {
+export default function(previousCycles: any, secondarySymptom: string) {
   const fhms = previousCycles
     .map((cycle: any) => {
       const status = getNfpStatus({ cycle, secondarySymptom })

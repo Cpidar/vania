@@ -1,3 +1,5 @@
+  // tslint:disable:max-line-length
+
 export const mucusNFP = ['t', 'Ø', 'f', 'S', 'S+']
 export const intensity = ['low', 'medium', 'high']
 
@@ -9,7 +11,7 @@ export const bleeding = {
   },
   exclude: {
     header: 'Exclude',
-    explainer: "You can exclude this value if it's not menstrual bleeding"
+    explainer: 'You can exclude this value if it\'s not menstrual bleeding'
   }
 }
 
@@ -20,7 +22,7 @@ export const cervix = {
   },
   firmness: {
     categories: ['hard', 'soft'],
-    explainer: "When it's hard it might feel like the tip of your nose"
+    explainer: 'When it\'s hard it might feel like the tip of your nose'
   },
   position: {
     categories: ['low', 'medium', 'high'],
@@ -38,7 +40,7 @@ export const mucus = {
     categories: ['nothing', 'creamy', 'egg white'],
     explainer: 'Looking at and touching your cervical mucus, which describes it best?'
   },
-  excludeExplainer: "You can exclude this value if you don't want to use it for fertility detection",
+  excludeExplainer: 'You can exclude this value if you don\'t want to use it for fertility detection',
   actionHint: 'Choose values for both "Feeling" and "Texture" to save.'
 }
 
@@ -125,7 +127,7 @@ export const temperature = {
   },
   exclude: {
     header: 'Exclude',
-    explainer: "You can exclude this value if you don't want to use it for fertility detection"
+    explainer: 'You can exclude this value if you don\'t want to use it for fertility detection'
   }
 }
 

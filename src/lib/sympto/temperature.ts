@@ -1,6 +1,6 @@
-import { SymptomShiftModel, TemperatureDaysModel } from "src/lib/cycle.models";
+import { SymptomShiftModel, TemperatureDaysModel } from 'src/lib/cycle.models';
 
-export default function (cycleDays: any) {
+export default function(cycleDays: any) {
   const temperatureDays: TemperatureDaysModel[] = cycleDays
     .filter((day: any) => day.temperature && !day.temperature.exclude)
     .map((day: any) => {
@@ -36,6 +36,7 @@ export default function (cycleDays: any) {
   return { detected: false }
 }
 
+// tslint:disable-next-line:variable-name
 function checkIfFirstHighMeasurement(_temp: any, i: number, temperatureDays: any, ltl: any) {
   // need at least 3 high temps to form a high temperature level
   if (i > temperatureDays.length - 3) {
@@ -91,7 +92,7 @@ function getResultForSecondExceptionRule(nextDaysAfterPotentialFhm: any[], ltl: 
   return false
 }
 
-function secondOrThirdTempIsAtOrBelowLtl(nextDaysAfterPotentialFhm: { temp: number; }[], ltl: number) {
+function secondOrThirdTempIsAtOrBelowLtl(nextDaysAfterPotentialFhm: Array<{ temp: number; }>, ltl: number) {
   const secondIsLow = nextDaysAfterPotentialFhm[0].temp <= ltl
   const thirdIsLow = nextDaysAfterPotentialFhm[1].temp <= ltl
   if ((secondIsLow || thirdIsLow) && !(secondIsLow && thirdIsLow)) {
