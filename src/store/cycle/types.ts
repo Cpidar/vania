@@ -1,0 +1,20 @@
+// Mutations Types
+export const CHANGE_PERIOD_SETTING = 'Change Default Period Setting'
+export const ADD_CYCLE_DAY = 'Add Cycle Days'
+export const DEL_CYCLE_DAY =  'Delete Cycle Days'
+export const SET_CYCLE_DAY = 'Cycle PHN for Selected Day'
+export const SET_FERTILITY_STATUSE = 'Fertility Status for Selected Day'
+export const SET_DATE = 'Set Selected Date'
+export const ADD_PR_MENS = 'Add Predicted Menses'
+export const DEL_PR_DAY = 'Add Predicted Menses'
+
+// Actions Types
+export const INIT = 'Initialize Store'
+export const GET_CYCLE_DAYS_FROM_DB = 'Get All Cycle Days From DB Sorted By Date'
+export const START_PERIOD = 'Start Period'
+export const END_PERIOD = 'End Period'
+export const DEL_PERIOD = 'Delete Period'
+export const GET_SYMPTOM = 'Get Cycle Day for Selected Day'
+export const SAVE_SYMPTOM = 'Save Symptom'
+export const SAVE_PHN = 'Save PHN'
+export const GET_PR_MENS = 'Get Predicted Menses'

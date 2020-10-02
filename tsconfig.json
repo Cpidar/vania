@@ -1,0 +1,20 @@
+{
+  "extends": "@quasar/app/tsconfig-preset",
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es6",
+    "strict": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "strictPropertyInitialization": false,
+    "resolveJsonModule": true,
+    "strictNullChecks": false,
+    "noUnusedLocals": false
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}
