@@ -2,13 +2,6 @@
 # yarn lockfile v1
 
 
-"@angular/core@^8.2.5":
-  version "8.2.5"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-8.2.5.tgz#c94f41c81abc318c9597285648f790b88ca7bfa6"
-  integrity sha512-cBEiHhLE8VFIdB53seR+nQYNQFlNloKgD7ro26eMazvRF94wBSzO9VrD3+/XmNWdIYibU7PBaXhDCOKTe+ZSHw==
-  dependencies:
-    tslib "^1.9.0"
-
 "@babel/code-frame@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -927,13 +920,6 @@
   integrity sha512-gZDI/eXOIk8kP2PkUKjWu9RW8GGVd2Hkgjxyr/S7Z+JF+0mr7bAlbw+DkTRxnD580o8Kqxlnba9wvqp5aOHBww==
   dependencies:
     "@hapi/hoek" "6.x.x"
-
-"@ionic-native/core@^5.13.0":
-  version "5.13.0"
-  resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-5.13.0.tgz#9d4068ae58334a4589178d135cfe7abdbad5003a"
-  integrity sha512-gfGkWdeh6F0cYfnUWd3XUJ1JQ7l9h91u25Mx+xE/EoM1PW/5jXtSFPqU4O3U6ttrUUPINI3BDJqC75D7eTWSEQ==
-  dependencies:
-    "@types/cordova" latest
 
 "@ionic-native/wheel-selector@^5.13.0":
   version "5.13.0"
@@ -3633,9 +3619,9 @@ decamelize@^1.2.0:
   integrity sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=
 
 decode-uri-component@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
-  integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.2.tgz#e69dbe25d37941171dd540e024c444cd5188e1e9"
+  integrity sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==
 
 decompress-response@^3.3.0:
   version "3.3.0"
